@@ -6,3 +6,5 @@ fastapi
 uvicorn
 joblib
 numpy
+beautifulsoup4
+langdetect
