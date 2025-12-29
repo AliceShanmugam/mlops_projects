@@ -13,7 +13,11 @@ __pycache__/
 mlruns/
 
 # Data
-data/
+data/raw/*.csv
+data/raw/images_train/
+data/raw_test/*.csv
+data/raw_test/images_test/
+
 
 # VSCode
 .vscode/
