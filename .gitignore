@@ -12,11 +12,11 @@ __pycache__/
 # MLflow
 mlruns/
 
-# Data
+# Data raw training and test files
 data/raw/*.csv
-data/raw/images_train/
+data/raw/image_train/
 data/raw_test/*.csv
-data/raw_test/images_test/
+data/raw_test/image_test/
 
 
 # VSCode
