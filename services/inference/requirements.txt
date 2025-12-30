@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+scikit-learn
+joblib
+numpy
+pandas
+mlflow
+beautifulsoup4
+langdetect
+pytest
