@@ -26,17 +26,9 @@ services:
       - ./models:/models
 
   mlflow:
-    image: python:3.12-slim
-    container_name: mlflow
-    command: >
-      mlflow server
-      --backend-store-uri sqlite:///mlflow.db
-      --default-artifact-root /mlflow/artifacts
-      --host 0.0.0.0
-      --port 5000
-      --serve-artifacts
-      --allowed-hosts mlflow,localhost,127.0.0.1
-      --cors-allowed-origins *
+    
+    build: mlflow
+    
     volumes:
       - ./mlflow:/mlflow
     ports:
