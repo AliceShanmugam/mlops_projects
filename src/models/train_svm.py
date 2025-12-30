@@ -100,7 +100,14 @@ def train_and_evaluate_svm(
     # =========================
     # Train SVM
     # =========================
+    print("➡️ Training SVM...")
     svm = train_svm(X_train_vec, y_train, **svm_params)
+    print("✅ SVM trained")
+
+    print("➡️ Saving SVM...")
+    joblib.dump(svm, artifacts_dir / "svm.joblib")
+    print("✅ SVM saved")
+    #svm = train_svm(X_train_vec, y_train, **svm_params)
 
     # =========================
     # Evaluation
@@ -117,7 +124,7 @@ def train_and_evaluate_svm(
     f1_macro = f1_score(y_val, y_pred, average="macro")
 
     # Save SVM
-    joblib.dump(svm, artifacts_dir / "svm.joblib")
+    #joblib.dump(svm, artifacts_dir / "svm.joblib")
 
     return {
         "f1_macro": f1_macro,

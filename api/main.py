@@ -2,11 +2,12 @@ from pathlib import Path
 import joblib
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Optional
 
 # =========================
 # Load artifacts
 # =========================
-ARTIFACTS_DIR = Path("models/run_linear_svm")
+ARTIFACTS_DIR = Path("models/run_linear_svm2")
 
 tfidf = joblib.load(ARTIFACTS_DIR / "tfidf.joblib")
 svm = joblib.load(ARTIFACTS_DIR / "svm.joblib")
@@ -30,7 +31,8 @@ class PredictRequest(BaseModel):
 
 class PredictResponse(BaseModel):
     predicted_label: int
-    probabilities: list[float]
+    decision_score: Optional[list[float]] = None
+    #probabilities: list[float]
 
 
 # =========================
@@ -45,9 +47,12 @@ def health():
 def predict(request: PredictRequest):
     X = tfidf.transform([request.text])
     pred = svm.predict(X)[0]
-    proba = svm.predict_proba(X)[0].tolist()
+    #proba = svm.predict_proba(X)[0].tolist()
 
-    return {
-        "predicted_label": int(pred),
-        "probabilities": proba,
-    }
+    response = {"predicted_label": int(pred)}
+    
+    if hasattr(svm, "decision_function"):
+        scores = svm.decision_function(X)
+        response["decision_score"] = scores[0].tolist()
+
+    return response

@@ -11,7 +11,7 @@ Le projet met l’accent sur :
 - la traçabilité des données et des modèles
 - l’industrialisation du modèle via une API d’inférence
 
----
+### Phase 1
 
 ## 📊 KPIs (Indicateurs clés)
 
@@ -134,3 +134,6 @@ Une API FastAPI minimale permet de réaliser des prédictions à partir de descr
 ### Lancement local
 ```bash
 uvicorn api.main:app --reload
+
+### Phase 2
+
