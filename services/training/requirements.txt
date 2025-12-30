@@ -1,7 +1,8 @@
-
 fastapi
 uvicorn
+scikit-learn
 mlflow
 pandas
-scikit-learn
-joblib
+numpy
+torch
+torchvision
