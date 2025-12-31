@@ -20,7 +20,10 @@ def train_svm():
     mlflow.set_experiment("rakuten-linear-svm")
 
     with mlflow.start_run():
-        metrics = train_and_evaluate_svm()
+        metrics = train_and_evaluate_svm(
+            data_path=DATA_PATH,
+            artifacts_dir=ARTIFACTS_DIR,
+        )
 
         # ✅ PARAMS
         mlflow.log_param("model", "linear_svm")
