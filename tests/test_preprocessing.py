@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Dec 29 20:19:22 2025
-
-@author: coach
-"""
-
 from pathlib import Path
 from src.preprocessing.text_cleaning import clean_text, preprocess_training_data
 

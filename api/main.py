@@ -17,8 +17,7 @@ svm = joblib.load(ARTIFACTS_DIR / "svm.joblib")
 # =========================
 app = FastAPI(
     title="Rakuten MLOps Inference API",
-    description="Minimal FastAPI for product classification",
-    version="1.0"
+    description="Minimal FastAPI for product classification"
 )
 
 

@@ -1,5 +1,3 @@
-
-
 # services/gateway/app/users.py
 from passlib.context import CryptContext
 

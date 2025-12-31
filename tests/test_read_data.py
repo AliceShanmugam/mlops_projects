@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Dec 29 17:25:13 2025
-
-@author: coach
-"""
 
 import pandas as pd
 from pathlib import Path
@@ -24,10 +18,3 @@ def test_raw_train_data_exists():
 def test_raw_test_data_exists():
     assert Path("data/raw_test/X_test_update.csv").exists()
     assert Path("data/raw_test/image_test").exists()
-
-
-
-# X = pd.read_csv("data/raw/X_train_update.csv")
-# y = pd.read_csv("data/raw/Y_train_CVw08PX.csv")
-# print(len(X))
-# print(len(y))
