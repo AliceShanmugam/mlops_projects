@@ -1,34 +1,43 @@
+
 from pathlib import Path
 import joblib
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+# =========================
+# CONSTANTS
+# =========================
+IMAGE_DIR = Path("data/raw/image_train")
+
 
 # =========================
-# Train TF-IDF
+# IMAGE PATHS
+# =========================
+def add_image_paths(df: pd.DataFrame, image_dir: Path) -> pd.DataFrame:
+    if not {"imageid", "productid"}.issubset(df.columns):
+       df["image_path"] = None
+       return df
+    def build_path(row):
+        filename = f"image_{row.imageid}_product_{row.productid}.jpg"
+        path = image_dir / filename
+        return str(path) if path.exists() else None
+
+    df["image_path"] = df.apply(build_path, axis=1)
+    return df
+
+# =========================
+# TF-IDF TRAINING
 # =========================
 def train_tfidf_vectorizer(
     data_path: Path,
-    output_path: Path,
+    artifacts_dir: Path,
     text_column: str = "text_clean",
     max_features: int = 50000,
     ngram_range: tuple = (1, 2),
-) :
-    """
-    Fit a TF-IDF vectorizer on training data and save it.
-
-    Parameters
-    ----------
-    data_path : Path
-        CSV file containing cleaned text.
-    output_path : Path
-        Path where the trained vectorizer will be saved.
-    """
-
+    add_images: bool = True,
+):
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(data_path)
-
-    if text_column not in df.columns:
-        raise ValueError(f"Column '{text_column}' not found in dataset")
 
     texts = df[text_column].astype(str)
 
@@ -40,30 +49,9 @@ def train_tfidf_vectorizer(
 
     X = vectorizer.fit_transform(texts)
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(vectorizer, output_path)
+    tfidf_path = artifacts_dir / "tfidf.joblib"
+    joblib.dump(vectorizer, tfidf_path)
+
+    print(f"TF-IDF saved to {tfidf_path}")
 
     return X, vectorizer
-
-
-# =========================
-# Load TF-IDF
-# =========================
-def load_tfidf_vectorizer(vectorizer_path: Path):
-    """
-    Load a trained TF-IDF vectorizer.
-    """
-    return joblib.load(vectorizer_path)
-
-
-# =========================
-# Transform new texts
-# =========================
-def transform_texts(
-    texts,
-    vectorizer
-):
-    """
-    Transform raw texts using a fitted TF-IDF vectorizer.
-    """
-    return vectorizer.transform(texts)
