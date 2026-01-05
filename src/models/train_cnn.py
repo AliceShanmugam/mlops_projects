@@ -7,7 +7,7 @@ from torchvision import transforms
 from PIL import Image
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score
 
 # ================= CONFIG =================
 IMAGE_SIZE = 128            
@@ -143,7 +143,7 @@ def train_cnn(data_path: Path, artifacts_dir: Path):
             y_pred.extend(preds)
 
     f1 = f1_score(y_true, y_pred, average="macro")
-
+    accuracy = accuracy_score(y_true, y_pred)
     # -------- SAVE --------
     model_path = artifacts_dir / "cnn.pt"
     torch.save(model.state_dict(), model_path)
@@ -151,6 +151,7 @@ def train_cnn(data_path: Path, artifacts_dir: Path):
     metrics = {
         "model": "cnn_from_scratch",
         "f1_macro": round(f1, 4),
+        "accuracy": round(accuracy, 4),
         "image_size": IMAGE_SIZE,
         "batch_size": BATCH_SIZE,
         "epochs": EPOCHS,
@@ -162,6 +163,7 @@ def train_cnn(data_path: Path, artifacts_dir: Path):
         json.dump(metrics, f, indent=2)
 
     print(f"CNN saved to {model_path}")
-    print(f"F1 macro: {f1:.4f}")
+    print(f"F1 macro: {f1:0.4f}")
+    print(f"accuracy: {accuracy:0.4f}")
 
     return metrics

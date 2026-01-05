@@ -74,6 +74,7 @@ def train_and_evaluate_svm(
     # --- Evaluation ---
     y_pred = svm.predict(X_val_vec)
 
+    accuracy = svm.score(y_val, y_pred) 
     f1 = f1_score(y_val, y_pred, average="macro")
     report = classification_report(
         y_val,
@@ -84,10 +85,14 @@ def train_and_evaluate_svm(
 
     print(f"SVM saved to {svm_path}")
     print(f"F1 macro: {f1:.4f}")
+    print(f"accuracy: {accuracy:0.4f}")
 
     return {
         "f1_macro": f1,
         "classification_report": report,
         "svm_path": svm_path,
+        "accurancy":accuracy,
     }
+
+
 

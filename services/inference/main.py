@@ -1,82 +1,225 @@
+# from pathlib import Path
+# import joblib
+# import torch
+# from fastapi import FastAPI, HTTPException
+# from pydantic import BaseModel
+# from typing import Optional
+# from torchvision import transforms
+# from PIL import Image
+# import sys
+# import pandas as pd
+
+# # =========================
+# # PATHS
+# # =========================
+# BASE_DIR = Path(__file__).resolve().parent.parent
+# sys.path.append(str(BASE_DIR)) 
+# TEXT_MODELS_DIR = BASE_DIR / "models" / "text"
+# IMAGE_MODELS_DIR = BASE_DIR / "models" / "images"
+# LABEL_NAME_DIR = BASE_DIR /"data" / "processed" 
+# df_labels = pd.read_csv(LABEL_NAME_DIR / "train_clean.csv")
+# LABEL_ID_TO_NAME = (df_labels.set_index("label")["label_name"].to_dict())
+
+# from src.models.train_cnn import SimpleCNN
+# IMAGE_ROOTS = BASE_DIR / "data"/ "raw" / "image_train"
+
+# # =========================
+# # LOAD TEXT MODEL
+# # =========================
+# tfidf = joblib.load(TEXT_MODELS_DIR / "tfidf.joblib")
+# svm = joblib.load(TEXT_MODELS_DIR / "svm.joblib")
+
+# # =========================
+# # LOAD CNN MODEL
+# # =========================
+# NUM_CLASSES = 8
+# DEVICE = torch.device("cpu")
+
+# cnn_model = SimpleCNN(NUM_CLASSES)
+# cnn_model.load_state_dict(
+#     torch.load(IMAGE_MODELS_DIR / "cnn.pt", map_location=DEVICE)
+# )
+# cnn_model.to(DEVICE)
+# cnn_model.eval()
+
+# # =========================
+# # IMAGE TRANSFORM
+# # =========================
+# IMAGE_SIZE = 128
+
+# transform = transforms.Compose([
+#     transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.5]*3, std=[0.5]*3),
+# ])
+
+
+
+# # =========================
+# # FASTAPI
+# # =========================
+# app = FastAPI(
+#     title="Rakuten MLOps Inference API (local)",
+#     description="Text and Image classification"
+# )
+
+# # =========================
+# # SCHEMAS
+# # =========================
+# class PredictTextRequest(BaseModel):
+#     text: str
+
+# class PredictImageRequest(BaseModel):
+#     image_path: str
+
+# class PredictResponse(BaseModel):
+#     predicted_label: int
+#     label_name : str
+#     decision_score: Optional[list[float]] = None
+
+# # =========================
+# # ENDPOINTS
+# # =========================
+# @app.get("/health")
+# def health():
+#     return {"status": "ok","service":"API REST local"}
+
+# @app.post("/predict/svm", response_model=PredictResponse)
+# def predict_svm(request: PredictTextRequest):
+#     X = tfidf.transform([request.text])
+#     pred = svm.predict(X)[0]
+    
+#     response = {"predicted_label": int(pred),"label_name":LABEL_ID_TO_NAME.get(pred,"unkown")}
+#     if hasattr(svm, "decision_function"):
+#         response["decision_score"] = svm.decision_function(X)[0].tolist()
+
+#     return response
+
+# @app.post("/predict/cnn", response_model=PredictResponse)
+# def predict_cnn(request: PredictImageRequest):
+#     try:
+#         image_path = IMAGE_ROOTS / request.image_path
+#         if not image_path.is_absolute():
+#             image_path = BASE_DIR / image_path
+
+#         if not image_path.exists():
+#             raise HTTPException(status_code=404, detail=f"Image not found: {image_path}")
+
+#         image = Image.open(image_path)
+#         tensor = transform(image).unsqueeze(0).to(DEVICE)
+
+#         with torch.no_grad():
+#             outputs = cnn_model(tensor)
+#             pred1 = outputs.argmax(dim=1).item()
+
+#         return {"predicted_label": pred1,"label_name":LABEL_ID_TO_NAME.get(pred1,"unkown")}
+
+#     except Exception as e:
+#         print("CNN inference error:", e)
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
+
 from pathlib import Path
+import sys
 import joblib
 import torch
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from torchvision import transforms
 from PIL import Image
-
-from src.models.train_cnn import SimpleCNN
-
-# =========================
-# Load TEXT model
-# =========================
-TEXT_DIR = Path("/models/text")
-tfidf = joblib.load(TEXT_DIR / "tfidf.joblib")
-svm = joblib.load(TEXT_DIR / "svm.joblib")
+import pandas as pd
 
 # =========================
-# Load IMAGE model
+# CONFIGURATION DES CHEMINS
 # =========================
-IMG_DIR = Path("/models/images")
-cnn = SimpleCNN(num_classes=8)
-cnn.load_state_dict(torch.load(IMG_DIR / "cnn.pt", map_location="cpu"))
-cnn.eval()
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(BASE_DIR))
 
+# Chemins vers les modèles (relatifs à /app dans le conteneur)
+MODELS_DIR = Path("/app/models")
+TEXT_MODELS_DIR = MODELS_DIR / "text"
+IMAGE_MODELS_DIR = MODELS_DIR / "images"
+LABEL_NAME_DIR = BASE_DIR /"data" / "processed" 
+df_labels = pd.read_csv(LABEL_NAME_DIR / "train_clean.csv")
+LABEL_ID_TO_NAME = (df_labels.set_index("label")["label_name"].to_dict())
+
+# =========================
+# IMPORT DES MODÈLES
+# =========================
+from src.models.train_cnn import SimpleCNN  # Import depuis src/ (monté en volume)
+
+# =========================
+# CHARGEMENT DES MODÈLES
+# =========================
+# Modèle texte (SVM + TF-IDF)
+tfidf = joblib.load(TEXT_MODELS_DIR / "tfidf.joblib")
+svm = joblib.load(TEXT_MODELS_DIR / "svm.joblib")
+
+# Modèle image (CNN)
+NUM_CLASSES = 8
+DEVICE = torch.device("cpu")
+cnn_model = SimpleCNN(NUM_CLASSES)
+cnn_model.load_state_dict(torch.load(IMAGE_MODELS_DIR / "cnn.pt", map_location=DEVICE))
+cnn_model.to(DEVICE)
+cnn_model.eval()
+
+# =========================
+# TRANSFORMS POUR LES IMAGES
+# =========================
+IMAGE_SIZE = 128
 transform = transforms.Compose([
-    transforms.Resize((128, 128)),
+    transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.5]*3, std=[0.5]*3),
 ])
 
 # =========================
-# FastAPI
+# FASTAPI : SCHÉMAS ET ROUTES
 # =========================
-app = FastAPI(title="Inference Service")
+app = FastAPI(
+    title="Rakuten MLOps Inference API",
+    description="API pour la classification multimodale texte et images"
+)
 
-class TextRequest(BaseModel):
+class PredictTextRequest(BaseModel):
     text: str
 
-class ImageRequest(BaseModel):
+class PredictImageRequest(BaseModel):
     image_path: str
 
 class PredictResponse(BaseModel):
     predicted_label: int
-    decision_score: Optional[list[float]] = None
-
-
+    label_name : str
+    decision_score: Optional[List[float]] = None
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "inference"}
+    return {"status": "ok"}
 
-
-
-@app.post("/predict/svm", response_model=PredictResponse)
-def predict_svm(req: TextRequest):
-    X = tfidf.transform([req.text])
+@app.post("/predict/svm")
+def predict_svm(request: PredictTextRequest):
+    X = tfidf.transform([request.text])
     pred = svm.predict(X)[0]
-
-    response = {"predicted_label": int(pred)}
+    response = {"predicted_label": int(pred),"label_name":LABEL_ID_TO_NAME.get(pred,"unknown")}
     if hasattr(svm, "decision_function"):
         response["decision_score"] = svm.decision_function(X)[0].tolist()
-
     return response
 
-
-@app.post("/predict/cnn", response_model=PredictResponse)
-def predict_cnn(req: ImageRequest):
-    img_path = Path(req.image_path)
-
-    if not img_path.exists():
-        raise HTTPException(404, "Image not found")
-
-    img = Image.open(img_path).convert("RGB")
-    tensor = transform(img).unsqueeze(0)
-
-    with torch.no_grad():
-        outputs = cnn(tensor)
-        pred = outputs.argmax(dim=1).item()
-
-    return {"predicted_label": pred}
+@app.post("/predict/cnn")
+def predict_cnn(request: PredictImageRequest):
+    try:
+        image_path = Path(request.image_path)
+        if not image_path.is_absolute():
+            image_path = Path("/app/data") / "raw" / "image_train" / image_path.name
+        if not image_path.exists():
+            raise HTTPException(status_code=404, detail=f"Image non trouvée : {image_path}")
+        image = Image.open(image_path).convert("RGB")
+        tensor = transform(image).unsqueeze(0).to(DEVICE)
+        with torch.no_grad():
+            outputs = cnn_model(tensor)
+            pred = outputs.argmax(dim=1).item()
+        return {"predicted_label": pred,"label_name":LABEL_ID_TO_NAME.get(pred,"unknown"), "decision_score": torch.softmax(outputs, dim=1).squeeze().tolist()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

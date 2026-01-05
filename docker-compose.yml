@@ -1,45 +1,65 @@
-
 services:
-
+  
   gateway:
     build:
       context: .
-      dockerfile : services/gateway/Dockerfile
+      dockerfile: services/gateway/Dockerfile
     ports:
       - "8000:8000"
+    environment:
+      - INFERENCE_URL=http://inference:8000
+      - TRAINING_URL=http://training:8000
     depends_on:
       - inference
       - training
+    networks:
+      - mlops_network
 
+  
   training:
     build:
       context: .
-      dockerfile : services/training/Dockerfile
-    ports:
-      - "8001:8000"
+      dockerfile: services/training/Dockerfile
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - PYTHONPATH=/app
     volumes:
-      - ./data:/data
-      - ./models:/models
+      - ./data:/app/data
+      - ./models:/app/models
       - ./src:/app/src
     depends_on:
       - mlflow
+    networks:
+      - mlops_network
+
 
   inference:
     build:
       context: .
-      dockerfile : services/inference/Dockerfile
+      dockerfile: services/inference/Dockerfile
     ports:
-      - "8002:8000"
+      - "8001:8000"  
+    environment:
+      - PYTHONPATH=/app
     volumes:
-      - ./models:/models
-      - ./data:/data
+      - ./models:/app/models
+      - ./data:/app/data
       - ./src:/app/src
+    networks:
+      - mlops_network
+
 
   mlflow:
     build:
       context: .
-      dockerfile : mlflow/Dockerfile
+      dockerfile: mlflow/Dockerfile
     ports:
       - "5000:5000"
     volumes:
-      - ./mlflow:/mlflow
+      - ./mlflow/mlruns:/mlflow/mlruns
+    networks:
+      - mlops_network
+
+networks:
+  mlops_network:
+    driver: bridge

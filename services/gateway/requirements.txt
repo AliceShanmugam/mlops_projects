@@ -10,3 +10,4 @@ prometheus-client
 structlog
 python-json-logger
 pydantic[email]
+
