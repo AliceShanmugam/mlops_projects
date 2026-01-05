@@ -1,12 +1,12 @@
 
 # services/gateway/app/main.py
-from fastapi import FastAPI, Depends, HTTPException, status, Request
+
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.middleware.cors import CORSMiddleware
 import requests
 
 from .auth import authenticate_user, create_access_token, require_admin, require_user
-from .schemas import Token, PredictRequest
+from .schemas import Token, PredictRequest, PredictImageRequest
 from .config import TRAINING_SERVICE_URL, INFERENCE_SERVICE_URL
 
 app = FastAPI(
@@ -14,22 +14,21 @@ app = FastAPI(
     description="Gateway sécurisée pour training et inference",
 )
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-# ---------- HEALTH ----------
+# ======================================================
+# HEALTH
+# ======================================================
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "gateway"}
 
-# ---------- AUTH ----------
+
+# ======================================================
+# AUTH
+# ======================================================
 @app.post("/token", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -42,24 +41,56 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
     return {"access_token": token, "token_type": "bearer"}
 
-# ---------- TRAINING (ADMIN) ----------
+
+# ======================================================
+# TRAINING (ADMIN ONLY)
+# ======================================================
 @app.post("/train/svm")
-def train(current_user=Depends(require_admin)):
-    response = requests.post(f"{TRAINING_SERVICE_URL}/train/svm", timeout=3600)
+def train_svm(current_user=Depends(require_admin)):
+    response = requests.post(
+        f"{TRAINING_SERVICE_URL}/train/svm",
+        timeout=3600,
+    )
     response.raise_for_status()
     return response.json()
 
-# ---------- PREDICT (USER + ADMIN) ----------
-@app.post("/predict")
-def predict(
+
+@app.post("/train/cnn")
+def train_cnn(current_user=Depends(require_admin)):
+    response = requests.post(
+        f"{TRAINING_SERVICE_URL}/train/cnn",
+        timeout=3600,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+# ======================================================
+# PREDICTION (USER + ADMIN)
+# ======================================================
+@app.post("/predict/svm")
+def predict_svm(
     predict_request: PredictRequest,
     current_user=Depends(require_user),
 ):
     response = requests.post(
-        f"{INFERENCE_SERVICE_URL}/predict",
+        f"{INFERENCE_SERVICE_URL}/predict/svm",
         json=predict_request.dict(),
         timeout=30,
     )
     response.raise_for_status()
     return response.json()
 
+
+@app.post("/predict/cnn")
+def predict_cnn(
+    predict_request: PredictImageRequest,
+    current_user=Depends(require_user),
+):
+    response = requests.post(
+        f"{INFERENCE_SERVICE_URL}/predict/cnn",
+        json=predict_request.dict(),
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()

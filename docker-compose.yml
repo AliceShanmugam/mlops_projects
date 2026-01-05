@@ -1,7 +1,10 @@
+
 services:
 
   gateway:
-    build: services/gateway
+    build:
+      context: .
+      dockerfile : services/gateway/Dockerfile
     ports:
       - "8000:8000"
     depends_on:
@@ -9,28 +12,34 @@ services:
       - training
 
   training:
-    build: services/training
+    build:
+      context: .
+      dockerfile : services/training/Dockerfile
     ports:
       - "8001:8000"
     volumes:
       - ./data:/data
       - ./models:/models
+      - ./src:/app/src
     depends_on:
       - mlflow
 
   inference:
-    build: services/inference
+    build:
+      context: .
+      dockerfile : services/inference/Dockerfile
     ports:
       - "8002:8000"
     volumes:
       - ./models:/models
+      - ./data:/data
+      - ./src:/app/src
 
   mlflow:
-    
-    build: mlflow
-    
-    volumes:
-      - ./mlflow:/mlflow
+    build:
+      context: .
+      dockerfile : mlflow/Dockerfile
     ports:
       - "5000:5000"
-
+    volumes:
+      - ./mlflow:/mlflow

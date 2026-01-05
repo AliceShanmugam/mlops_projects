@@ -2,11 +2,11 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY services/gateway/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app app
-COPY main.py .
+COPY services/gateway/app app
 
-#CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-CMD ["python", "main.py"]
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+#CMD ["python", "main.py"]

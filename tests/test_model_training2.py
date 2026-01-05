@@ -8,7 +8,7 @@ from src.models.train_linearsvm import train_and_evaluate_svm
 from src.models.train_cnn import train_cnn
 from src.features.build_features import train_tfidf_vectorizer
 
-IMAGE_SIZE =     224        
+IMAGE_SIZE =     128        
 BATCH_SIZE = 2            
 EPOCHS = 1                 
 LR = 1e-3
