@@ -1,8 +1,8 @@
 # services/training/app/main.py
 from fastapi import FastAPI, HTTPException
 
-from .train_linearsvm import train_and_evaluate_svm
-from .train_cnn import train_cnn
+from train_linearsvm import train_and_evaluate_svm
+from train_cnn import train_cnn
 
 app = FastAPI(title="Training service")
 

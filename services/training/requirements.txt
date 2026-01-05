@@ -1,11 +1,11 @@
 
+
 fastapi
 uvicorn
-pandas
-numpy
 scikit-learn
+pandas
 joblib
+torch
+torchvision
+numpy
 pillow
-
-torch==2.2.2
-torchvision==0.17.2

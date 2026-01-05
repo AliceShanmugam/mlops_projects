@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /mlflow
 
@@ -10,7 +10,7 @@ CMD mlflow server \
   --host 0.0.0.0 \
   --port 5000 \
   --backend-store-uri sqlite:///mlflow.db \
-  --default-artifact-root /mlruns \
+  --default-artifact-root /mlflow/mlruns \
   --serve-artifacts \
   --allowed-hosts "*" \
   --cors-allowed-origins "*"
