@@ -1,0 +1,9 @@
+# services/gateway/app/config.py
+from datetime import timedelta
+
+SECRET_KEY = "CHANGE_ME_SUPER_SECRET"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+TRAINING_SERVICE_URL = "http://training:8000"
+INFERENCE_SERVICE_URL = "http://inference:8000"

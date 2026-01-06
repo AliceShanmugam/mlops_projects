@@ -24,7 +24,7 @@ Write-Host "   - MLflow:     http://localhost:5000"
 # Affiche les logs d'un service spécifique (ex: training)
 Write-Host""
 Write-Host "6. logs de services specifiques"
-# docker-compose logs -f training
+docker-compose logs -f training
 docker-compose logs -f inference
 # docker-compose logs -f gateway
 # docker-compose logs -f mlflow

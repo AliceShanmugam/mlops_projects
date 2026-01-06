@@ -6,7 +6,7 @@ import pandas as pd
 
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, classification_report
+from sklearn.metrics import f1_score, classification_report, accuracy_score
 
 
 # =========================
@@ -74,7 +74,7 @@ def train_and_evaluate_svm(
     # --- Evaluation ---
     y_pred = svm.predict(X_val_vec)
 
-    accuracy = svm.score(y_val, y_pred) 
+    accuracy = accuracy_score(y_val, y_pred)
     f1 = f1_score(y_val, y_pred, average="macro")
     report = classification_report(
         y_val,

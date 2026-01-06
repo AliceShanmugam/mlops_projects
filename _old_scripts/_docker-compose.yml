@@ -1,0 +1,51 @@
+services:
+
+  gateway:
+    build: services/gateway
+    container_name: gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - inference
+      - training
+    environment:
+      - INFERENCE_SERVICE_URL=http://inference:8000
+      - TRAINING_SERVICE_URL=http://training:8000
+
+  training:
+    build: services/training
+    container_name: training
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./data:/data
+      - ./models:/models
+      - ./src:/app/src
+    depends_on:
+      - mlflow
+    environment:
+      - DATA_DIR=/data
+      - MODELS_DIR=/models
+
+  inference:
+    build: services/inference
+    container_name: inference
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./models:/models
+      - ./data/raw/image_train:/data/raw/image_train:ro
+    environment:
+      - MODELS_DIR=/models
+      - IMAGE_DATA_DIR=/data/raw/image_train
+
+  mlflow:
+    build: mlflow
+    container_name: mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlflow:/mlflow
+      - ./models:/models
+    environment:
+      - MLFLOW_TRACKING_URI=http://0.0.0.0:5000

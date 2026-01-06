@@ -134,10 +134,13 @@ import pandas as pd
 # =========================
 # CONFIGURATION DES CHEMINS
 # =========================
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(BASE_DIR))
+IN_DOCKER = Path("/app").exists()
+BASE_DIR = Path("/app") if IN_DOCKER else Path(__file__).resolve().parent.parent.parent
 
-# Chemins vers les modèles (relatifs à /app dans le conteneur)
+#BASE_DIR = Path(__file__).resolve().parent.parent.parent
+#sys.path.append(str(BASE_DIR))
+
+
 MODELS_DIR = Path("/app/models")
 TEXT_MODELS_DIR = MODELS_DIR / "text"
 IMAGE_MODELS_DIR = MODELS_DIR / "images"
@@ -148,7 +151,7 @@ LABEL_ID_TO_NAME = (df_labels.set_index("label")["label_name"].to_dict())
 # =========================
 # IMPORT DES MODÈLES
 # =========================
-from src.models.train_cnn import SimpleCNN  # Import depuis src/ (monté en volume)
+from src.models.train_cnn import SimpleCNN
 
 # =========================
 # CHARGEMENT DES MODÈLES
@@ -202,9 +205,10 @@ def health():
 def predict_svm(request: PredictTextRequest):
     X = tfidf.transform([request.text])
     pred = svm.predict(X)[0]
-    response = {"predicted_label": int(pred),"label_name":LABEL_ID_TO_NAME.get(pred,"unknown")}
-    if hasattr(svm, "decision_function"):
-        response["decision_score"] = svm.decision_function(X)[0].tolist()
+    response = {
+        "predicted_label": int(pred),
+        "label_name":LABEL_ID_TO_NAME.get(pred,"unknown"),
+        "decision_score" : svm.decision_function(X)[0].tolist()}
     return response
 
 @app.post("/predict/cnn")
@@ -220,6 +224,9 @@ def predict_cnn(request: PredictImageRequest):
         with torch.no_grad():
             outputs = cnn_model(tensor)
             pred = outputs.argmax(dim=1).item()
-        return {"predicted_label": pred,"label_name":LABEL_ID_TO_NAME.get(pred,"unknown"), "decision_score": torch.softmax(outputs, dim=1).squeeze().tolist()}
+        return {
+            "predicted_label": pred,
+            "label_name":LABEL_ID_TO_NAME.get(pred,"unknown"), 
+            "decision_score": torch.softmax(outputs, dim=1).squeeze().tolist()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,49 +1,18 @@
-# Rakuten Product Classification multimodal — MLOps Project
+# Projet MLOps - Challenge RAKUTEN - Déploiement de modéles de classification multimodale
 
-## 🎯 Objectif du projet
+## Objectifs du projet
 
-L’objectif de ce projet est de concevoir un **MVP MLOps complet** pour la
-classification automatique de produits e-commerce Rakuten à partir de
-données textuelles (et à terme images).
+Le projet vise à créer une architecture MLOps réaliste permettant :
+de deployer La classification automatique de produits à partir :
+  du texte (SVM + TF-IDF)
+  des images (CNN from scratch)
+La reproductibilité complète des entraînements et inférences
+La traçabilité et le suivi des données, modèles et métriques
+Une API d’inférence conteneurisée et sécurisée
+Une architecture microservices prête pour l’industrialisation
+l'orchestation de pipeline complet et scalable
 
-Le projet met l’accent sur :
-- la reproductibilité des expérimentations
-- la traçabilité des données et des modèles
-- l’industrialisation du modèle via une API d’inférence
-
-### Phase 1
-
-## 📊 KPIs (Indicateurs clés)
-
-Les indicateurs suivis pour évaluer le système sont :
-
-- **Performance modèle**
-  - F1-score macro (classification multi-classes)
-- **Latence**
-  - Temps de réponse de l’API d’inférence
-- **Robustesse**
-  - Tests unitaires (données, features, modèle)
-- **Reproductibilité**
-  - Versioning des artefacts (TF-IDF, SVM)
-  - Environnement contrôlé via dépendances
-
----
-
-## 🧱 Architecture du projet
-dev (local)
-├── data ingestion & preprocessing
-├── feature engineering (TF-IDF)
-├── model training (SVM)
-└── tests unitaires
-↓
-build
-├── artefacts versionnés (tfidf.joblib, svm.joblib)
-└── validation des performances
-↓
-run
-└── API FastAPI d’inférence
-
-## 📁 Structure du repository
+## Structure du repository
 
 mlops_projects/
 ├── api/ # API FastAPI
@@ -52,88 +21,182 @@ mlops_projects/
 │ ├── raw_test/ # Données brutes de test
 │ ├── processed/ # Données prétraitées
 │ └── README.md # Data catalog
+├── mlflow/ # tracking et suivi MLFLow
+│ └──  mlruns/ # artefacts de MLFlow
+├── models/ # modeles entraînés svm & cnn
+│ ├── images/ # modeles entrainés cnn
+│ └── text/ # modeles entrainiés tfidf + svm
+├── services/ # microservices conteneurisés
+│ ├── gateway/ # service authentification
+│ ├── inference/ # service prédiction
+│ ├── training/ # service entrainement de modéles
 ├── src/
-│ ├── preprocessing/ # Nettoyage texte
+│ ├── preprocessing/ # Nettoyage texte et images
 │ ├── features/ # TF-IDF
-│ ├── models/ # Entraînement SVM
+│ ├── models/ # modeles SVM et CNN
+│ ├── pipelines/ # Entraînement modeles SVM et CNN
 ├── tests/ # Tests unitaires
-├── models/ # Artefacts entraînés
-├── requirements.txt
-├── pytest.ini #test uniquement mlops_projects/src
+├── requirements.txt # framework à installer 
+├── pytest.ini # test uniquement mlops_projects/tests
+├── Makefile
+├── docker-compose.yml #conteneurisation des microservices
+├── deploiement.ps1 # build et deploiement conteneurs
 └── README.md
 
+### Phase 1 Fondations & Conteneurisation
 
----
+# les KPI (performance, coût, latence)
 
-## 📦 Données
+| Catégorie          | KPI                                       |
+| ------------------ | ----------------------------------------- |
+| Performance modèle | Accuracy / F1-macro                       |
+| Robustesse         | Tests unitaires (data, features, API)     |
+| Reproductibilité   | Docker + scripts d’entraînement           |
+| Latence API        | < 3 s (en locale)                      |
+| Traçabilité        | MLflow (params, metrics, artefacts)       |
+| monitoring         | suivi des données et des metriques        |
+| Scalabilité        | Séparation training / inference / gateway |
 
-Les données utilisées proviennent du **challenge Rakuten France**.
+# Données et traitement
+data/
+├── raw/
+│   ├── X_train.csv
+│   ├── y_train.csv
+│   └── image_train/
+├── raw_test/
+│   └── image_test/
+└── processed/
+    └── train_clean.csv
 
-- Données textuelles : descriptions produits
-- Données images : photos produits (non utilisées dans le baseline)
+Nettoyage du texte : src/preprocessing/text_cleaning.py
+Construction des features TF-IDF : src/features/build_features.py
+Gestion des valeurs manquantes, Normalisation & tokenisation, Traçabilité des transformations
 
-Les règles de gestion des données sont :
-- les données brutes (`data/raw`, `data/raw_test`) sont **immutables**
-- les transformations sont écrites dans `data/processed`
-- les données ne sont pas versionnées dans Git (via `.gitignore`)
+# Modèles & entraînement
+models/
+├── text/
+│   ├── svm.joblib
+│   └── tfidf.joblib
+└── images/
+    └── cnn.pt
 
-👉 Voir le **data catalog détaillé** : `data/README.md`
+Modèle texte 
+TF-IDF + Linear SVM
+Script : src/models/train_linearsvm.py
+Pipeline : src/pipelines/run_training_text.py
 
----
+Modèle image
+CNN from scratch (PyTorch)
+Script : src/models/train_cnn.py
+Pipeline : src/pipelines/run_training_images.py
 
-## 🧹 Prétraitement des données
+# Tests unitaires
+Localisés dans tests/ :
+test_read_data.py → chargement des données
+test_preprocessing.py → nettoyage texte
+test_features.py → TF-IDF
+test_model_training2.py → entraînement modèles
+test_api.py → endpoints FastAPI
+lancement des tests (validation des données, modèles, pretraitement, API)
+  bash : pytest
 
-Le prétraitement est implémenté dans :
-src/preprocessing/text_cleaning.py
+# API d’inférence
+localisé dans api/main.py
+Endpoints
+GET /health	      ==> Healthcheck
+POST /predict/svm	==> Prédiction texte
+POST /predict/cnn	==> Prédiction image
+lancement de l'API en local
+  bash : python -m api.main
 
-Étapes principales :
-- concaténation `designation` + `description`
-- suppression HTML
-- normalisation (minuscules, caractères spéciaux)
-- mapping des labels Rakuten vers des classes numériques
-- détection de langue
+### Phase 2 Microservices (en cours d'achevement)
 
----
+# ML Flow et suivi d'experience
+mlflow/
+├── Dockerfile
+├── mlflow.db
+└── mlruns/
+ML Flow conteneurisé
 
-## 🧠 Modèle baseline
+# Services
+services/gateway : authentification ==> FastAPI + OAuth2 (admin / user) + accès aux services (inference, training, mlflow)
+services/infernces : prediction ==> Chargement des modèles entraînés + Prédiction texte & image
+services/training : entrainement ==> Entraînement SVM & CNN + Enregistrement des modèles
 
-Le modèle baseline repose sur :
+Architecture microservices
+[ Client ]
+    |
+    v
+[ Gateway sécurisé ]
+    |
+    +--> [ Inference ]
+    |
+    +--> [ Training ]
+    |
+    +--> [ MLflow ]
 
-- **Vectorisation** : TF-IDF
-- **Classifieur** : SVM linéaire (`SVC(kernel="linear")`)
+# Orchestration Docker Compose
+Services exposés :
+  Gateway, Port:8000
+  inference, Port:8002
+  training, Port:8001
+  MLflow UI, Port:5000
 
-Le pipeline respecte les bonnes pratiques MLOps :
-- TF-IDF entraîné uniquement sur le jeu d’apprentissage
-- séparation stricte train / validation
-- artefacts versionnés (`tfidf.joblib`, `svm.joblib`)
+integration docker compose : nettoyage, rebuild images et lancement des services
+bash : ./deploiement.ps1
 
-Les métriques calculées incluent :
-- F1-score macro
-- rapport de classification par classe
+tests unitaires d'integration docker-compose
+bash : ./tests/test_docker-compose.ps1
 
----
-
-## 🧪 Tests unitaires
-
-Des tests automatisés valident :
-- l’existence et la structure des données
-- le prétraitement texte
-- la construction des features TF-IDF
-- l’entraînement et l’évaluation du modèle
-- l’API d’inférence
-
-Lancement des tests :
-
-```bash
-pytest
-
-## API d’inférence
-
-Une API FastAPI minimale permet de réaliser des prédictions à partir de descriptions produits.
-
-### Lancement local
-```bash
-uvicorn api.main:app --reload
-
-### Phase 2
+architecture globale
+┌───────────────────────────────────────────────┐
+│                   CLIENT                      │
+│        (curl / browser / application)         │
+└─────────────────────────┬─────────────────────┘
+                          │ HTTP
+                          ▼
+┌───────────────────────────────────────────────┐
+│               API GATEWAY                     │
+│         FastAPI + OAuth2 (JWT)                │
+│                                               │
+│  - Authentification admin / user              │
+│  - Contrôle d’accès                           │
+│  - Routage des requêtes                       │
+└───────────────┬───────────────────┬──────────┘
+                │                   │
+                │                   │
+        TRAIN (admin)          PREDICT (user)
+                │                   │
+                ▼                   ▼
+┌──────────────────────────┐   ┌──────────────────────────┐
+│      TRAINING SERVICE     │   │     INFERENCE SERVICE     │
+│        FastAPI            │   │        FastAPI            │
+│                            │   │                          │
+│  - Entraînement SVM       │   │  - Chargement modèles     │
+│  - Entraînement CNN       │   │  - Predict /svm           │
+│  - Sauvegarde modèles     │   │  - Predict /cnn           │
+│  - Logging MLflow         │   │                          │
+└───────────────┬──────────┘   └───────────────┬──────────┘
+                │                               │
+                │                               │
+                ▼                               ▼
+┌──────────────────────────┐   ┌──────────────────────────┐
+│        MLFLOW SERVER     │   │      MODELS STORAGE       │
+│                          │   │                          │
+│  - Params                │   │  models/text/            │
+│  - Metrics               │   │   ├── tfidf.joblib       │
+│  - Artefacts             │   │   └── svm.joblib         │
+│                          │   │                          │
+│  UI : http://localhost   │   │  models/images/          │
+│       :5000              │   │   └── cnn.pt             │
+└──────────────────────────┘   └──────────────────────────┘
+                ▲
+                │
+        ┌───────┴───────────────────────┐
+        │          DATA STORAGE          │
+        │                                │
+        │  data/raw/                     │
+        │  data/processed/               │
+        │  image_train / image_test      │
+        └────────────────────────────────┘
 
