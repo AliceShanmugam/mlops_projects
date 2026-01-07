@@ -1,6 +1,7 @@
 services:
   
   gateway:
+    container_name: gateway_AF
     build:
       context: .
       dockerfile: services/gateway/Dockerfile
@@ -17,6 +18,7 @@ services:
 
   
   training:
+    container_name: training_AF
     build:
       context: .
       dockerfile: services/training/Dockerfile
@@ -34,6 +36,7 @@ services:
 
 
   inference:
+    container_name: inference_AF
     build:
       context: .
       dockerfile: services/inference/Dockerfile
@@ -50,6 +53,7 @@ services:
 
 
   mlflow:
+    container_name: mlflow_AF
     build:
       context: .
       dockerfile: mlflow/Dockerfile
