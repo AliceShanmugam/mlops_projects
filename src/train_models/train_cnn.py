@@ -81,6 +81,7 @@ def train_cnn(
             with mlflow.start_run(run_name=run_name,nested=True):
                 df = pd.read_csv(data_path)
                 df = df.dropna(subset=["image_path", "label"])
+                num_classes = df["label"].nunique()
                 train_df, val_df = train_test_split(df,test_size=0.2,random_state=42,stratify=df["label"])
 
                 transform = transforms.Compose([
@@ -113,7 +114,7 @@ def train_cnn(
                 mlflow.log_param("batch_size",BATCH_SIZE)
                 mlflow.log_param("epochs",EPOCHS)
                 mlflow.log_param("learning_rate",LR)
-                mlflow.log_param("num_classes",NUM_CLASSES)
+                mlflow.log_param("num_classes",num_classes)
                 mlflow.log_param("device",str(DEVICE))
          
                 for epoch in range(EPOCHS):

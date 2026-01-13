@@ -21,7 +21,7 @@ LABEL_NAME_DIR = BASE_DIR /"data" / "processed"
 df_labels = pd.read_csv(LABEL_NAME_DIR / "train_clean.csv")
 LABEL_ID_TO_NAME = (df_labels.set_index("label")["label_name"].to_dict())
 
-from src.models.train_cnn import SimpleCNN
+from src.train_models.train_cnn import SimpleCNN
 IMAGE_ROOTS = BASE_DIR / "data"/ "raw" / "image_train"
 
 # =========================

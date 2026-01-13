@@ -4,15 +4,15 @@ from PIL import Image
 import numpy as np
 import torch
 import json
-from src.models.train_linearsvm import train_and_evaluate_svm
-from src.models.train_cnn import train_cnn
-from src.features.build_features import train_tfidf_vectorizer
+from src.train_models.train_linearsvm import train_and_evaluate_svm
+from src.train_models.train_cnn import train_cnn
+from src.preprocessing.train_tfidf import train_tfidf_vectorizer
 
 IMAGE_SIZE =     128        
 BATCH_SIZE = 2            
 EPOCHS = 1                 
 LR = 1e-3
-NUM_CLASSES = 2
+NUM_CLASSES = 8
 
 # ======================================================
 # TEXT MODEL TFIDF + SVM
@@ -95,7 +95,8 @@ def test_training_cnn_pipeline_creates_artifacts(tmp_path):
     # ----------------------------
     # Train CNN
     # ----------------------------
-    metrics = train_cnn(data_path=data_path,
+   #metrics = 
+    train_cnn(data_path=data_path,
         artifacts_dir = artifacts_dir)
 
     # ----------------------------

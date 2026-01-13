@@ -1,11 +1,11 @@
 {
   "model": "cnn_from_scratch",
-  "f1_macro": 0.5867,
-  "accuracy": 0.597,
+  "f1_macro": 0.5805,
+  "accuracy": 0.5872,
   "image_size": 128,
   "batch_size": 16,
   "epochs": 10,
   "num_images": 42106,
   "device": "cpu",
-  "mlflow_run_id": "107faf58772a49cdbbd7462d82c70f75"
+  "mlflow_run_id": "ece103060b644e02a9573055a62692b2"
 }

@@ -10,3 +10,4 @@ pillow
 mlflow
 tqdm
 bs4
+langdetect

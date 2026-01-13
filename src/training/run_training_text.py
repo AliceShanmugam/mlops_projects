@@ -34,7 +34,7 @@ def make_json_serializable(obj):
 # =========================
 def main_texte():
     mlflow.set_experiment("Texte_Pipeline")
-    with mlflow.start_run(run_name="Full_Texte_Pipeline"):
+    with mlflow.start_run(run_name="Full_Texte_Pipeline",nested=True):
         mlflow.set_tag("step", "preprocessing")
         print("\n")
         print("1. Preprocessing dataset (text + image)")

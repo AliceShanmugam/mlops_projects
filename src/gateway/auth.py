@@ -8,8 +8,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 
-from gateway.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from gateway.users import users_db
+from src.gateway.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from src.gateway.users import users_db
 
 # ---------------- PASSWORD HASHING ----------------
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

@@ -58,6 +58,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
+    
       - ./mlflow/mlruns:/mlflow/mlruns
     networks:
       - mlops_network

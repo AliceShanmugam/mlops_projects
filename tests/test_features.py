@@ -2,9 +2,8 @@ from pathlib import Path
 import pandas as pd
 import joblib
 
-from src.features.build_features import train_tfidf_vectorizer
-#from src.features.build_features import load_tfidf_vectorizer
-#from src.features.build_features import  transform_texts
+from src.preprocessing.train_tfidf import train_tfidf_vectorizer
+
 
 
 def test_tfidf_training_and_transform(tmp_path):

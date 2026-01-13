@@ -4,9 +4,9 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 import requests
 
-from gateway.auth import authenticate_user, create_access_token, require_admin, require_user
-from gateway.schemas import Token, PredictRequest, PredictImageRequest
-from gateway.config import TRAINING_SERVICE_URL, INFERENCE_SERVICE_URL
+from src.gateway.auth import authenticate_user, create_access_token, require_admin, require_user
+from src.gateway.schemas import Token, PredictRequest, PredictImageRequest
+from src.gateway.config import TRAINING_SERVICE_URL, INFERENCE_SERVICE_URL
 
 app = FastAPI(
     title="MLOps Secure Gateway",
@@ -99,7 +99,7 @@ import uvicorn
 
 if __name__ == "__main__":
     uvicorn.run(
-        "app.main:app",
+        "main:app",
         host="0.0.0.0",
         port=8000,
         reload=False
