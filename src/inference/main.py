@@ -141,9 +141,9 @@ BASE_DIR = Path("/app") if IN_DOCKER else Path(__file__).resolve().parent.parent
 #sys.path.append(str(BASE_DIR))
 
 
-MODELS_DIR = Path("/app/models")
-TEXT_MODELS_DIR = MODELS_DIR / "text"
-IMAGE_MODELS_DIR = MODELS_DIR / "images"
+MODELS_DIR = Path("/app/src/mlflow/mlruns")
+TEXT_MODELS_DIR = MODELS_DIR 
+IMAGE_MODELS_DIR = MODELS_DIR
 LABEL_NAME_DIR = BASE_DIR /"data" / "processed" 
 df_labels = pd.read_csv(LABEL_NAME_DIR / "train_clean.csv")
 LABEL_ID_TO_NAME = (df_labels.set_index("label")["label_name"].to_dict())
@@ -151,7 +151,7 @@ LABEL_ID_TO_NAME = (df_labels.set_index("label")["label_name"].to_dict())
 # =========================
 # IMPORT DES MODÈLES
 # =========================
-from src.models.train_cnn import SimpleCNN
+from src.train_models.train_cnn import SimpleCNN
 
 # =========================
 # CHARGEMENT DES MODÈLES
