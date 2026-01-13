@@ -9,3 +9,4 @@ numpy
 pillow
 mlflow
 tqdm
+bs4

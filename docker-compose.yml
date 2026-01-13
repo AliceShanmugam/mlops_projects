@@ -4,7 +4,7 @@ services:
     container_name: gateway_AF
     build:
       context: .
-      dockerfile: services/gateway/Dockerfile
+      dockerfile: src/gateway/Dockerfile
     ports:
       - "8000:8000"
     environment:
@@ -21,13 +21,12 @@ services:
     container_name: training_AF
     build:
       context: .
-      dockerfile: services/training/Dockerfile
+      dockerfile: src/training/Dockerfile
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
       - PYTHONPATH=/app
     volumes:
       - ./data:/app/data
-      - ./models:/app/models
       - ./src:/app/src
     depends_on:
       - mlflow
@@ -39,13 +38,12 @@ services:
     container_name: inference_AF
     build:
       context: .
-      dockerfile: services/inference/Dockerfile
+      dockerfile: src/inference/Dockerfile
     ports:
       - "8001:8000"  
     environment:
       - PYTHONPATH=/app
     volumes:
-      - ./models:/app/models
       - ./data:/app/data
       - ./src:/app/src
     networks:
@@ -56,7 +54,7 @@ services:
     container_name: mlflow_AF
     build:
       context: .
-      dockerfile: mlflow/Dockerfile
+      dockerfile: src/mlflow/Dockerfile
     ports:
       - "5000:5000"
     volumes:

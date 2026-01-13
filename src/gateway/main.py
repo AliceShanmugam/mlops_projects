@@ -1,13 +1,12 @@
-
-# services/gateway/app/main.py
+# services/gateway/main.py
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 import requests
 
-from .auth import authenticate_user, create_access_token, require_admin, require_user
-from .schemas import Token, PredictRequest, PredictImageRequest
-from .config import TRAINING_SERVICE_URL, INFERENCE_SERVICE_URL
+from gateway.auth import authenticate_user, create_access_token, require_admin, require_user
+from gateway.schemas import Token, PredictRequest, PredictImageRequest
+from gateway.config import TRAINING_SERVICE_URL, INFERENCE_SERVICE_URL
 
 app = FastAPI(
     title="MLOps Secure Gateway",

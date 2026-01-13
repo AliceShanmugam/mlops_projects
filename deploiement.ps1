@@ -11,8 +11,7 @@ Write-Host "3. Lancement des services sans logs (-d)"
 docker-compose up -d
 
 Write-Host""
-Write-Host "4. Attente de 5 secondes pour le demarrage des services..."
-Start-Sleep -Seconds 5
+Write-Host"4. Affichage des services lancés"
 docker-compose ps
 
 Write-Host""

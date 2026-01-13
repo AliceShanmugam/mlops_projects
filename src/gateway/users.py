@@ -1,4 +1,4 @@
-# services/gateway/app/users.py
+# services/gateway/users.py
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

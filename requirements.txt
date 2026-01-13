@@ -6,5 +6,5 @@ fastapi
 uvicorn
 joblib
 numpy
-beautifulsoup4
+bs4
 langdetect
