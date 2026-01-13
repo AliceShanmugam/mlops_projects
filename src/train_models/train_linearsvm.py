@@ -5,7 +5,6 @@ import joblib
 import pandas as pd
 import json
 import mlflow
-import mlflow.skelearn
 
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split

@@ -19,6 +19,7 @@ import joblib
 import random
 import io
 import nltk
+from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import DistilBertTokenizer, DistilBertModel
 from torchvision.models import ResNet101_Weights, resnet101
@@ -43,10 +44,10 @@ st.set_page_config(
 nltk.download('stopwords')
 
 # Chemins relatifs (à adapter selon ton environnement local)
-BASE_PATH = "C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_DS_validé/BD rakuten_challengeData"
-DATA_PATH = os.path.join(BASE_PATH, "data_final.csv")
-IMAGE_TRAIN_PATH = os.path.join(BASE_PATH, "images/images/image_train")
-IMAGE_TEST_PATH = os.path.join(BASE_PATH, "images/images/image_test")
+
+DATA_PATH = Path("/data/processed/train_clean.csv")
+IMAGE_TRAIN_PATH = Path("/data/raw/image_train")
+IMAGE_TEST_PATH = Path("/data/raw_test/image_test")
 
 # =========================
 # CHARGEMENT DES DONNÉES

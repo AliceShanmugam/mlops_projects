@@ -23,11 +23,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 # ---------------- AUTHENTICATION ----------------
 def authenticate_user(username: str, password: str) -> Optional[dict]:
-    """
-    Vérifie :
-    - que l'utilisateur existe
-    - que le mot de passe est correct
-    """
+   
     user = users_db.get(username)
     if not user:
         return None
@@ -39,11 +35,7 @@ def authenticate_user(username: str, password: str) -> Optional[dict]:
 
 # ---------------- JWT ----------------
 def create_access_token(data: dict) -> str:
-    """
-    data DOIT contenir :
-    - sub (username)
-    - role
-    """
+    
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})

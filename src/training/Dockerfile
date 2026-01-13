@@ -13,11 +13,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 2. Copie et installe les dépendances Python
-COPY services/training/requirements.txt .
+COPY src/training/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 3. Copie le code source
-COPY services/training/main.py .
+COPY src/training/main.py .
 COPY src/ /app/src/
 
 # 4. Commande de démarrage (exécution du script d'entraînement)

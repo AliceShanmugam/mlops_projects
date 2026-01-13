@@ -1,6 +1,6 @@
 
-from src.pipelines.run_training_text import main
-from src.pipelines.run_training_images import main
+from src.training.run_training_text import main
+from src.training.run_training_images import main
 import mlflow
 import logging
 
@@ -13,7 +13,7 @@ if __name__ == "__main__":
         train_text_pipeline(
             data_path="/app/data/raw/X_train.csv",
             target_path="/app/data/raw/Y_train.csv",
-            output_dir="/app/models/text"
+            output_dir="/app/src/mlflow/mlruns"
         )
         mlflow.log_param("model_type", "SVM")
         logger.info("Modèle texte entraîné avec succès.")
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     with mlflow.start_run(run_name="Image_Training_CNN"):
         train_images_pipeline(
             data_path="/app/data/raw/image_train",
-            output_dir="/app/models/images"
+            output_dir="/app/src/mlflow/mlruns"
         )
         mlflow.log_param("model_type", "CNN")
         logger.info("Modèle image entraîné avec succès.")
