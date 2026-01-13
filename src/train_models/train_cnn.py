@@ -111,10 +111,10 @@ def train_cnn(
                 mlflow.log_param("num_classes", len(df["label"].unique()))
                 mlflow.log_param("image_size",IMAGE_SIZE)
                 mlflow.log_param("batch_size",BATCH_SIZE)
-                mlflow.log_param( "epochs",EPOCHS)
+                mlflow.log_param("epochs",EPOCHS)
                 mlflow.log_param("learning_rate",LR)
                 mlflow.log_param("num_classes",NUM_CLASSES)
-                mlflow.log_param( "device",str(DEVICE))
+                mlflow.log_param("device",str(DEVICE))
          
                 for epoch in range(EPOCHS):
                     model.train()
