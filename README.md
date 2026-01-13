@@ -1,6 +1,6 @@
-# Projet MLOps - Challenge RAKUTEN - Déploiement de modéles de classification multimodale
+### Projet MLOps - Challenge RAKUTEN - Déploiement de modéles de classification multimodale
 
-## Objectifs du projet
+# Objectifs du projet
 
 Le projet vise à créer une architecture MLOps réaliste permettant :
 de deployer La classification automatique de produits à partir :
@@ -12,7 +12,7 @@ Une API d’inférence conteneurisée et sécurisée
 Une architecture microservices prête pour l’industrialisation
 l'orchestation de pipeline complet et scalable
 
-## Structure du repository
+# Structure du repository
 
 mlops_projects/
 ├── api/ # API FastAPI
@@ -43,9 +43,9 @@ mlops_projects/
 ├── deploiement.ps1 # build et deploiement conteneurs
 └── README.md
 
-### Phase 1 Fondations & Conteneurisation
+# Phase 1 Fondations & Conteneurisation
 
-# les KPI (performance, coût, latence)
+## les KPI (performance, coût, latence)
 
 | Catégorie          | KPI                                       |
 | ------------------ | ----------------------------------------- |
@@ -57,7 +57,7 @@ mlops_projects/
 | monitoring         | suivi des données et des metriques        |
 | Scalabilité        | Séparation training / inference / gateway |
 
-# Données et traitement
+## Données et traitement
 data/
 ├── raw/
 │   ├── X_train.csv
@@ -72,7 +72,7 @@ Nettoyage du texte : src/preprocessing/text_cleaning.py
 Construction des features TF-IDF : src/features/build_features.py
 Gestion des valeurs manquantes, Normalisation & tokenisation, Traçabilité des transformations
 
-# Modèles & entraînement
+## Modèles & entraînement
 models/
 ├── text/
 │   ├── svm.joblib
@@ -90,7 +90,7 @@ CNN from scratch (PyTorch)
 Script : src/models/train_cnn.py
 Pipeline : src/pipelines/run_training_images.py
 
-# Tests unitaires
+## Tests unitaires
 Localisés dans tests/ :
 test_read_data.py → chargement des données
 test_preprocessing.py → nettoyage texte
@@ -100,7 +100,7 @@ test_api.py → endpoints FastAPI
 lancement des tests (validation des données, modèles, pretraitement, API)
   bash : pytest
 
-# API d’inférence
+## API d’inférence
 localisé dans api/main.py
 Endpoints
 GET /health	      ==> Healthcheck
@@ -109,16 +109,16 @@ POST /predict/cnn	==> Prédiction image
 lancement de l'API en local
   bash : python -m api.main
 
-### Phase 2 Microservices (en cours d'achevement)
+# Phase 2 Microservices (en cours d'achevement)
 
-# ML Flow et suivi d'experience
+## ML Flow et suivi d'experience
 mlflow/
 ├── Dockerfile
 ├── mlflow.db
 └── mlruns/
 ML Flow conteneurisé
 
-# Services
+## Services
 services/gateway : authentification ==> FastAPI + OAuth2 (admin / user) + accès aux services (inference, training, mlflow)
 services/infernces : prediction ==> Chargement des modèles entraînés + Prédiction texte & image
 services/training : entrainement ==> Entraînement SVM & CNN + Enregistrement des modèles
@@ -135,7 +135,7 @@ Architecture microservices
     |
     +--> [ MLflow ]
 
-# Orchestration Docker Compose
+## Orchestration Docker Compose
 Services exposés :
   Gateway, Port:8000
   inference, Port:8002
