@@ -47,7 +47,7 @@ def train_and_evaluate_svm(
         raise FileNotFoundError("tfidf.joblib not found. Train TF-IDF first.")
 
     mlflow.set_experiment(experiment_name)
-    with mlflow.start_run(run_name=run_name):
+    with mlflow.start_run(run_name=run_name, nested=True):
         
         X_text, y = load_processed_data(data_path)
         stratify = y if len(set(y)) > 1 else None
@@ -85,8 +85,9 @@ def train_and_evaluate_svm(
         print(f"SVM saved to {svm_path}")
         print(f"F1 macro: {f1:0.4f}")
         print(f"accuracy: {accuracy:0.4f}")
+        print("mlflow_run_id ",mlflow.active_run().info.run_id)
 
-        return {"f1_macro": f1,"classification_report": report,"svm_path": svm_path,"accurancy":accuracy}
+        return {"f1_macro": f1,"classification_report": report,"svm_path": svm_path,"accuracy":accuracy,"mlflow_run_id": mlflow.active_run().info.run_id}
 
 
 

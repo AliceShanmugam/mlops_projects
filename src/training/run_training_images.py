@@ -33,7 +33,7 @@ def make_json_serializable(obj):
 # =========================
 # PIPELINE
 # =========================
-def main():
+def main_image():
     
     mlflow.set_experiment("Image_Pipeline")
     with mlflow.start_run(run_name="Full_Image_Pipeline"):
@@ -51,7 +51,7 @@ def main():
         
         mlflow.set_tag("step", "training")
         print("\n")
-        print("\2. Training CNN from scratch")
+        print("2. Training CNN from scratch")
         metrics = train_cnn(
             data_path=TRAIN_CLEAN_PATH,
             artifacts_dir=MODELS_DIR,
@@ -62,8 +62,8 @@ def main():
         print("3. Save global metrics")
         metrics_path = MODELS_DIR / "metrics_cnn_pipeline.json"
         metrics = make_json_serializable(metrics)
-        mlflow.log_metrics("image_pipeline_accuracy",metrics["accuracy"])
-        mlflow.log_metrics("image_pipeline_f1",metrics["f1_macro"])
+        mlflow.log_metric("image_pipeline_accuracy",metrics["accuracy"])
+        mlflow.log_metric("image_pipeline_f1",metrics["f1_macro"])
 
         MODELS_DIR.mkdir(parents=True, exist_ok=True)
         with open(metrics_path, "w", encoding="utf-8") as f:
@@ -86,4 +86,4 @@ def main():
 # ENTRY POINT
 # =========================
 if __name__ == "__main__":
-    main()
+    main_image()

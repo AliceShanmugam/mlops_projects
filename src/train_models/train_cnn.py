@@ -78,7 +78,7 @@ def train_cnn(
     
             artifacts_dir.mkdir(parents=True, exist_ok=True)
             mlflow.set_experiment(experiment_name)
-            with mlflow.start_run(run_name=run_name):
+            with mlflow.start_run(run_name=run_name,nested=True):
                 df = pd.read_csv(data_path)
                 df = df.dropna(subset=["image_path", "label"])
                 train_df, val_df = train_test_split(df,test_size=0.2,random_state=42,stratify=df["label"])
@@ -109,17 +109,17 @@ def train_cnn(
                 # mlflow log params
                 mlflow.log_param("num_images", len(df))
                 mlflow.log_param("num_classes", len(df["label"].unique()))
-                mlflow.log_params("image_size",IMAGE_SIZE)
-                mlflow.log_params("batch_size",BATCH_SIZE)
-                mlflow.log_params( "epochs",EPOCHS)
-                mlflow.log_params("learning_rate",LR)
-                mlflow.log_params("num_classes",NUM_CLASSES)
-                mlflow.log_params( "device",str(DEVICE))
+                mlflow.log_param("image_size",IMAGE_SIZE)
+                mlflow.log_param("batch_size",BATCH_SIZE)
+                mlflow.log_param( "epochs",EPOCHS)
+                mlflow.log_param("learning_rate",LR)
+                mlflow.log_param("num_classes",NUM_CLASSES)
+                mlflow.log_param( "device",str(DEVICE))
          
                 for epoch in range(EPOCHS):
                     model.train()
                     epoch_loss = 0
-            
+                    print("Epoch:",epoch+1, "on ",EPOCHS)
                     for images, labels in train_loader:
                         images = images.to(DEVICE, non_blocking=True)
                         labels = labels.to(DEVICE, non_blocking=True)
@@ -129,7 +129,6 @@ def train_cnn(
                         loss.backward()
                         optimizer.step()
                         epoch_loss += loss.item()
-                        
                     mlflow.log_metric("train_loss", epoch_loss / len(train_loader), step=epoch)
                     print(f"Epoch {epoch+1}/{EPOCHS} | Loss: {epoch_loss/len(train_loader):0.4f}")
 
@@ -148,9 +147,9 @@ def train_cnn(
                 f1 = f1_score(y_true, y_pred, average="macro")
                 accuracy = accuracy_score(y_true, y_pred)
                 #mlflow log metrics
-                mlflow.log_metrics("accuracy",accuracy)
-                mlflow.log_metrics("f1_macro",f1)
-                mlflow.log_metrics("val_loss",epoch_loss / len(val_loader))
+                mlflow.log_metric("accuracy",accuracy)
+                mlflow.log_metric("f1_macro",f1)
+                mlflow.log_metric("val_loss",epoch_loss / len(val_loader))
                 
                 model_path = artifacts_dir / "cnn.pt"
                 torch.save(model.state_dict(), model_path)

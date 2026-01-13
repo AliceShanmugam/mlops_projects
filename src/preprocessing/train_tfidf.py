@@ -19,7 +19,7 @@ def train_tfidf_vectorizer(
     run_name : str ="TFIDF_run_1"
 ):
     mlflow.set_experiment(experiment_name)
-    with mlflow.start_run(run_name=run_name):
+    with mlflow.start_run(run_name=run_name, nested=True):
         
         artifacts_dir.mkdir(parents=True, exist_ok=True)
         df = pd.read_csv(data_path)
@@ -33,11 +33,11 @@ def train_tfidf_vectorizer(
         tfidf_path = artifacts_dir / "tfidf.joblib"
         joblib.dump(vectorizer, tfidf_path)
         # mlflow save tfidf maodel
-        mlflow.log_artefact(tfidf_path,"vectorization")
+        mlflow.log_artifact(tfidf_path,"vectorization")
         # mlflow Log parameters
         mlflow.log_param("num_texts", len(texts))   
         mlflow.log_param("avg_text_length", texts.str.len().mean())
-        mlflow.log_params("max_features", max_features)
+        #mlflow.log_params("max_features", str(max_features))
         mlflow.log_param("ngram_range",str(ngram_range))
         mlflow.log_param("sublinear_tf", True)
         mlflow.log_param("text_column",text_column)

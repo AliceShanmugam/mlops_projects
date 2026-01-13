@@ -21,4 +21,4 @@ COPY src/training/main.py .
 COPY src/ /app/src/
 
 # 4. Commande de démarrage (exécution du script d'entraînement)
-CMD ["python", "main.py"]
+CMD ["python","-m", "src.training.main"]

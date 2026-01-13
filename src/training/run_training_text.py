@@ -32,7 +32,7 @@ def make_json_serializable(obj):
 # =========================
 # PIPELINE
 # =========================
-def main():
+def main_texte():
     mlflow.set_experiment("Texte_Pipeline")
     with mlflow.start_run(run_name="Full_Texte_Pipeline"):
         mlflow.set_tag("step", "preprocessing")
@@ -73,8 +73,8 @@ def main():
         print("3. Save global metrics")
         metrics_path = MODELS_DIR / "metrics_svm_pipeline.json"
         metrics = make_json_serializable(metrics)
-        mlflow.log_metrics("texte_pipeline_accuracy",metrics["accuracy"])
-        mlflow.log_metrics("texte_pipeline_f1",metrics["f1_macro"])
+        mlflow.log_metric("texte_pipeline_accuracy",metrics["accuracy"])
+        mlflow.log_metric("texte_pipeline_f1",metrics["f1_macro"])
 
         MODELS_DIR.mkdir(parents=True, exist_ok=True)
         with open(metrics_path, "w", encoding="utf-8") as f:
@@ -96,4 +96,4 @@ def main():
 # ENTRY POINT
 # =========================
 if __name__ == "__main__":
-    main()
+    main_texte()

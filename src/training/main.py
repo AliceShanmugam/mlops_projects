@@ -1,6 +1,6 @@
 
-from src.training.run_training_text import main
-from src.training.run_training_images import main
+from src.training.run_training_text import main_texte
+from src.training.run_training_images import main_image
 import mlflow
 import logging
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     # Entraînement SVM (texte)
     with mlflow.start_run(run_name="Text_Training_SVM"):
-        train_text_pipeline(
+        main_texte(
             data_path="/app/data/raw/X_train.csv",
             target_path="/app/data/raw/Y_train.csv",
             output_dir="/app/src/mlflow/mlruns"
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     # Entraînement CNN (images)
     with mlflow.start_run(run_name="Image_Training_CNN"):
-        train_images_pipeline(
+        main_image(
             data_path="/app/data/raw/image_train",
             output_dir="/app/src/mlflow/mlruns"
         )
