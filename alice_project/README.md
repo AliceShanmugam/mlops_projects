@@ -21,7 +21,7 @@
 
 
 ## Machine learning Canvas
-    ![Aperçu](pics/image-1.png)
+![Aperçu](pics/image-1.png)
 
 
 ## KPIs (performance, coût et latence)
@@ -31,7 +31,7 @@
     | F1 macro               | Baseline ≥ 0.60   |
     | Latence inférence      | < 50 ms           |
     | Taille modèle          | SVM < 50 MB       |
-    | Couverture vocabulaire | TF-IDF 2k        |
+    | Couverture vocabulaire | TF-IDF 2k         |
 
 ## Architecture du projet
 
