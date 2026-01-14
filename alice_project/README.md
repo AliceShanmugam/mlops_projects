@@ -37,7 +37,7 @@ Déployer une API simple avec FastAPI + Docker
 ## Architecture du projet
 
 ### Architecture globale
-
+```
 [Raw Data]
     ↓
 [Preprocessing]
@@ -53,9 +53,10 @@ Déployer une API simple avec FastAPI + Docker
 [FastAPI]
     ↓
 [Client]
+```
 
 ### Workflow
-
+```
 Notebook (EDA / baseline)
         ↓
 Python scripts (train, test)
@@ -63,10 +64,10 @@ Python scripts (train, test)
 Docker build
         ↓
 API d’inférence
+```
 
 ### Structure du projet 
-
-```text
+```
 ml-project/
 │
 ├── data/
