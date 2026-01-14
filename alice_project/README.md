@@ -10,38 +10,37 @@ Les descriptions produits sont transformées en représentations numériques à 
 ⚠️ Dans le cadre de ce projet nous allons nous focaliser sur les descriptions en francais et procéder à une traduction en francais lors du preprocessing.
 
 ### Objectifs techniques
-```
+
 Construire un modèle robuste pour la classification de texte
 Garantir la reproductibilité des résultats
 Mettre à disposition une API d’inférence conteneurisée
-```
+
 
 ### Objectifs MLOps
-```
+
 Séparer clairement data / features / modèles
 Implémenter des tests unitaires
 Fournir une traçabilité des données et des modèles
 Déployer une API simple avec FastAPI + Docker
-```
 
-## Machine learning Canvas : Besoins et Coûts
+
+## Machine learning Canvas : besoins et coûts
 ![Aperçu](pics/image-1.png)
 
 
 ## KPIs (performance, coût et latence)
-```
+
 | KPI                    | Valeur            |
 | -----------------------| ------------------|
 | F1 macro               | Baseline ≥ 0.60   |
 | Latence inférence      | < 50 ms           |
 | Taille modèle          | SVM < 50 MB       |
-| Couverture vocabulaire | TF-IDF 2k         |
-```
+| Couverture vocabulaire | TF-IDF 2k         |  
 
 ## Architecture du projet
 
 ### Architecture globale
-```
+
 [Raw Data]
     ↓
 [Preprocessing]
@@ -57,10 +56,10 @@ Déployer une API simple avec FastAPI + Docker
 [FastAPI]
     ↓
 [Client]
-```
+
 
 ### Workflow
-```
+
 Notebook (EDA / baseline)
         ↓
 Python scripts (train, test)
@@ -68,10 +67,11 @@ Python scripts (train, test)
 Docker build
         ↓
 API d’inférence
-```
+
 
 ### Structure du projet 
-```
+
+```text
 ml-project/
 │
 ├── data/
@@ -103,6 +103,7 @@ ml-project/
 ├── Makefile
 ├── requirements.txt
 └── README.md
+
 ```
 
 ## Traitement des données
