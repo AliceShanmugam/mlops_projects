@@ -6,15 +6,11 @@ L’objectif est de fournir:
     - un modèle évalué
     - une API d’inférence minimale prête à être déployée.
 
-Les descriptions produits sont transformées en représentations numériques à l’aide de TFIDF, puis classifiées via un modèle SVM couplé d'une vectorisation TF-IDF.  
-⚠️ Dans le cadre de ce projet nous allons nous focaliser sur les descriptions en francais et procéder à une traduction en francais lors du preprocessing.
-
 ### Objectifs techniques
 
 Construire un modèle robuste pour la classification de texte
 Garantir la reproductibilité des résultats
 Mettre à disposition une API d’inférence conteneurisée
-
 
 ### Objectifs MLOps
 
@@ -37,6 +33,7 @@ Déployer une API simple avec FastAPI + Docker
 | Taille modèle          | SVM < 50 MB       |
 | Couverture vocabulaire | TF-IDF 2k         |  
 
+
 ## Architecture du projet
 
 ### Architecture globale
@@ -57,7 +54,6 @@ Déployer une API simple avec FastAPI + Docker
     ↓
 [Client]
 
-
 ### Workflow
 
 Notebook (EDA / baseline)
@@ -67,7 +63,6 @@ Python scripts (train, test)
 Docker build
         ↓
 API d’inférence
-
 
 ### Structure du projet 
 
@@ -106,26 +101,31 @@ ml-project/
 
 ```
 
-## Traitement des données
-    Le traitement des données consiste à :
-        - la collecte des données recupérées directement depuis le site Rakuten Challenge ( descritpions, titres et labels)
-        - le nettoyage des données afin de les utiliser pour nos modèles par la suite (passage en minuscules, suppression des caractères spéciaux, encodage des labels)
 
-    Les données utilisées pour la classification ont été filtrées à partir des données initiales pour les répartir dans 8 catégories différentes.
+## Traitement des données
+
+Le traitement des données consiste à :
+    - la collecte des données > recupérées directement depuis le site Rakuten Challenge ( descritpions, titres et labels)
+    - le nettoyage des données > afin de les utiliser pour nos modèles par la suite (passage en minuscules, suppression des caractères spéciaux, encodage des labels, etc.)
+
+⚠️ Les données utilisées pour la classification ont été filtrées à partir des données initiales pour les répartir dans 8 catégories différentes.
 
 
 ## Modèles de machine learning
-    Pour la classification des titres+descriptions selon la catégorie on a utilisé les modèles suivants dans la phase précédante : 
-        - Logistic Regression + TFIDF
-        - SVM + TFIDF
-        - XGBOOST + TFIDF
+
+Les descriptions produits sont transformées en représentations numériques à l’aide de TFIDF, puis classifiées via un modèle SVM.
+
+⚠️ Dans le cadre de ce projet nous allons nous focaliser sur les descriptions en francais et procéder à une traduction en français lors du preprocessing.
 
 
 ## Tests unitaires
-    Les tests garantissent la stabilité des données, des features et des prédictions avant déploiement.
+
+Les tests garantissent la stabilité des données, des features et des prédictions avant déploiement.
+
 
 ## API d'inférence
-    On utilise FastAPI.
-    Un chargement du modèle est attendu lorsqu'un call API est effectué pour une prédiction en temps réel (inférence en temps réel)
+
+On utilise FastAPI.
+Un chargement du modèle préentraîné est attendu lorsqu'un call API est effectué pour réaliser une inférence en temps réel.
 
 
