@@ -1,101 +1,108 @@
 ## Contexte et objectifs du projet
-    Ce projet vise à construire un modèle de classification automatique de descriptions textuelles de produits afin de prédire leur catégorie.
-    L’objectif est de fournir une pipeline reproductible, un modèle évalué, et une API d’inférence minimale prête à être déployée.
+Ce projet vise à construire un modèle de classification automatique de descriptions textuelles de produits afin de prédire leur catégorie et ce afin d'aider le vendeur à mieux mettre en avant son produit.
 
-    Les descriptions produits sont transformées en représentations numériques à l’aide de TFIDF, puis classifiées via trois modèles :
-        - Logistic Regression (baseline)
-        - SVM
-        - XGBoost
+L’objectif est de fournir:
+    - une pipeline reproductible
+    - un modèle évalué
+    - une API d’inférence minimale prête à être déployée.
+
+Les descriptions produits sont transformées en représentations numériques à l’aide de TFIDF, puis classifiées via un modèle SVM couplé d'une vectorisation TF-IDF
+⚠️ Dans le cadre de ce projet nous allons nous focaliser sur les descriptions en francais et procéder à une traduction en francais lors du preprocessing.
 
 ### Objectifs techniques
-    Construire un modèle baseline robuste pour la classification de texte
-    Comparer plusieurs modèles (SVM vs XGBoost)
-    Garantir la reproductibilité des résultats
-    Mettre à disposition une API d’inférence conteneurisée
+```
+Construire un modèle robuste pour la classification de texte
+Garantir la reproductibilité des résultats
+Mettre à disposition une API d’inférence conteneurisée
+```
 
 ### Objectifs MLOps
-    Séparer clairement data / features / modèles
-    Implémenter des tests unitaires (données, features, prédictions)
-    Fournir une traçabilité des données et des modèles
-    Déployer une API simple avec FastAPI + Docker
+```
+Séparer clairement data / features / modèles
+Implémenter des tests unitaires
+Fournir une traçabilité des données et des modèles
+Déployer une API simple avec FastAPI + Docker
+```
 
-
-## Machine learning Canvas
+## Machine learning Canvas : Besoins et Coûts
 ![Aperçu](pics/image-1.png)
 
 
 ## KPIs (performance, coût et latence)
-
-    | KPI                    | Valeur            |
-    | -----------------------| ------------------|
-    | F1 macro               | Baseline ≥ 0.60   |
-    | Latence inférence      | < 50 ms           |
-    | Taille modèle          | SVM < 50 MB       |
-    | Couverture vocabulaire | TF-IDF 2k         |
+```
+| KPI                    | Valeur            |
+| -----------------------| ------------------|
+| F1 macro               | Baseline ≥ 0.60   |
+| Latence inférence      | < 50 ms           |
+| Taille modèle          | SVM < 50 MB       |
+| Couverture vocabulaire | TF-IDF 2k         |
+```
 
 ## Architecture du projet
 
 ### Architecture globale
-
-    [Raw Data]
-        ↓
-    [Preprocessing]
-        ↓
-    [TF-IDF Vectorization]
-        ↓
-    [Model Training (Logistic Regression / SVM / XGBoost)]
-        ↓
-    [Evaluation & Selection]
-        ↓
-    [Model Artifact]
-        ↓
-    [FastAPI]
-        ↓
-    [Client]
+```
+[Raw Data]
+    ↓
+[Preprocessing]
+    ↓
+[TF-IDF Vectorization]
+    ↓
+[Model Training (Logistic Regression / SVM / XGBoost)]
+    ↓
+[Evaluation & Selection]
+    ↓
+[Model Artifact]
+    ↓
+[FastAPI]
+    ↓
+[Client]
+```
 
 ### Workflow
-
-    Notebook (EDA / baseline)
-            ↓
-    Python scripts (train, test)
-            ↓
-    Docker build
-            ↓
-    API d’inférence
+```
+Notebook (EDA / baseline)
+        ↓
+Python scripts (train, test)
+        ↓
+Docker build
+        ↓
+API d’inférence
+```
 
 ### Structure du projet 
 ```
-    ml-project/
-    │
-    ├── data/
-    │   ├── raw/                    # données brutes
-    │   ├── processed/              # données nettoyées
-    │   └── data_quality_report.md
-    │
-    ├── notebooks/
-    │   └── baseline_model.ipynb
-    │
-    ├── src/
-    │   ├── preprocessing.py        # nettoyage texte
-    │   ├── model.py                # pipelines ML
-    │   ├── evaluate.py             # métriques
-    │   └── train.py                # script d’entraînement
-    │
-    ├── api/
-    │   └── main.py                 # API FastAPI
-    │
-    ├── tests/
-    │   ├── test_data.py
-    │   ├── test_features.py
-    │   └── test_predictions.py
-    │
-    ├── models/
-    │   └── model.pkl
-    │
-    ├── Dockerfile
-    ├── Makefile
-    ├── requirements.txt
-    └── README.md
+ml-project/
+│
+├── data/
+│   ├── raw/                    # données brutes
+│   ├── processed/              # données nettoyées
+│   └── data_quality_report.md
+│
+├── notebooks/
+│   └── baseline_model.ipynb
+│
+├── src/
+│   ├── preprocessing.py        # nettoyage texte
+│   ├── model.py                # pipelines ML
+│   ├── evaluate.py             # métriques
+│   └── train.py                # script d’entraînement
+│
+├── api/
+│   └── main.py                 # API FastAPI
+│
+├── tests/
+│   ├── test_data.py
+│   ├── test_features.py
+│   └── test_predictions.py
+│
+├── models/
+│   └── model.pkl
+│
+├── Dockerfile
+├── Makefile
+├── requirements.txt
+└── README.md
 ```
 
 ## Traitement des données
