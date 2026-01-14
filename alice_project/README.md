@@ -6,7 +6,7 @@ L’objectif est de fournir:
     - un modèle évalué
     - une API d’inférence minimale prête à être déployée.
 
-Les descriptions produits sont transformées en représentations numériques à l’aide de TFIDF, puis classifiées via un modèle SVM couplé d'une vectorisation TF-IDF.\n
+Les descriptions produits sont transformées en représentations numériques à l’aide de TFIDF, puis classifiées via un modèle SVM couplé d'une vectorisation TF-IDF.  
 ⚠️ Dans le cadre de ce projet nous allons nous focaliser sur les descriptions en francais et procéder à une traduction en francais lors du preprocessing.
 
 ### Objectifs techniques
