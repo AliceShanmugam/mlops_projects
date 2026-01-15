@@ -1,58 +1,36 @@
-# Script principal
-
+import os
 import joblib
-import pandas as pd
+from sklearn.svm import LinearSVC
+from sklearn.metrics import f1_score, classification_report
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+# Création de dossier models s'il n'existe pas
+os.makedirs("models", exist_ok=True)
 
-from preprocessing import clean_text
-from model import build_svm_pipeline
-from evaluate import evaluate_model
+X_train = joblib.load("data/processed/X_train_tfidf.joblib")
+y_train = joblib.load("data/processed/y_train.joblib")
+X_test = joblib.load("data/processed/X_test_tfidf.joblib")
+y_test = joblib.load("data/processed/y_test.joblib")
 
+# Entraînement
+model = LinearSVC(random_state=42)
+model.fit(X_train, y_train)
 
-DATA_PATH = "data/processed/df_labeled_fr.csv"
-TEXT_COL = "text"
-TARGET_COL = "label"
-MODEL_OUTPUT = "models/model.pkl"
+# Prédictions
+y_pred = model.predict(X_test)
 
+# Évaluation
+f1 = f1_score(y_test, y_pred, average="macro")
 
-def main():
-    # Load data
-    df = pd.read_csv(DATA_PATH)
+print("===== ÉVALUATION =====")
+print(classification_report(y_test, y_pred))
+print(f"F1-score macro : {f1:.3f}")
 
-    df[TEXT_COL] = df[TEXT_COL].astype(str).apply(clean_text)
+# Condition de sauvegarde
+THRESHOLD = 0.7
 
-    X = df[TEXT_COL]
-    y = df[TARGET_COL]
-
-    # Encode labels
-    label_encoder = LabelEncoder()
-    y_enc = label_encoder.fit_transform(y)
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y_enc, test_size=0.2, random_state=42, stratify=y_enc
-    )
-
-    results = {}
-
-    # ------------------
-    # SVM
-    svm_pipeline = build_svm_pipeline()
-    svm_pipeline.fit(X_train, y_train)
-    svm_preds = svm_pipeline.predict(X_test)
-
-    results["svm"] = evaluate_model(y_test, svm_preds)
-
-    # Save model + label encoder
-    joblib.dump(
-        {
-            "model": svm_pipeline,
-            "label_encoder": label_encoder
-        },
-        MODEL_OUTPUT
-    )
-
-
-if __name__ == "__main__":
-    main()
+if f1 >= THRESHOLD:
+    joblib.dump(model, "models/svm.joblib")
+    print(f"✅ Modèle sauvegardé (F1 ≥ {THRESHOLD})")
+else:
+    print(f"❌ Modèle NON sauvegardé (F1 < {THRESHOLD})")
+    print("👉 Essayez de changer de modèle, d'hyperparamètres ou de features.")

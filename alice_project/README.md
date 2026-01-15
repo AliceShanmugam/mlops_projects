@@ -28,7 +28,7 @@ Déployer une API simple avec FastAPI + Docker
 
 | KPI                    | Valeur            |
 | -----------------------| ------------------|
-| F1 macro               | Baseline ≥ 0.60   |
+| F1 macro               | Baseline ≥ 0.70   |
 | Latence inférence      | < 50 ms           |
 | Taille modèle          | SVM < 50 MB       |
 | Couverture vocabulaire | TF-IDF 2k         |  
