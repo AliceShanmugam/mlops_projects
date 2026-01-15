@@ -1,28 +1,66 @@
 
-from src.training.run_training_text import main_texte
-from src.training.run_training_images import main_image
+# from src.training.run_training_text import main_texte
+# from src.training.run_training_images import main_image
+# import mlflow
+# import logging
+
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
+
+# if __name__ == "__main__":
+#     # Entraînement SVM (texte)
+#     with mlflow.start_run(run_name="Text_Training_SVM"):
+#         main_texte()
+#         mlflow.log_param("model_type", "SVM")
+#         logger.info("Modèle texte entraîné avec succès.")
+
+#     # Entraînement CNN (images)
+#     with mlflow.start_run(run_name="Image_Training_CNN"):
+#         main_image()
+#         mlflow.log_param("model_type", "CNN")
+#         logger.info("Modèle image entraîné avec succès.")
+        
+
+from fastapi import FastAPI, BackgroundTasks
 import mlflow
 import logging
+
+from src.training.run_training_text import main_texte
+from src.training.run_training_images import main_image
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-if __name__ == "__main__":
-    # Entraînement SVM (texte)
+app = FastAPI(title="Training Service")
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+def train_text_pipeline():
     with mlflow.start_run(run_name="Text_Training_SVM"):
         main_texte()
-            #data_path="/app/data/raw/X_train.csv",
-            #target_path="/app/data/raw/Y_train.csv",
-            #output_dir="/app/src/mlflow/mlruns"
-        #)
         mlflow.log_param("model_type", "SVM")
         logger.info("Modèle texte entraîné avec succès.")
 
-    # Entraînement CNN (images)
+
+def train_image_pipeline():
     with mlflow.start_run(run_name="Image_Training_CNN"):
         main_image()
-            #data_path="/app/data/raw/image_train",
-            #output_dir="/app/src/mlflow/mlruns"
-        #)
         mlflow.log_param("model_type", "CNN")
         logger.info("Modèle image entraîné avec succès.")
+
+
+@app.post("/train/svm")
+def train_svm(background_tasks: BackgroundTasks):
+    background_tasks.add_task(train_text_pipeline)
+    return {"status": "svm_training_started"}
+
+
+@app.post("/train/cnn")
+def train_cnn(background_tasks: BackgroundTasks):
+    background_tasks.add_task(train_image_pipeline)
+    return {"status": "cnn_training_started"}
+

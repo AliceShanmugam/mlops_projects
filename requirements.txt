@@ -1,10 +1,11 @@
 pandas
 pytest
 scikit-learn
-mlflow
 fastapi
 uvicorn
 joblib
 numpy
 bs4
 langdetect
+mlflow==2.9.2
+protobuf<4

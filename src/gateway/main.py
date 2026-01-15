@@ -3,6 +3,8 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 import requests
+import logging
+
 
 from src.gateway.auth import authenticate_user, create_access_token, require_admin, require_user
 from src.gateway.schemas import Token, PredictRequest, PredictImageRequest
@@ -44,24 +46,46 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 # ======================================================
 # TRAINING (ADMIN ONLY)
 # ======================================================
-@app.post("/train/svm")
+
+logger = logging.getLogger(__name__)
+
+
+@app.post("/train/svm", status_code=status.HTTP_202_ACCEPTED)
 def train_svm(current_user=Depends(require_admin)):
-    response = requests.post(
-        f"{TRAINING_SERVICE_URL}/train/svm",
-        timeout=3600,
-    )
-    response.raise_for_status()
-    return response.json()
+    try:
+        requests.post(
+            f"{TRAINING_SERVICE_URL}/train/svm",
+            timeout=5,  # juste le temps de déclencher
+        )
+        return {
+            "status": "training_started",
+            "model": "svm",
+        }
+    except requests.RequestException as e:
+        logger.error(f"SVM training trigger failed: {e}")
+        raise HTTPException(
+            status_code=502,
+            detail="Training service unavailable",
+        )
 
 
-@app.post("/train/cnn")
+@app.post("/train/cnn", status_code=status.HTTP_202_ACCEPTED)
 def train_cnn(current_user=Depends(require_admin)):
-    response = requests.post(
-        f"{TRAINING_SERVICE_URL}/train/cnn",
-        timeout=3600,
-    )
-    response.raise_for_status()
-    return response.json()
+    try:
+        requests.post(
+            f"{TRAINING_SERVICE_URL}/train/cnn",
+            timeout=5,
+        )
+        return {
+            "status": "training_started",
+            "model": "cnn",
+        }
+    except requests.RequestException as e:
+        logger.error(f"CNN training trigger failed: {e}")
+        raise HTTPException(
+            status_code=502,
+            detail="Training service unavailable",
+        )
 
 
 # ======================================================

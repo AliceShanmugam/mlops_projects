@@ -22,4 +22,5 @@ COPY src/train_models/train_cnn.py src/train_models/
 ENV PYTHONPATH=/app
 
 # 6. Commande de démarrage
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.inference.main:app", "--host", "0.0.0.0", "--port", "8000"]
+

@@ -43,16 +43,13 @@ Assert-Ok "Docker containers running" {
 # ======================================================
 Write-Host ""
 Write-Host "Health check"
-Write-Host ""
 
 Assert-Ok "Gateway health" {
     Invoke-RestMethod http://localhost:8000/health
 }
-
-#Assert-Ok "Training health" {
-#    Invoke-RestMethod http://localhost:8001/health
-#}
-
+Assert-Ok "inference health" {
+    Invoke-RestMethod http://localhost:8001/health
+}
 Assert-Ok "MLflow health" {
     Invoke-WebRequest http://localhost:5000 -UseBasicParsing
 }
@@ -62,7 +59,6 @@ Assert-Ok "MLflow health" {
 # ======================================================
 Write-Host ""
 Write-Host " Authentication"
-Write-Host ""
 
 $adminToken = Assert-Ok "Admin login" {
     (Invoke-RestMethod `
@@ -87,20 +83,31 @@ $userToken = Assert-Ok "User login" {
 # ======================================================
 Write-Host ""
 Write-Host " Training"
-Write-Host ""
 
 Assert-Ok "Train SVM (admin)" {
-    Invoke-RestMethod `
+    $response = Invoke-WebRequest `
         -Method POST `
         -Uri http://localhost:8000/train/svm `
         -Headers @{ Authorization = "Bearer $adminToken" }
+
+    if ($response.StatusCode -notin 200, 202) {
+        throw "Unexpected status code: $($response.StatusCode)"
+    }
+
+    $response.StatusCode
 }
 
 Assert-Ok "Train CNN (admin)" {
-    Invoke-RestMethod `
+    $response = Invoke-WebRequest `
         -Method POST `
         -Uri http://localhost:8000/train/cnn `
         -Headers @{ Authorization = "Bearer $adminToken" }
+
+    if ($response.StatusCode -notin 200, 202) {
+        throw "Unexpected status code: $($response.StatusCode)"
+    }
+
+    $response.StatusCode
 }
 
 # ======================================================
@@ -108,7 +115,6 @@ Assert-Ok "Train CNN (admin)" {
 # ======================================================
 Write-Host ""
 Write-Host "Inference"
-Write-Host ""
 
 # ---------- SVM ----------
 $bodyText = @{

@@ -2,7 +2,8 @@ FROM python:3.12-slim
 
 WORKDIR /mlflow
 
-RUN pip install --no-cache-dir mlflow
+RUN pip install --no-cache-dir mlflow setuptools "protobuf"
+
 
 CMD mlflow server \
   --host 0.0.0.0 \

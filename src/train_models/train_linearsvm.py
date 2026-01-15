@@ -87,7 +87,7 @@ def train_and_evaluate_svm(
         print(f"accuracy: {accuracy:0.4f}")
         print("mlflow_run_id ",mlflow.active_run().info.run_id)
 
-        return {"f1_macro": f1,"classification_report": report,"svm_path": svm_path,"accuracy":accuracy,"mlflow_run_id": mlflow.active_run().info.run_id}
+        return {"svm_model": svm,"f1_macro": f1,"classification_report": report,"svm_path": svm_path,"accuracy":accuracy,"mlflow_run_id": mlflow.active_run().info.run_id}
 
 
 
