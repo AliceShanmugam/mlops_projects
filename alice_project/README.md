@@ -2,22 +2,22 @@
 Ce projet vise à construire un modèle de classification automatique de descriptions textuelles de produits afin de prédire leur catégorie et ce afin d'aider le vendeur à mieux mettre en avant son produit.
 
 L’objectif est de fournir:
-    - une pipeline reproductible
-    - un modèle évalué
-    - une API d’inférence minimale prête à être déployée.
+    - une pipeline reproductible  
+    - un modèle évalué  
+    - une API d’inférence minimale prête à être déployée.  
 
 ### Objectifs techniques
 
-Construire un modèle robuste pour la classification de texte
-Garantir la reproductibilité des résultats
-Mettre à disposition une API d’inférence conteneurisée
+Construire un modèle robuste pour la classification de texte   
+Garantir la reproductibilité des résultats  
+Mettre à disposition une API d’inférence conteneurisée  
 
 ### Objectifs MLOps
 
-Séparer clairement data / features / modèles
-Implémenter des tests unitaires
-Fournir une traçabilité des données et des modèles
-Déployer une API simple avec FastAPI + Docker
+Séparer clairement data / features / modèles  
+Implémenter des tests unitaires  
+Fournir une traçabilité des données et des modèles  
+Déployer une API simple avec FastAPI + Docker  
 
 
 ## Machine learning Canvas : besoins et coûts
