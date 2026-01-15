@@ -68,6 +68,37 @@ services:
     networks:
       - mlops_network
 
+
+  streamlit:
+    container_name: streamlit_AF
+    build:
+      context: .
+      dockerfile: streamlit/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - GATEWAY_URL=http://gateway:8000
+      - INFERENCE_URL=http://inference:8000
+      - TRAINING_URL=http://training:8000
+      - MLFLOW_URL=http://mlflow:5000
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./streamlit:/app/streamlit
+    depends_on:
+      - gateway
+      - inference
+      - training
+      - mlflow
+    networks:
+      - mlops_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 networks:
   mlops_network:
     driver: bridge

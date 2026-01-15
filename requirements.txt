@@ -1,5 +1,6 @@
 pandas
 pytest
+pytest-cov
 scikit-learn
 fastapi
 uvicorn
@@ -9,3 +10,20 @@ bs4
 langdetect
 mlflow==2.9.2
 protobuf<4
+torch
+torchvision
+pillow
+pydantic
+python-multipart
+pyjwt
+bcrypt
+slowapi
+prometheus-client
+airflow
+evidently
+structlog
+python-json-logger
+streamlit>=1.28.0
+plotly
+requests
+hashlib

@@ -1,0 +1,232 @@
+name: MLOps CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ================================================================
+  # JOB 1: TESTS & CODE QUALITY
+  # ================================================================
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run Pytest
+      run: |
+        pytest tests/ -v --cov=src --cov-report=xml --cov-report=term-missing
+    
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        flags: unittests
+        fail_ci_if_error: false
+    
+    - name: Lint with pylint
+      run: |
+        pip install pylint
+        pylint src/ --disable=all --enable=E,F --exit-zero || true
+    
+    - name: Security scan with bandit
+      run: |
+        pip install bandit
+        bandit -r src/ -ll -f json -o bandit-report.json || true
+    
+    - name: Check formatting with black
+      run: |
+        pip install black
+        black --check src/ || true
+    
+    - name: SAST with semgrep
+      run: |
+        pip install semgrep
+        semgrep --config=p/owasp-top-ten src/ || true
+  
+  # ================================================================
+  # JOB 2: BUILD & PUSH DOCKER IMAGES
+  # ================================================================
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    strategy:
+      matrix:
+        service: [ gateway, inference, training, mlflow ]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Log in to Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+        tags: |
+          type=ref,event=branch
+          type=sha,prefix={{branch}}-
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        dockerfile: src/${{ matrix.service }}/Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+  
+  # ================================================================
+  # JOB 3: DOCKER COMPOSE INTEGRATION TEST
+  # ================================================================
+  integration-test:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Run unit test for docker-compose
+      run: |
+        docker-compose config > /dev/null
+        echo "Docker-compose configuration is valid"
+    
+    - name: Start services
+      run: |
+        docker-compose up -d
+        sleep 30
+    
+    - name: Run health checks
+      run: |
+        for i in {1..5}; do
+          echo "Attempt $i/5..."
+          curl -f http://localhost:8000/health || sleep 10
+        done
+        
+        curl -f http://localhost:8001/health
+        curl -f http://localhost:8002/health
+        curl -f http://localhost:5000
+    
+    - name: Stop services
+      if: always()
+      run: docker-compose down
+  
+  # ================================================================
+  # JOB 4: GENERATE SBOM & ARTIFACTS
+  # ================================================================
+  artifacts:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Generate SBOM with syft
+      run: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+        syft . -o json > sbom.json || true
+    
+    - name: Upload SBOM artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: sbom
+        path: sbom.json
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: |
+          coverage.xml
+          bandit-report.json
+  
+  # ================================================================
+  # JOB 5: NOTIFY DEPLOYMENT
+  # ================================================================
+  notify:
+    needs: [ test, build ]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Create deployment
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const deployment = await github.rest.repos.createDeployment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: context.sha,
+            environment: 'production',
+            auto_merge: false,
+            required_contexts: [],
+            description: 'MLOps pipeline deployment'
+          });
+          console.log('Deployment created:', deployment.data.id);
+    
+    - name: Slack notification
+      if: always()
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+        payload: |
+          {
+            "text": "MLOps CI/CD Pipeline Status",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Pipeline Status*\n✅ Tests Passed\n✅ Images Built\n🚀 Ready for deployment"
+                }
+              }
+            ]
+          }

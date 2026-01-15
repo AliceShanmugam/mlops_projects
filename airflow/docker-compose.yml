@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # PostgreSQL for Airflow metadata
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Airflow Scheduler
+  airflow-scheduler:
+    image: apache/airflow:2.7.0
+    command: scheduler
+    environment:
+      AIRFLOW_HOME: /airflow
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
+      AIRFLOW__CORE__DAG_DISCOVERY_SAFE_MODE: 'False'
+    volumes:
+      - ./dags:/airflow/dags
+      - ./logs:/airflow/logs
+      - ./plugins:/airflow/plugins
+      - ../src:/app/src:ro
+      - ../data:/app/data:ro
+      - ../models:/app/models
+    ports:
+      - "8793:8793"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8793/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Airflow Webserver
+  airflow-webserver:
+    image: apache/airflow:2.7.0
+    command: webserver
+    environment:
+      AIRFLOW_HOME: /airflow
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
+      AIRFLOW__WEBSERVER__AUTHENTICATE: 'True'
+      AIRFLOW__WEBSERVER__AUTH_BACKEND: 'airflow.contrib.auth.backends.password_auth'
+    volumes:
+      - ./dags:/airflow/dags
+      - ./logs:/airflow/logs
+      - ./plugins:/airflow/plugins
+      - ../src:/app/src:ro
+      - ../data:/app/data:ro
+      - ../models:/app/models
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
