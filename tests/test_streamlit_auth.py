@@ -10,6 +10,7 @@ import hashlib
 import json
 import tempfile
 import os
+import shutil
 
 # Ajouter le chemin streamlit
 sys.path.insert(0, str(Path(__file__).parent.parent / "streamlit"))
@@ -23,6 +24,16 @@ from auth_manager import (
     has_permission,
     DEFAULT_USERS
 )
+
+# Fixture pour restaurer users_db.json après chaque test
+@pytest.fixture(autouse=True)
+def reset_users_db():
+    """Reset users database before each test"""
+    # Sauvegarder les utilisateurs par défaut
+    original_users = DEFAULT_USERS.copy()
+    yield
+    # Restaurer après le test
+    save_users(original_users)
 
 
 class TestPasswordHashing:
@@ -82,12 +93,11 @@ class TestUserDataManagement:
     
     def test_save_and_load_users(self):
         """Verify users can be saved and loaded"""
-        test_users = {
-            "test_user": {
-                "password_hash": hash_password("test123"),
-                "role": "user",
-                "permissions": ["inference"]
-            }
+        test_users = DEFAULT_USERS.copy()
+        test_users["test_user"] = {
+            "password_hash": hash_password("test123"),
+            "role": "user",
+            "permissions": ["inference"]
         }
         
         # Save
@@ -258,11 +268,22 @@ class TestAuthenticationFlow:
     def test_permission_check_after_login(self, monkeypatch):
         """Verify permissions are correctly set after login"""
         class MockSessionState:
+            def __init__(self):
+                self._data = {}
+            
             def __setattr__(self, name, value):
-                self.__dict__[name] = value
+                if name.startswith('_'):
+                    super().__setattr__(name, value)
+                else:
+                    self._data[name] = value
             
             def __getattr__(self, name):
-                return self.__dict__.get(name)
+                if name.startswith('_'):
+                    return super().__getattribute__(name)
+                return self._data.get(name)
+            
+            def get(self, key, default=None):
+                return self._data.get(key, default)
         
         st_session = MockSessionState()
         monkeypatch.setattr("auth_manager.st.session_state", st_session)
@@ -271,7 +292,6 @@ class TestAuthenticationFlow:
         authenticate("admin", "admin123")
         
         # Check permissions
-        monkeypatch.setattr("auth_manager.st.session_state", st_session)
         assert has_permission("train")
         assert has_permission("inference")
         assert has_permission("upload_data")
