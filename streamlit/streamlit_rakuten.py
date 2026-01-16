@@ -90,13 +90,6 @@ TRAINING_URL = os.getenv("TRAINING_URL", "http://localhost:8002")
 MLFLOW_URL = os.getenv("MLFLOW_URL", "http://localhost:5000")
 GRAFANA_URL = os.getenv("GRAFANA_URL", "http://localhost:3000")
 
-# URLs des services (à adapter selon votre setup)
-GATEWAY_URL = os.getenv("GATEWAY_URL", "http://localhost:8000")
-INFERENCE_URL = os.getenv("INFERENCE_URL", "http://localhost:8001")
-TRAINING_URL = os.getenv("TRAINING_URL", "http://localhost:8002")
-MLFLOW_URL = os.getenv("MLFLOW_URL", "http://localhost:5000")
-GRAFANA_URL = os.getenv("GRAFANA_URL", "http://localhost:3000")
-
 # =========================
 # INITIALISATION SESSION
 # =========================

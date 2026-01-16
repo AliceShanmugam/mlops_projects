@@ -9,16 +9,18 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copier les requirements
-COPY requirements.txt .
+COPY streamlit/requirements.txt .
 
 # Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir streamlit>=1.28.0 plotly requests
+    pip install --no-cache-dir streamlit>=1.28.0 plotly requests beautifulsoup4 langdetect
 
-# Copier le code
-COPY streamlit/ /app/
-COPY data/ /app/data/ 2>/dev/null || true
-COPY models/ /app/models/ 2>/dev/null || true
+# Copier le code streamlit
+COPY streamlit/*.py /app/
+COPY streamlit/users_db.json /app/
+COPY data /app/data
+COPY models /app/models
+COPY src /app/src
 
 # Configuration Streamlit
 RUN mkdir -p ~/.streamlit

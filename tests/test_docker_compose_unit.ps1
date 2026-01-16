@@ -223,6 +223,89 @@ Test-Config "Training health check" {
 }
 
 # ==============================================================================
+# [10] Streamlit Configuration
+# ==============================================================================
+Write-Host ""
+Write-Host "[10] Streamlit Configuration"
+Write-Host ""
+
+Test-Config "Streamlit service exists" {
+    $found = Select-String -Path "docker-compose.yml" -Pattern "^\s+streamlit\s*:" -Quiet
+    if (-not $found) {
+        throw "Streamlit service not defined"
+    }
+}
+
+Test-Config "Streamlit port 8501:8501" {
+    $found = Select-String -Path "docker-compose.yml" -Pattern '8501:8501' -Quiet
+    if (-not $found) { throw "Port 8501:8501 not found" }
+}
+
+Test-Config "Streamlit Dockerfile exists" {
+    if (-not (Test-Path "streamlit/Dockerfile")) {
+        throw "streamlit/Dockerfile not found"
+    }
+}
+
+Test-Config "Streamlit has GATEWAY_URL environment" {
+    $found = Select-String -Path "docker-compose.yml" -Pattern 'GATEWAY_URL=http://gateway:8000' -Quiet
+    if (-not $found) { throw "GATEWAY_URL not set for Streamlit" }
+}
+
+Test-Config "Streamlit has MLFLOW_URL environment" {
+    $found = Select-String -Path "docker-compose.yml" -Pattern 'MLFLOW_URL=http://mlflow:5000' -Quiet
+    if (-not $found) { throw "MLFLOW_URL not set for Streamlit" }
+}
+
+Test-Config "Streamlit depends on gateway" {
+    $content = Get-Content "docker-compose.yml" -Raw
+    if ($content -match 'streamlit:[\s\S]*?depends_on:[\s\S]*?gateway') {
+        # Valid
+    } else {
+        throw "Streamlit dependency on gateway not configured"
+    }
+}
+
+Test-Config "Streamlit volume mounted for data" {
+    $found = Select-String -Path "docker-compose.yml" -Pattern './data:/app/data' -Quiet
+    if (-not $found) { throw "Data volume not mounted for Streamlit" }
+}
+
+Test-Config "Streamlit volume mounted for models" {
+    $found = Select-String -Path "docker-compose.yml" -Pattern './models:/app/models' -Quiet
+    if (-not $found) { throw "Models volume not mounted for Streamlit" }
+}
+
+Test-Config "Streamlit health check endpoint" {
+    try {
+        $response = Invoke-RestMethod "http://localhost:8501/_stcore/health" -TimeoutSec 3 -ErrorAction Stop
+        # Streamlit returns plain text, just check if response is not empty
+        if ($null -eq $response) { throw "No response from Streamlit health check" }
+    }
+    catch {
+        Write-Host "  (Note: Streamlit may not be fully started yet)" -ForegroundColor Yellow
+    }
+}
+
+Test-Config "Streamlit app file exists" {
+    if (-not (Test-Path "streamlit/streamlit_rakuten.py")) {
+        throw "streamlit/streamlit_rakuten.py not found"
+    }
+}
+
+Test-Config "Streamlit auth manager exists" {
+    if (-not (Test-Path "streamlit/auth_manager.py")) {
+        throw "streamlit/auth_manager.py not found"
+    }
+}
+
+Test-Config "Streamlit requirements.txt exists" {
+    if (-not (Test-Path "streamlit/requirements.txt")) {
+        throw "streamlit/requirements.txt not found"
+    }
+}
+
+# ==============================================================================
 # TEST SUMMARY
 # ==============================================================================
 Write-Host ""

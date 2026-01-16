@@ -106,10 +106,11 @@ Endpoints
 GET /health	      ==> Healthcheck
 POST /predict/svm	==> Prédiction texte
 POST /predict/cnn	==> Prédiction image
+
 lancement de l'API en local
   bash : python -m api.main
 
-# Phase 2 Microservices (en cours d'achevement)
+# Phase 2 Microservices
 
 ## ML Flow et suivi d'experience
 mlflow/
