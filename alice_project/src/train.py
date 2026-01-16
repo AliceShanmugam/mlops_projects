@@ -2,6 +2,7 @@ import os
 import joblib
 from sklearn.svm import LinearSVC
 from sklearn.metrics import f1_score, classification_report
+from sklearn.pipeline import Pipeline
 
 # Création de dossier models s'il n'existe pas
 os.makedirs("models", exist_ok=True)
@@ -34,3 +35,13 @@ if f1 >= THRESHOLD:
 else:
     print(f"❌ Modèle NON sauvegardé (F1 < {THRESHOLD})")
     print("👉 Essayez de changer de modèle, d'hyperparamètres ou de features.")
+
+# Création de pipeline complète pour la production
+tfidf_vectorizer = joblib.load("models/tfidf_vectorizer.joblib")
+pipeline = Pipeline([
+    ("tfidf", tfidf_vectorizer),
+    ("svm", model)
+])
+
+joblib.dump(pipeline, "models/text_pipeline.joblib")
+

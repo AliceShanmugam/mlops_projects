@@ -131,7 +131,7 @@ Un chargement du modèle préentraîné est attendu lorsqu'un call API est effec
 
 
 ### Commandes docker
-Se placer dans le dossier alice-project :  
+⚠️ Se placer dans le dossier alice-project :  
 > sudo docker build -t rakuten-ml-challenge . (bash)
 
 Les gros fichiers (Excel, datasets, modèles) ne sont pas copiés dans l’image.  
@@ -144,3 +144,11 @@ Ou utiliser avec le Makefile:
 
 Ou utiliser docker_compose:  
 > docker compose up --build
+
+Build api  
+> sudo docker build -f Dockerfile.api -t rakuten-api .
+
+Run api  
+> sudo docker run --rm -p 8000:8000 \
+  -v ./models:/app/models \
+  rakuten-api
