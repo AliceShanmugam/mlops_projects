@@ -148,3 +148,30 @@ bash : ./deploiement.ps1
 
 tests unitaires d'integration docker-compose
 bash : ./tests/test_docker-compose.ps1
+
+token
+curl -X 'POST' \
+  'http://127.0.0.1:8000/token' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=password&username=admin&password=admin123'
+
+predict/svm
+  curl -X 'POST' \
+  'http://127.0.0.1:8000/predict/svm' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc2ODU2NzQ5OH0.NfuqpCW0SPFs6Lgn659sGcM_57EcEWegkDwJis6SPHg' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "text": "Ordinateur portable 15 pouces, 8GB RAM, SSD 256GB"
+}'
+
+predict/cnn
+curl -X 'POST' \
+  'http://127.0.0.1:8000/predict/cnn' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc2ODU2NzQ5OH0.NfuqpCW0SPFs6Lgn659sGcM_57EcEWegkDwJis6SPHg' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "image_path": "data/raw/image_train/image_528113_product_923222.jpg"
+}'
