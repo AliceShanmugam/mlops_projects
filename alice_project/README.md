@@ -1,23 +1,23 @@
 ## Contexte et objectifs du projet
 Ce projet vise à construire un modèle de classification automatique de descriptions textuelles de produits afin de prédire leur catégorie et ce afin d'aider le vendeur à mieux mettre en avant son produit.
 
-L’objectif est de fournir:
+L’objectif est de fournir:  
     - une pipeline reproductible  
     - un modèle évalué  
     - une API d’inférence minimale prête à être déployée.  
 
 ### Objectifs techniques
 
-Construire un modèle robuste pour la classification de texte   
-Garantir la reproductibilité des résultats  
-Mettre à disposition une API d’inférence conteneurisée  
+Construire un modèle robuste pour la classification de texte.   
+Garantir la reproductibilité des résultats.  
+Mettre à disposition une API d’inférence conteneurisée.  
 
 ### Objectifs MLOps
 
-Séparer clairement data / features / modèles  
-Implémenter des tests unitaires  
-Fournir une traçabilité des données et des modèles  
-Déployer une API simple avec FastAPI + Docker  
+Séparer clairement data / features / modèles.  
+Implémenter des tests unitaires.  
+Fournir une traçabilité des données et des modèles.  
+Déployer une API simple avec FastAPI + Docker.  
 
 
 ## Machine learning Canvas : besoins et coûts
@@ -105,8 +105,8 @@ ml-project/
 
 ## Traitement des données
 
-Le traitement des données consiste à :
-    - la collecte des données > recupérées directement depuis le site Rakuten Challenge ( descritpions, titres et labels)
+Le traitement des données consiste à :  
+    - la collecte des données > recupérées directement depuis le site Rakuten Challenge ( descritpions, titres et labels)  
     - le nettoyage des données > afin de les utiliser pour nos modèles par la suite (passage en minuscules, suppression des caractères spéciaux, encodage des labels, etc.)
 
 ⚠️ Les données utilisées pour la classification ont été filtrées à partir des données initiales pour les répartir dans 8 catégories différentes.
@@ -130,3 +130,17 @@ On utilise FastAPI.
 Un chargement du modèle préentraîné est attendu lorsqu'un call API est effectué pour réaliser une inférence en temps réel.
 
 
+### Commandes docker
+Se placer dans le dossier alice-project :  
+> sudo docker build -t rakuten-ml-challenge . (bash)
+
+Les gros fichiers (Excel, datasets, modèles) ne sont pas copiés dans l’image.  
+On ajoute seulement les fichiers raws via volumes Docker au moment du run car les scripts qui tourneront dans le conteneur vont générer automatiquement les fichiers processed et le modèle :
+> sudo docker run --rm -v ./data:/app/data/ rakuten-ml-challenge (bash)
+
+Ou utiliser avec le Makefile:  
+> make build
+> make run
+
+Ou utiliser docker_compose:  
+> docker compose up --build

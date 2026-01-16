@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  ml:
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models

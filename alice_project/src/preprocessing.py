@@ -8,6 +8,11 @@ from deep_translator import GoogleTranslator
 from tqdm import tqdm
 import os
 
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+import joblib
+import spacy
+
 DetectorFactory.seed = 0
 
 def clean_text(text: str) -> str:
@@ -86,12 +91,15 @@ def preprocess(run_translation=True):
         stratify=y
     )
 
+    # Stopwords
+    nlp = spacy.blank("fr")
+    french_stopwords = list(nlp.Defaults.stop_words)
+
     # Vectorisation TF-IDF
     tfidf_vectorizer = TfidfVectorizer(
-    stop_words="french",
+    stop_words=french_stopwords,
     max_features=2000,
     ngram_range=(1, 2),
-    min_df=2
     )
 
     X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
@@ -104,7 +112,7 @@ def preprocess(run_translation=True):
     joblib.dump(X_test_tfidf, "data/processed/X_test_tfidf.joblib")
     joblib.dump(y_train, "data/processed/y_train.joblib")
     joblib.dump(y_test, "data/processed/y_test.joblib")
-    joblib.dump(tfidf_vectorizer, "data/processed/tfidf_vectorizer.joblib")
+    joblib.dump(tfidf_vectorizer, "models/tfidf_vectorizer.joblib")
 
 
 if __name__ == "__main__":

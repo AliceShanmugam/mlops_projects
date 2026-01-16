@@ -26,7 +26,7 @@ print(classification_report(y_test, y_pred))
 print(f"F1-score macro : {f1:.3f}")
 
 # Condition de sauvegarde
-THRESHOLD = 0.7
+THRESHOLD = 0.6
 
 if f1 >= THRESHOLD:
     joblib.dump(model, "models/svm.joblib")
