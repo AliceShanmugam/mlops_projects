@@ -63,9 +63,10 @@ mlops_projects/
 | Taille modèle      | svm                                   | < 50 MB        |
 | Taille modèle      | cnn                                   | < 100 MB       |
 
-![Aperçu](data/ml_canva.png)
+![Aperçu](data/ml-canva.png)
 
 ## Données et traitement
+```
 data/
 ├── raw/
 │   ├── X_train.csv
@@ -75,19 +76,20 @@ data/
 │   └── image_test/
 └── processed/
     └── train_clean.csv
-
+```
 Nettoyage du texte : src/preprocessing/text_cleaning.py
 Construction des features TF-IDF : src/features/build_features.py
 Gestion des valeurs manquantes, Normalisation & tokenisation, Traçabilité des transformations
 
 ## Modèles & entraînement
+```
 models/
 ├── text/
 │   ├── svm.joblib
 │   └── tfidf.joblib
 └── images/
     └── cnn.pt
-
+```
 Modèle texte 
 TF-IDF + Linear SVM
 Script : src/models/train_linearsvm.py
@@ -121,10 +123,12 @@ lancement de l'API en local
 # Phase 2 Microservices
 
 ## ML Flow et suivi d'experience
+```
 mlflow/
 ├── Dockerfile
 ├── mlflow.db
 └── mlruns/
+```
 ML Flow conteneurisé
 
 ## Services
@@ -133,6 +137,7 @@ services/infernces : prediction ==> Chargement des modèles entraînés + Prédi
 services/training : entrainement ==> Entraînement SVM & CNN + Enregistrement des modèles
 
 Architecture microservices
+```
 [ Client ]
     |
     v
@@ -143,7 +148,7 @@ Architecture microservices
     +--> [ Training ]
     |
     +--> [ MLflow ]
-
+```
 ## Orchestration Docker Compose
 Services exposés :
   Gateway, Port:8000
