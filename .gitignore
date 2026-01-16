@@ -18,6 +18,11 @@ data/raw/image_train/
 data/raw_test/*.csv
 data/raw_test/image_test/
 
+#reading README
+README_PRODUCTION
+
+
+
 
 # VSCode
 .vscode/

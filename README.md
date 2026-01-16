@@ -11,30 +11,37 @@ La traçabilité et le suivi des données, modèles et métriques
 Une API d’inférence conteneurisée et sécurisée
 Une architecture microservices prête pour l’industrialisation
 l'orchestation de pipeline complet et scalable
+Séparer clairement data / features / modèles.  
+Implémenter des tests unitaires.  
+
 
 # Structure du repository
+```
 
 mlops_projects/
+|
+├── airflow/ # DAG pour ETL (Phase 3 en cours)
 ├── api/ # API FastAPI
 ├── data/
 │ ├── raw/ # Données brutes d’entraînement
 │ ├── raw_test/ # Données brutes de test
 │ ├── processed/ # Données prétraitées
 │ └── README.md # Data catalog
-├── mlflow/ # tracking et suivi MLFLow
-│ └──  mlruns/ # artefacts de MLFlow
+├── k8s/ # scabilité des microservices (Phase 3 en cours)
+├──  mlruns/ # artefacts de MLFlow
 ├── models/ # modeles entraînés svm & cnn
 │ ├── images/ # modeles entrainés cnn
 │ └── text/ # modeles entrainiés tfidf + svm
-├── services/ # microservices conteneurisés
+├── monitoring/ # monitoring microservices (Phase 3 en cours)
+├── src/ # microservices et modeles source conteneurisés
+│ ├── common/ # services communs (Phase 3 en cours)
 │ ├── gateway/ # service authentification
 │ ├── inference/ # service prédiction
 │ ├── training/ # service entrainement de modéles
-├── src/
 │ ├── preprocessing/ # Nettoyage texte et images
-│ ├── features/ # TF-IDF
-│ ├── models/ # modeles SVM et CNN
-│ ├── pipelines/ # Entraînement modeles SVM et CNN
+│ ├── train_models/ # modeles SVM et CNN
+│ ├── mlflow/ # tracking Entraînement modeles SVM et CNN
+├── streamlit/ # UI et dashboard
 ├── tests/ # Tests unitaires
 ├── requirements.txt # framework à installer 
 ├── pytest.ini # test uniquement mlops_projects/tests
@@ -43,19 +50,20 @@ mlops_projects/
 ├── deploiement.ps1 # build et deploiement conteneurs
 └── README.md
 
+```
 # Phase 1 Fondations & Conteneurisation
 
 ## les KPI (performance, coût, latence)
 
-| Catégorie          | KPI                                       |
-| ------------------ | ----------------------------------------- |
-| Performance modèle | Accuracy / F1-macro                       |
-| Robustesse         | Tests unitaires (data, features, API)     |
-| Reproductibilité   | Docker + scripts d’entraînement           |
-| Latence API        | < 3 s (en locale)                      |
-| Traçabilité        | MLflow (params, metrics, artefacts)       |
-| monitoring         | suivi des données et des metriques        |
-| Scalabilité        | Séparation training / inference / gateway |
+| Catégorie          | KPI                                   | Valeurs        |
+| ------------------ | --------------------------------------|----------------|
+| Performance modèle | Accuracy / F1-macro                   | Baseline > 0.7 |
+| Robustesse         | Tests unitaires (data, features, API) | 100 % passed   |
+| Latence API        | < 3 s (en locale)                     | < 50 ms        |
+| Taille modèle      | svm                                   | < 50 MB        |
+| Taille modèle      | cnn                                   | < 100 MB       |
+
+![Aperçu](data/ml_canva.png)
 
 ## Données et traitement
 data/
