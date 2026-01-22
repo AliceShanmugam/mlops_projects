@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: inference
-        image: ghcr.io/your-org/inference:latest
+        image: mlops_projects-inference:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000

@@ -21,7 +21,7 @@ spec:
       serviceAccountName: mlops-training
       containers:
       - name: training
-        image: ghcr.io/your-org/training:latest
+        image: mlops_projects-training:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000

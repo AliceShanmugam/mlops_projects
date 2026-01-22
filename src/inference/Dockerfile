@@ -12,15 +12,12 @@ RUN apt-get update && apt-get install -y \
 COPY src/inference/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 3. Copie le fichier main.py
-COPY src/inference/main.py .
+# 3. Copie tout le code source
+COPY src/ /app/src/
 
-# 4. Copie les fichiers nécessaires depuis src/ (pour SimpleCNN)
-COPY src/train_models/train_cnn.py src/train_models/
-
-# 5. Variable d'environnement pour les imports
+# 4. Variable d'environnement pour les imports
 ENV PYTHONPATH=/app
 
-# 6. Commande de démarrage
+# 5. Commande de démarrage
 CMD ["uvicorn", "src.inference.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
