@@ -79,7 +79,7 @@ docker-compose --version  # 2.0+
 kubectl version --client  # 1.20+
 minikube version  # 1.25+
 ```
-
+kubectl 
 ### Local Development (Docker Compose)
 ```bash
 # Start all services
