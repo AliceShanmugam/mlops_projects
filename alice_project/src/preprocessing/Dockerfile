@@ -21,4 +21,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ ./src
 
 # Commande par défaut = pipeline complet
-CMD ["python", "src/run_pipeline.py"]
+CMD ["python", "src/preprocessing.py"]
