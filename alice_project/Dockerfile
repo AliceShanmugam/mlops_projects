@@ -20,8 +20,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copie tout le dossier src/ depuis le disque local vers /app/src/ dans le conteneur.
 COPY src/ ./src
 
-# Dossiers (vides dans l'image, remplis via volumes)
-RUN mkdir -p data/raw data/processed models
-
 # Commande par défaut = pipeline complet
 CMD ["python", "src/run_pipeline.py"]

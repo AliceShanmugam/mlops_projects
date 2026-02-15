@@ -1,7 +1,6 @@
-version: "3.9"
 services:
   ml:
-    build: .
+    build: . # Utilise le Dockerfile dans le dossier courant
     volumes:
       - ./data:/app/data
       - ./models:/app/models

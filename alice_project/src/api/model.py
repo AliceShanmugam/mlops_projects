@@ -1,6 +1,6 @@
 import joblib
 
-MODEL_PATH = "models/test_pipeline.joblib"
+MODEL_PATH = "models/text_pipeline.joblib"
 
 pipeline = joblib.load(MODEL_PATH)
 

@@ -132,23 +132,44 @@ Un chargement du modèle préentraîné est attendu lorsqu'un call API est effec
 
 ### Commandes docker
 ⚠️ Se placer dans le dossier alice-project :  
+
+Pour build l'image
 > sudo docker build -t rakuten-ml-challenge . (bash)
 
 Les gros fichiers (Excel, datasets, modèles) ne sont pas copiés dans l’image.  
 On ajoute seulement les fichiers raws via volumes Docker au moment du run car les scripts qui tourneront dans le conteneur vont générer automatiquement les fichiers processed et le modèle :
-> sudo docker run --rm -v ./data:/app/data/ rakuten-ml-challenge (bash)
+> sudo docker run --rm -v ./data:/app/data -v ./models:/app/models rakuten-ml-challenge (bash)
 
 Ou utiliser avec le Makefile:  
 > make build
 > make run
 
 Ou utiliser docker_compose:  
-> docker compose up --build
+> docker compose up --build (pour construire l'image)
+> docker compose up
+
+Pour arreter le conteneur: 
+> docker compose down
+
+Lancer le docker en mode interactif
+> docker run -it \
+  -v $(PWD)/data:/app/data \
+  -v $(PWD)/models:/app/models \
+  rakuten-ml-challenge \
+  /bin/bash
 
 Build api  
 > sudo docker build -f Dockerfile.api -t rakuten-api .
 
-Run api  
-> sudo docker run --rm -p 8000:8000 \
-  -v ./models:/app/models \
-  rakuten-api
+Run api  (apres ouverture nouvelle session)
+etape 0:
+> docker rm rakuten-api-container 
+Pour supprimer l'ancien conteneur ayant le meme nom
+
+etape 1:
+> docker images
+> docker ps -a
+> docker run -d --name rakuten-api-container -p 8000:8000 -v ./models:/app/models rakuten-api
+
+etape 3:
+> http://localhost:8000/docs
