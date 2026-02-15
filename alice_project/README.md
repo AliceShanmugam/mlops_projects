@@ -148,6 +148,11 @@ Ou utiliser docker_compose:
 > docker compose up --build (pour construire l'image)
 > docker compose up
 
+> docker compose up mlflow
+> docker compose up preprocessing
+> docker compose up training
+> docker compose up api
+
 Pour arreter le conteneur: 
 > docker compose down
 
@@ -173,3 +178,4 @@ etape 1:
 
 etape 3:
 > http://localhost:8000/docs
+
