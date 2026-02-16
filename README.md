@@ -188,3 +188,24 @@ curl -X 'POST' \
   -d '{
   "image_path": "data/raw/image_train/image_528113_product_923222.jpg"
 }'
+
+
+# Phase 3 Orchestration et deploiement
+
+## orchestration airflow
+```
+airflow/
+├── dags/
+│   ├── mlops_docker_compose_dag.py
+│   └── mlops_training_pipeline.py
+└── docker-compose.yml
+│ 
+│ 
+└── docker-compose-airflow.yaml
+└── docker-compose.yml
+```
+lancement airflow
+docker-compose down -v                              # nettoyage images docker
+docker-compose build                                # creation images docker
+docker-compose -f docker-compose.airflow.yaml up -d # lancement iamges docker
+

@@ -1,0 +1,45 @@
+name: CD - Build & Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository_owner }}/mlops
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push Gateway
+        run: |
+          docker build -t $REGISTRY/$IMAGE_PREFIX/gateway:latest -f src/gateway/Dockerfile .
+          docker push $REGISTRY/$IMAGE_PREFIX/gateway:latest
+
+      - name: Build & push Training
+        run: |
+          docker build -t $REGISTRY/$IMAGE_PREFIX/training:latest -f src/training/Dockerfile .
+          docker push $REGISTRY/$IMAGE_PREFIX/training:latest
+
+      - name: Build & push Inference
+        run: |
+          docker build -t $REGISTRY/$IMAGE_PREFIX/inference:latest -f src/inference/Dockerfile .
+          docker push $REGISTRY/$IMAGE_PREFIX/inference:latest
+
+      - name: Build & push MLflow
+        run: |
+          docker build -t $REGISTRY/$IMAGE_PREFIX/mlflow:latest -f src/mlflow/Dockerfile .
+          docker push $REGISTRY/$IMAGE_PREFIX/mlflow:latest
