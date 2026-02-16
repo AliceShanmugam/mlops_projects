@@ -140,6 +140,8 @@ def make_json_serializable(obj):
 # =========================
 def main_texte():
     """Pipeline complet pour l'entraînement du modèle texte."""
+    uri = "file:///C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_MLops/mlops_projects/src/mlflow/mlflow.db"
+    mlflow.set_tracking_uri(uri)  # Assure-toi que le serveur MLflow est en cours d'exécution
     mlflow.set_experiment("Rakuten_Text_Pipeline")
 
     with mlflow.start_run(run_name="Full_Text_Pipeline"):

@@ -77,6 +77,8 @@ def train_cnn(
         run_name: str ="run_cnn_1"):
     
             artifacts_dir.mkdir(parents=True, exist_ok=True)
+            uri = "file:///C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_MLops/mlops_projects/src/mlflow/mlflow.db"
+            mlflow.set_tracking_uri(uri)
             mlflow.set_experiment(experiment_name)
             with mlflow.start_run(run_name=run_name,nested=True):
                 df = pd.read_csv(data_path)

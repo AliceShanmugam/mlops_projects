@@ -33,6 +33,8 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Training Service")
 
+uri = "file:///C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_MLops/mlops_projects/src/mlflow/mlflow.db"
+mlflow.set_tracking_uri(uri)
 
 @app.get("/health")
 def health():

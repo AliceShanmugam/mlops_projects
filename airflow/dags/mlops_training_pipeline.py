@@ -12,6 +12,11 @@ Orchestrates:
 7. Artifact Management
 """
 
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+import pandas as pd
+from pathlib import Path
+from src.preprocessing.text_cleaning import clean_text
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -52,100 +57,60 @@ dag = DAG(
 
 def load_data(**context):
     """Load raw data from source."""
-    import pandas as pd
-    from pathlib import Path
-    
     logger.info("Loading raw data...")
-    
     data_dir = Path("/app/data/raw")
     df = pd.read_csv(data_dir / "X_train_update.csv")
-    
     logger.info(f"Data loaded: {df.shape[0]} rows, {df.shape[1]} columns")
     context['task_instance'].xcom_push(key='data_shape', value=df.shape)
-    
     return {"status": "success", "rows": df.shape[0]}
 
 
 def preprocess_data(**context):
     """Preprocess data (cleaning, validation)."""
-    import pandas as pd
-    from src.preprocessing.text_cleaning import clean_text
-    
     logger.info("Preprocessing data...")
-    
     data_shape = context['task_instance'].xcom_pull(task_ids='load_data', key='data_shape')
     logger.info(f"Input data shape: {data_shape}")
-    
     # Clean and validate data
     # df = clean_text(df)
-    
     logger.info("Preprocessing complete")
     return {"status": "success"}
 
 
 def feature_engineering(**context):
     """Extract features (TF-IDF, embeddings, etc.)."""
-    import pandas as pd
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    
     logger.info("Extracting features...")
-    
     # Load preprocessed data
     df = pd.read_csv("/app/data/processed/train_clean.csv")
-    
     # TF-IDF vectorization
     vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
     X = vectorizer.fit_transform(df['text'])
-    
     logger.info(f"Features extracted: {X.shape[1]} features")
     return {"status": "success", "features": X.shape[1]}
 
 
 def split_data(**context):
     """Split data into train/val/test."""
-    import pandas as pd
-    from sklearn.model_selection import train_test_split
-    
     logger.info("Splitting data...")
-    
     df = pd.read_csv("/app/data/processed/train_clean.csv")
-    
     # 70% train, 15% val, 15% test
     train, temp = train_test_split(df, test_size=0.3, random_state=42)
     val, test = train_test_split(temp, test_size=0.5, random_state=42)
-    
     logger.info(f"Train: {len(train)}, Val: {len(val)}, Test: {len(test)}")
-    
-    return {
-        "status": "success",
-        "train_size": len(train),
-        "val_size": len(val),
-        "test_size": len(test)
-    }
+    return {"status": "success","train_size": len(train),"val_size": len(val),"test_size": len(test)}
 
 
 def validate_pipeline(**context):
     """Validate pipeline configuration."""
     logger.info("Validating pipeline...")
-    
-    checks = {
-        'data_loaded': True,
-        'models_available': True,
-        'mlflow_connected': True,
-    }
-    
+    checks = {'data_loaded': True,'models_available': True,'mlflow_connected': True,}
     if not all(checks.values()):
         raise ValueError("Validation failed")
-    
     logger.info("Pipeline validation passed")
     return {"status": "success"}
-
 
 def notify_completion(**context):
     """Notify about pipeline completion."""
     logger.info("Pipeline execution completed successfully!")
-    
-    # Could send Slack notification, etc.
     return {"status": "completed"}
 
 

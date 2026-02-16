@@ -268,6 +268,7 @@ JOUR 2 - 02:00 (Nuit)
 
 JOUR 2 - 02:30
   GitHub Actions déclenché
+  
   ✓ Récupère nouvelle image de registre
   ✓ Déploie sur K8s
   ✓ Rolling update inference pods
