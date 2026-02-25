@@ -1,9 +1,12 @@
 
+from asyncio.log import logger
 from pathlib import Path
 import json
 import mlflow
 from src.preprocessing.text_cleaning import preprocess_training_data
 from src.train_models.train_cnn import train_cnn
+import dagshub
+dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
 
 # =========================
 # PATHS
@@ -16,7 +19,7 @@ X_TRAIN_PATH = DATA_RAW_DIR / "X_train_update.csv"
 Y_TRAIN_PATH = DATA_RAW_DIR / "Y_train_CVw08PX.csv"
 TRAIN_CLEAN_PATH = DATA_PROCESSED_DIR / "train_clean.csv"
 
-
+mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
 # =========================
 # UTILS
 # =========================
@@ -52,10 +55,29 @@ def main_image():
         mlflow.set_tag("step", "training")
         print("\n")
         print("2. Training CNN from scratch")
-        metrics = train_cnn(
+        model, metrics = train_cnn(
             data_path=TRAIN_CLEAN_PATH,
             artifacts_dir=MODELS_DIR,
         )
+
+        # 4. Enregistrement du modèle dans le registry MLflow
+        mlflow.pytorch.log_model(
+                pytorch_model=model, 
+                artifact_path="model_cnn",
+                registered_model_name="CNN_Image_Classifier"
+            )
+            
+        # Transition vers le stage "Production"
+        client = mlflow.MlflowClient()
+        all_versions = client.search_model_versions("name='CNN_Image_Classifier'")
+        latest_version = max(all_versions,key=lambda mv: int(mv.version))
+
+        client.transition_model_version_stage(
+                name="CNN_Image_Classifier",
+                        stage="Production",
+                        version=latest_version.version
+            )
+        logger.info(f"✅ Modèle CNN_Image_Classifier v{latest_version.version} passé en Production")
 
         mlflow.set_tag("step", "metrics")
         print("\n")

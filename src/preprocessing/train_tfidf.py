@@ -5,7 +5,7 @@ import pandas as pd
 import mlflow
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-
+mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
 # =========================
 # TF-IDF TRAINING
 # =========================

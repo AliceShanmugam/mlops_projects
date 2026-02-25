@@ -10,7 +10,12 @@ from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, classification_report, accuracy_score
 
+import dagshub
+dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
 
+
+mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
+# ======
 # =========================
 # LOAD DATA
 # =========================

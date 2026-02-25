@@ -10,13 +10,13 @@ __pycache__/
 *.egg
 
 # MLflow
-mlflow/mlruns/
+src/mlflow/mlruns/
 
 # Data raw training and test files
-data/raw/*.csv
-data/raw/image_train/
-data/raw_test/*.csv
-data/raw_test/image_test/
+#data/raw/*.csv
+#data/raw/image_train/
+#data/raw_test/*.csv
+#data/raw_test/image_test/
 
 #reading README
 README_PRODUCTION

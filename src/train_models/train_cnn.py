@@ -9,10 +9,12 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, accuracy_score
 import mlflow
+import dagshub
+dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
 
 # ================= CONFIG =================
 IMAGE_SIZE = 128            
-BATCH_SIZE = 16             
+BATCH_SIZE = 4            
 EPOCHS = 10                 
 LR = 1e-3
 NUM_CLASSES = 8
@@ -77,14 +79,21 @@ def train_cnn(
         run_name: str ="run_cnn_1"):
     
             artifacts_dir.mkdir(parents=True, exist_ok=True)
-            uri = "file:///C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_MLops/mlops_projects/src/mlflow/mlflow.db"
-            mlflow.set_tracking_uri(uri)
+
+            mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
             mlflow.set_experiment(experiment_name)
             with mlflow.start_run(run_name=run_name,nested=True):
                 df = pd.read_csv(data_path)
                 df = df.dropna(subset=["image_path", "label"])
-                num_classes = df["label"].nunique()
-                train_df, val_df = train_test_split(df,test_size=0.2,random_state=42,stratify=df["label"])
+                #num_classes = df["label"].nunique()
+                #train_df, val_df = train_test_split(df,test_size=0.2,random_state=42,stratify=df["label"])
+                
+                # reduction du dataset pour éviter les problèmes de mémoire
+                MAX_SAMPLES_PER_CLASS = 500
+                df_limited = (df.groupby("label", group_keys=False).apply(lambda x: x.sample(n=min(len(x), MAX_SAMPLES_PER_CLASS),random_state=452)))
+                num_classes = df_limited["label"].nunique() # Recalcul du nombre de classes après limitation 
+                train_df, val_df = train_test_split(df_limited,test_size=0.2,random_state=42,stratify=df_limited["label"])
+                
 
                 transform = transforms.Compose([
                     transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
@@ -157,10 +166,9 @@ def train_cnn(
                 model_path = artifacts_dir / "cnn.pt"
                 torch.save(model.state_dict(), model_path)
                 # mlflow save cnn model
-                mlflow.pytorch.log_model(model,"model",registered_model_name="image_CNN_Model")
+                #mlflow.pytorch.log_model(model,"model",registered_model_name="image_CNN_Model")
             
                 metrics = {
-                    "model": "cnn_from_scratch",
                     "f1_macro": round(f1, 4),
                     "accuracy": round(accuracy, 4),
                     "image_size": IMAGE_SIZE,
@@ -182,4 +190,4 @@ def train_cnn(
                 print(f"MLflow: {mlflow.active_run().info.run_id}")
 
             
-                return metrics
+                return model, metrics

@@ -1,0 +1,10 @@
+{
+  "f1_macro": 0.4339,
+  "accuracy": 0.4406,
+  "image_size": 128,
+  "batch_size": 4,
+  "epochs": 100,
+  "num_images": 42106,
+  "device": "cpu",
+  "mlflow_run_id": "a1a89d20b25d4ae391a70e8739548583"
+}

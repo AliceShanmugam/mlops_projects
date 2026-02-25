@@ -1,111 +1,17 @@
 
 # # src/training/run_training_text.py
 
-# from pathlib import Path
-# import json
-# import mlflow
-# from src.preprocessing.text_cleaning import preprocess_training_data
-# from src.preprocessing.train_tfidf import train_tfidf_vectorizer
-# from src.train_models.train_linearsvm import train_and_evaluate_svm
-
-
-# # =========================
-# # PATHS
-# # =========================
-# DATA_RAW_DIR = Path("data/raw")
-# DATA_PROCESSED_DIR = Path("data/processed")
-# MODELS_DIR = Path("src/mlflow/mlruns")
-
-# X_TRAIN_PATH = DATA_RAW_DIR / "X_train_update.csv"
-# Y_TRAIN_PATH = DATA_RAW_DIR / "Y_train_CVw08PX.csv"
-# TRAIN_CLEAN_PATH = DATA_PROCESSED_DIR / "train_clean.csv"
-
-# def make_json_serializable(obj):
-#     if isinstance(obj, Path):
-#         return str(obj)
-#     if isinstance(obj, dict):
-#         return {k: make_json_serializable(v) for k, v in obj.items()}
-#     if isinstance(obj, list):
-#         return [make_json_serializable(v) for v in obj]
-#     return obj
-
-# # =========================
-# # PIPELINE
-# # =========================
-# def main_texte():
-#     mlflow.set_experiment("Texte_Pipeline")
-#     with mlflow.start_run(run_name="Full_Texte_Pipeline",nested=True):
-#         mlflow.set_tag("step", "preprocessing")
-#         print("\n")
-#         print("1. Preprocessing dataset (text + image)")
-#         preprocess_training_data(
-#             x_path=X_TRAIN_PATH,
-#             y_path=Y_TRAIN_PATH,
-#             output_path=TRAIN_CLEAN_PATH,
-#             detect_lang=True,
-#         )
-#         mlflow.log_artifact(TRAIN_CLEAN_PATH, "preprocessed_data")
-#         print(f"Dataset préprocessé sauvegardé: {TRAIN_CLEAN_PATH}")
-        
-#         mlflow.set_tag("step", "vectorization")
-#         print("\n")
-#         print("2. Training TF-IDF vectorizer")
-#         train_tfidf_vectorizer(
-#             data_path=TRAIN_CLEAN_PATH,
-#             artifacts_dir=MODELS_DIR,
-#             text_column="text_clean",
-#             max_features=50000,
-#             ngram_range=(1, 2)
-#         )
-
-#         mlflow.set_tag("step", "training")
-#         print("\n")
-#         print("3. Training Linear SVM")
-#         metrics = train_and_evaluate_svm(
-#             data_path=TRAIN_CLEAN_PATH,
-#             artifacts_dir=MODELS_DIR,
-#             test_size=0.2,
-#             svm_params={"C": 1.0}
-#         )
-        
-#         mlflow.set_tag("step", "metrics")
-#         print("\n")
-#         print("3. Save global metrics")
-#         metrics_path = MODELS_DIR / "metrics_svm_pipeline.json"
-#         metrics = make_json_serializable(metrics)
-#         mlflow.log_metric("texte_pipeline_accuracy",metrics["accuracy"])
-#         mlflow.log_metric("texte_pipeline_f1",metrics["f1_macro"])
-
-#         MODELS_DIR.mkdir(parents=True, exist_ok=True)
-#         with open(metrics_path, "w", encoding="utf-8") as f:
-#                json.dump(metrics, f, indent=2)
-#         mlflow.log_artifact(metrics_path, "texte_pipeline_metrics")
-
-#         mlflow.set_tag("status", "success")
-#         mlflow.set_tag("pipeline", "texte_classification")
-        
-#         print("\n===============================")
-#         print(" Pipeline texte terminé avec succès!")
-#         print(f"   - Modèle SVM: {MODELS_DIR.resolve()}/cnn.pt")
-#         print(f"   - Métriques_SVM: {metrics_path.resolve()}")
-#         print(f"   - Run MLflow: {metrics['mlflow_run_id']}")
-#         print("===============================\n")
-       
-        
-# # =========================
-# # ENTRY POINT
-# # =========================
-# if __name__ == "__main__":
-#     main_texte()
-    
 from pathlib import Path
 import json
 import mlflow
 from mlflow.tracking import MlflowClient
+from opentelemetry import metrics
 from src.preprocessing.text_cleaning import preprocess_training_data
 from src.preprocessing.train_tfidf import train_tfidf_vectorizer
 from src.train_models.train_linearsvm import train_and_evaluate_svm
 import logging
+import dagshub
+dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
@@ -140,9 +46,9 @@ def make_json_serializable(obj):
 # =========================
 def main_texte():
     """Pipeline complet pour l'entraînement du modèle texte."""
-    uri = "file:///C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_MLops/mlops_projects/src/mlflow/mlflow.db"
-    mlflow.set_tracking_uri(uri)  # Assure-toi que le serveur MLflow est en cours d'exécution
-    mlflow.set_experiment("Rakuten_Text_Pipeline")
+
+    mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
+
 
     with mlflow.start_run(run_name="Full_Text_Pipeline"):
         try:
@@ -183,30 +89,36 @@ def main_texte():
 
             # 4. Enregistrement du modèle dans le registry MLflow
             mlflow.sklearn.log_model(
-                sk_model=metrics["svm_model"],  # Assure-toi que train_linearsvm.py retourne le modèle
+                sk_model=metrics["svm_model"], 
                 artifact_path="model",
                 registered_model_name="Text_Classifier_SVM"
             )
-
+            
             # Transition vers le stage "Production"
             client = MlflowClient()
+            all_versions = client.search_model_versions("name='Text_Classifier_SVM'")
+            latest_version = max(all_versions,key=lambda mv: int(mv.version))
+
             client.transition_model_version_stage(
                 name="Text_Classifier_SVM",
-                version=mlflow.active_run().info.run_id,
-                stage="Production"
+                        stage="Production",
+                        version=latest_version.version
             )
+            logger.info(f"✅ Modèle Text_Classifier_SVM v{latest_version.version} passé en Production")
 
             # 5. Sauvegarde des métriques
             mlflow.set_tag("step", "metrics")
             logger.info("4. Sauvegarde des métriques...")
             metrics_path = MODELS_DIR / "metrics_svm.json"
-            metrics_serializable = make_json_serializable(metrics)
+            # Retirer le modèle des métriques avant JSON
+            metrics_for_json = {k: v for k, v in metrics.items()if k != "svm_model"}
+            metrics_serializable = make_json_serializable(metrics_for_json)
             with open(metrics_path, "w", encoding="utf-8") as f:
                 json.dump(metrics_serializable, f, indent=2)
             mlflow.log_artifact(metrics_path, "metrics")
             mlflow.log_metrics({
-                "accuracy": metrics["accuracy"],
-                "f1_macro": metrics["f1_macro"]
+                "accuracy": metrics_for_json["accuracy"],
+                "f1_macro": metrics_for_json["f1_macro"]
             })
 
             # Tags finaux

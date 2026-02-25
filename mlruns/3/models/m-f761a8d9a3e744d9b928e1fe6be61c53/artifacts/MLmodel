@@ -1,0 +1,23 @@
+artifact_path: file:///C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_MLops/mlops_projects/mlruns/3/models/m-f761a8d9a3e744d9b928e1fe6be61c53/artifacts
+flavors:
+  python_function:
+    config:
+      device: null
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pytorch
+    pickle_module_name: mlflow.pytorch.pickle_module
+    python_version: 3.12.2
+  pytorch:
+    code: null
+    model_data: data
+    pytorch_version: 2.10.0+cpu
+mlflow_version: 3.9.0
+model_id: m-f761a8d9a3e744d9b928e1fe6be61c53
+model_size_bytes: 33944641
+model_uuid: m-f761a8d9a3e744d9b928e1fe6be61c53
+prompts: null
+run_id: ce627fd4f1ac43dda12b302008527a71
+utc_time_created: '2026-02-25 23:01:42.087272'
