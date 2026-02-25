@@ -33,4 +33,7 @@
     - create Dockerfile.api (can also create a docker compose for api) to run api
     - Run to explore API
 
-## 
+## Experiments with MLFlow
+    - create a docker-compose file that manages all services Dockerfiles (one Dockerfile per service > microservices)
+    - docker compose up --build (--build lorsque le Dockerfile est modifié)
+    - Etudier difference entre runs/modifs des cripts/modifs des données ?

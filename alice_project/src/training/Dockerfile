@@ -17,8 +17,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Code
-# Copie tout le dossier src/ depuis le disque local vers /app/src/ dans le conteneur.
-COPY src/ ./src
+# Copie tout le dossier src/training/ depuis le disque local vers /app/src/training/ dans le conteneur.
+COPY src/training/ ./
+
+EXPOSE 8001
 
 # Commande par défaut = pipeline complet
-CMD ["python", "src/training/train.py"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]

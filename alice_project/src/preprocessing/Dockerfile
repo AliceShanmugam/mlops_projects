@@ -17,8 +17,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Code
-# Copie tout le dossier src/ depuis le disque local vers /app/src/ dans le conteneur.
-COPY src/ ./src
+# Copie tout le dossier src/preprocessing/ depuis le disque local vers /app/src/preprocessing/ dans le conteneur.
+COPY src/preprocessing/ ./
 
 # Commande par défaut = pipeline complet
-CMD ["python", "src/preprocessing/preprocessing.py"]
+CMD ["python", "preprocessing.py"]

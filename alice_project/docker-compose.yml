@@ -1,3 +1,5 @@
+version : '3.9'
+
 services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
@@ -8,9 +10,11 @@ services:
       - ./mlruns:/mlruns
     command: >
       mlflow server
-      --backend-store-uri sqlite:///mlflow.db
-      --default-artifact-root /mlruns
+      --backend-store-uri sqlite:////mlruns/mlflow.db
+      --artifacts-destination /mlruns
       --host 0.0.0.0
+      --allowed-hosts '*'
+#     --allowed-hosts mlflow,localhost,127.0.0.1,localhost:5000
 
   preprocessing:
     build:
@@ -30,8 +34,12 @@ services:
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
-      - mlflow
-      - preprocessing
+        mlflow:
+          condition: service_started
+        preprocessing:
+          condition: service_started
+    ports :
+      - "8001:8001"
 
   api:
     build:
@@ -41,3 +49,15 @@ services:
       - "8000:8000"
     volumes:
       - ./models:/app/models
+
+  gateway:
+    build:
+      context: .
+      dockerfile: src/gateway/Dockerfile
+    depends_on:
+        api:
+          condition: service_started
+        training:
+          condition: service_started
+    ports:
+      - "8080:8080"
