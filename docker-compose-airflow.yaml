@@ -18,10 +18,10 @@ services:
       bash -c "
       airflow db init &&
       airflow users create
-        --username admin
-        --password admin
-        --firstname Admin
-        --lastname Admin
+        --username user
+        --password user123
+        --firstname Adam
+        --lastname adam
         --role Admin
         --email admin@mlops.local &&
       airflow webserver & airflow scheduler

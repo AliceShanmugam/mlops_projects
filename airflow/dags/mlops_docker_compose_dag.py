@@ -68,4 +68,5 @@ with DAG(
         docker_url="unix://var/run/docker.sock",
     )
 
-    start_mlflow >> training >> inference >> gateway >> streamlit
+    gateway >> start_mlflow >> training >> inference >>  streamlit
+    gateway >> start_mlflow >> inference >>  streamlit
