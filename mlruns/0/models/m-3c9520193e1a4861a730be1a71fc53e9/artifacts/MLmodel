@@ -1,0 +1,23 @@
+artifact_path: file:///C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_MLops/mlops_projects/mlruns/0/models/m-3c9520193e1a4861a730be1a71fc53e9/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.2
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+    skops_trusted_types: null
+mlflow_version: 3.9.0
+model_id: m-3c9520193e1a4861a730be1a71fc53e9
+model_size_bytes: 3200685
+model_uuid: m-3c9520193e1a4861a730be1a71fc53e9
+prompts: null
+run_id: cb271f80e0854f2b899d440ae47b524e
+utc_time_created: '2026-02-26 00:22:32.655059'

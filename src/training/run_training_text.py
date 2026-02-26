@@ -47,7 +47,7 @@ def make_json_serializable(obj):
 def main_texte():
     """Pipeline complet pour l'entraînement du modèle texte."""
 
-    mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
+    #mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
 
 
     with mlflow.start_run(run_name="Full_Text_Pipeline"):

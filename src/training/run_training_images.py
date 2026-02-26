@@ -19,7 +19,7 @@ X_TRAIN_PATH = DATA_RAW_DIR / "X_train_update.csv"
 Y_TRAIN_PATH = DATA_RAW_DIR / "Y_train_CVw08PX.csv"
 TRAIN_CLEAN_PATH = DATA_PROCESSED_DIR / "train_clean.csv"
 
-mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
+#mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
 # =========================
 # UTILS
 # =========================
