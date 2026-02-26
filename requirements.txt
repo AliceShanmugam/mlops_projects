@@ -19,7 +19,7 @@ pyjwt
 bcrypt
 slowapi
 prometheus-client
-airflow
+apache-airflow
 evidently
 structlog
 python-json-logger
