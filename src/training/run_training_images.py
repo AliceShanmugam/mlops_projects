@@ -6,7 +6,6 @@ import mlflow
 from src.preprocessing.text_cleaning import preprocess_training_data
 from src.train_models.train_cnn import train_cnn
 import dagshub
-#dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
 
 # =========================
 # PATHS
@@ -19,7 +18,6 @@ X_TRAIN_PATH = DATA_RAW_DIR / "X_train_update.csv"
 Y_TRAIN_PATH = DATA_RAW_DIR / "Y_train_CVw08PX.csv"
 TRAIN_CLEAN_PATH = DATA_PROCESSED_DIR / "train_clean.csv"
 
-#mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
 # =========================
 # UTILS
 # =========================

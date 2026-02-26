@@ -65,5 +65,5 @@
   },
   "svm_path": "models\\text\\svm.joblib",
   "accuracy": 0.9084540489194965,
-  "mlflow_run_id": "dd4e53a3c4184f948c0be2a69240f743"
+  "mlflow_run_id": "591125c4e12a4fbcba73640a293b8217"
 }

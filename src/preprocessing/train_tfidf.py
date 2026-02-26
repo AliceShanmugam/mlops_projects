@@ -1,11 +1,12 @@
 
 from pathlib import Path
+import dagshub
 import joblib
 import pandas as pd
 import mlflow
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
+
 # =========================
 # TF-IDF TRAINING
 # =========================
@@ -18,6 +19,7 @@ def train_tfidf_vectorizer(
     experiment_name : str = "TFIDF_vectorizer",
     run_name : str ="TFIDF_run_1"
 ):
+    dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
     mlflow.set_experiment(experiment_name)
     with mlflow.start_run(run_name=run_name, nested=True):
         
