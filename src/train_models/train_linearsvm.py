@@ -60,7 +60,7 @@ def train_and_evaluate_svm(
         vectorizer = joblib.load(tfidf_path)
         X_train_vec = vectorizer.transform(X_train)
         X_val_vec = vectorizer.transform(X_val)
-        svm = LinearSVC(C=svm_params.get("C", 1.0),max_iter=5000)
+        svm = LinearSVC(C=svm_params.get("C", 1.0),max_iter=10000,random_state=423)
         svm.fit(X_train_vec, y_train)
         svm_path = artifacts_dir / "svm.joblib"
         joblib.dump(svm, svm_path)
