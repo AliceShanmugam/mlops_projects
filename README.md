@@ -206,6 +206,6 @@ airflow/
 ```
 lancement airflow
 docker-compose down -v                              # nettoyage images docker
-docker-compose build                                # creation images docker
+docker-compose build -d                                # creation images docker
 docker-compose -f docker-compose.airflow.yaml up -d # lancement iamges docker
 

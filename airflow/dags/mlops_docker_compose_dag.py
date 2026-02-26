@@ -70,4 +70,3 @@ with DAG(
     )
 
     gateway >> start_mlflow >> training >> inference >>  streamlit
-    gateway >> start_mlflow >> inference >>  streamlit

@@ -24,6 +24,10 @@ LABEL_ID_TO_NAME = (df_labels.set_index("label")["label_name"].to_dict())
 from src.train_models.train_cnn import SimpleCNN
 IMAGE_ROOTS = BASE_DIR / "data"/ "raw" / "image_train"
 
+AIRFLOW_API_URL = "http://airflow-webserver:8080/api/v1"
+AIRFLOW_DAG_ID = "mlops_docker_compose_pipeline"
+AIRFLOW_AUTH = ("airflow", "airflow")
+
 # =========================
 # LOAD TEXT MODEL
 # =========================
@@ -117,6 +121,31 @@ def predict_cnn(request: PredictImageRequest):
 
     except Exception as e:
         print("CNN inference error:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+        
+@app.post("/train")
+async def trigger_training():
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            response = await client.post(
+                f"{AIRFLOW_API_URL}/dags/{AIRFLOW_DAG_ID}/dagRuns",
+                auth=AIRFLOW_AUTH,
+                json={"conf": {}},
+            )
+
+        if response.status_code not in (200, 201):
+            raise HTTPException(
+                status_code=500,
+                detail=f"Airflow error: {response.text}",
+            )
+
+        return {
+            "status": "training triggered",
+            "dag_id": AIRFLOW_DAG_ID,
+            "mode": "async",
+        }
+
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
         
