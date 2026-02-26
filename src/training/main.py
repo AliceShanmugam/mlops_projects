@@ -1,29 +1,9 @@
-
-# from src.training.run_training_text import main_texte
-# from src.training.run_training_images import main_image
-# import mlflow
-# import logging
-
-# logging.basicConfig(level=logging.INFO)
-# logger = logging.getLogger(__name__)
-
-# if __name__ == "__main__":
-#     # Entraînement SVM (texte)
-#     with mlflow.start_run(run_name="Text_Training_SVM"):
-#         main_texte()
-#         mlflow.log_param("model_type", "SVM")
-#         logger.info("Modèle texte entraîné avec succès.")
-
-#     # Entraînement CNN (images)
-#     with mlflow.start_run(run_name="Image_Training_CNN"):
-#         main_image()
-#         mlflow.log_param("model_type", "CNN")
-#         logger.info("Modèle image entraîné avec succès.")
-        
+     
 
 from fastapi import FastAPI, BackgroundTasks
 import mlflow
 import logging
+import dagshub
 
 from src.training.run_training_text import main_texte
 from src.training.run_training_images import main_image
@@ -32,9 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Training Service")
-
-uri = "file:///C:/Users/coach/Desktop/datascientest/Projet DATASCIENTEST/projet_MLops/mlops_projects/src/mlflow/mlflow.db"
-mlflow.set_tracking_uri(uri)
+dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
 
 @app.get("/health")
 def health():

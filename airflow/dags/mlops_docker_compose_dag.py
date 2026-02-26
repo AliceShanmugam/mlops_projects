@@ -20,6 +20,7 @@ with DAG(
     start_date=days_ago(1),
     schedule_interval=None,
     catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     start_mlflow = DockerOperator(
