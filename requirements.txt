@@ -8,7 +8,7 @@ joblib
 numpy
 bs4
 langdetect
-mlflow==2.9.2
+mlflow
 protobuf<4
 torch
 torchvision
@@ -26,5 +26,4 @@ python-json-logger
 streamlit>=1.28.0
 plotly
 requests
-
 dagshub
