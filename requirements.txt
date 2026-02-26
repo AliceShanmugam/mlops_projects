@@ -27,3 +27,4 @@ streamlit>=1.28.0
 plotly
 requests
 hashlib
+dagshub
