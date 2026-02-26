@@ -11,10 +11,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, classification_report, accuracy_score
 
 import dagshub
-dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
 
 
-mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
+
+#mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
 # ======
 # =========================
 # LOAD DATA
@@ -50,7 +50,7 @@ def train_and_evaluate_svm(
     tfidf_path = artifacts_dir / "tfidf.joblib"
     if not tfidf_path.exists():
         raise FileNotFoundError("tfidf.joblib not found. Train TF-IDF first.")
-
+    dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
     mlflow.set_experiment(experiment_name)
     with mlflow.start_run(run_name=run_name, nested=True):
         

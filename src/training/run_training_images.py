@@ -6,7 +6,7 @@ import mlflow
 from src.preprocessing.text_cleaning import preprocess_training_data
 from src.train_models.train_cnn import train_cnn
 import dagshub
-dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
+#dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
 
 # =========================
 # PATHS
@@ -37,7 +37,7 @@ def make_json_serializable(obj):
 # PIPELINE
 # =========================
 def main_image():
-    
+    dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
     mlflow.set_experiment("Image_Pipeline")
     with mlflow.start_run(run_name="Full_Image_Pipeline",nested=True):
         mlflow.set_tag("step", "preprocessing")
@@ -109,3 +109,4 @@ def main_image():
 # =========================
 if __name__ == "__main__":
     main_image()
+    print(">>> MLFLOW_TRACKING_URI =", mlflow.get_tracking_uri())

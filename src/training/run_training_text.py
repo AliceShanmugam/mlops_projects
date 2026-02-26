@@ -11,7 +11,7 @@ from src.preprocessing.train_tfidf import train_tfidf_vectorizer
 from src.train_models.train_linearsvm import train_and_evaluate_svm
 import logging
 import dagshub
-dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
+
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
@@ -45,11 +45,8 @@ def make_json_serializable(obj):
 # PIPELINE COMPLET
 # =========================
 def main_texte():
-    """Pipeline complet pour l'entraînement du modèle texte."""
-
-    #mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
-
-
+    dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
+    mlflow.set_experiment("Text_Pipeline")
     with mlflow.start_run(run_name="Full_Text_Pipeline"):
         try:
             # 1. Préprocessing
@@ -144,3 +141,4 @@ def main_texte():
 # =========================
 if __name__ == "__main__":
     main_texte()
+print(">>> MLFLOW_TRACKING_URI =", mlflow.get_tracking_uri())

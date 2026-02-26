@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, accuracy_score
 import mlflow
 import dagshub
-dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
+
 
 # ================= CONFIG =================
 IMAGE_SIZE = 128            
@@ -79,8 +79,8 @@ def train_cnn(
         run_name: str ="run_cnn_1"):
     
             artifacts_dir.mkdir(parents=True, exist_ok=True)
-
-            mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
+            dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
+            #mlflow.set_tracking_uri("sqlite:///src/mlflow/mlflow.db")
             mlflow.set_experiment(experiment_name)
             with mlflow.start_run(run_name=run_name,nested=True):
                 df = pd.read_csv(data_path)
