@@ -1,5 +1,3 @@
-version : '3.9'
-
 services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
@@ -28,6 +26,7 @@ services:
     build:
       context: . # Utilise le Dockerfile dans le dossier courant
       dockerfile : src/training/Dockerfile
+    image : alice_project-training
     volumes:
       - ./data:/app/data
       - ./models:/app/models
@@ -40,6 +39,23 @@ services:
           condition: service_started
     ports :
       - "8001:8001"
+
+  airflow:
+    image: apache/airflow:2.8.1-python3.10
+    container_name: airflow
+    restart: always
+    environment:
+      # Utilisation du SequentialExecutor pour SQLite
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8081:8080"  # UI Airflow
+    command: >
+      bash -c "airflow db init && airflow webserver"
 
   api:
     build:

@@ -5,16 +5,23 @@ import mlflow.sklearn
 from sklearn.svm import LinearSVC
 from sklearn.metrics import f1_score, classification_report
 from sklearn.pipeline import Pipeline
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--data_version", required=True)
+args = parser.parse_args()
+
+DATA_PATH = f"data/processed/{args.data_version}"
 
 mlflow.set_experiment("text_classification")
 
 # Création de dossier models s'il n'existe pas
 os.makedirs("models", exist_ok=True)
 
-X_train = joblib.load("data/processed/X_train_tfidf.joblib")
-y_train = joblib.load("data/processed/y_train.joblib")
-X_test = joblib.load("data/processed/X_test_tfidf.joblib")
-y_test = joblib.load("data/processed/y_test.joblib")
+X_train = joblib.load(f"{DATA_PATH}/X_train_tfidf.joblib")
+y_train = joblib.load(f"{DATA_PATH}/y_train.joblib")
+X_test = joblib.load(f"{DATA_PATH}/X_test_tfidf.joblib")
+y_test = joblib.load(f"{DATA_PATH}/y_test.joblib")
 
 with mlflow.start_run():
 
@@ -22,6 +29,7 @@ with mlflow.start_run():
     mlflow.log_param("model_type", "LinearSVC")
     mlflow.log_param("random_state", 42)
     mlflow.log_param("threshold", 0.6)
+    mlflow.log_param("data_version", args.data_version)
 
     # Entraînement
     model = LinearSVC(random_state=42)

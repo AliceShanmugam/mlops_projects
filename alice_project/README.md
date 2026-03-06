@@ -186,3 +186,6 @@ api
 
 mlflow
 > http://localhost:5000
+
+airflow
+>  --username sakura   --firstname alice   --lastname shan   --role Admin   --email alice.shanmugam@gmail.com   --password sakura

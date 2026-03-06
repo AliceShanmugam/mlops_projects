@@ -4,7 +4,7 @@ import requests
 app = FastAPI()
 
 PREDICT_SERVICE = "http://api:8000"
-TRAINING_SERVICE = "http://training:8001"
+AIRFLOW_URL = "http://airflow:8080"
 
 @app.post("/predict")
 def predict(payload: dict):
@@ -12,6 +12,12 @@ def predict(payload: dict):
     return response.json()
 
 @app.post("/train")
-def train():
-    response = requests.post(f"{TRAINING_SERVICE}/train")
+def trigger_training():
+
+    response = requests.post(
+        f"{AIRFLOW_URL}/api/v1/dags/training_pipeline/dagRuns",
+        json={"conf": {"data_version": "latest"}},
+        auth=("airflow", "airflow")  # si auth activée
+    )
+
     return response.json()

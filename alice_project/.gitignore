@@ -1,0 +1,8 @@
+# MLflow
+mlruns/
+
+# Data raw training and test files
+data/raw/
+data/processed/
+
+old/

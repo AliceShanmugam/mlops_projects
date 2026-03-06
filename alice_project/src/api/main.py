@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from src.api.schemas import PredictionRequest, PredictionResponse
-from src.api.model import predict
+from schemas import PredictionRequest, PredictionResponse
+from model import predict
 
 app = FastAPI(
     title="Text Classification API",

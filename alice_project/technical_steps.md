@@ -23,7 +23,7 @@
 
 ## Launch ml pipeline container
     - create Dockerfile and docker-compose to run pipeline in a container. Don't forget to mount volumes to get preprocessed data and model saved locally in data/processed/ or models/.
-    - Run once to get data locally, if data change then rerun a container with same image (docker compose up), if script is changing, recreate a new image and run container (docker compose build)
+    - Run once to get data locally, if data or script change then rerun a container with same image (docker compose up), if Dockerfile is changing, recreate a new image and run container (docker compose build)
     - No need to run everytime, if just need to explore API
 
 ## Launch API container
@@ -37,3 +37,18 @@
     - create a docker-compose file that manages all services Dockerfiles (one Dockerfile per service > microservices)
     - docker compose up --build (--build lorsque le Dockerfile est modifié)
     - Etudier difference entre runs/modifs des cripts/modifs des données ?
+
+## Gateway
+    - docker compose up
+
+## Data Lineage
+    - timestamp data in preprocessing.py
+    - Use the folder with desired data version in train.py
+
+## Github Actions (CI/CD)
+    - 
+    - 
+
+## Airflow + DockerOperator
+
+## Logging

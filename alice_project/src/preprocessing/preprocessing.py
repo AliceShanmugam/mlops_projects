@@ -7,6 +7,7 @@ from langdetect.lang_detect_exception import LangDetectException
 from deep_translator import GoogleTranslator
 from tqdm import tqdm
 import os
+from datetime import datetime 
 
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -106,14 +107,17 @@ def preprocess(run_translation=True):
     X_test_tfidf = tfidf_vectorizer.transform(X_test)
 
     # Sauvegarde des jeux de données prétraités
-    os.makedirs("data/processed", exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_dir = f"data/processed/{timestamp}"
+    os.makedirs(output_dir, exist_ok=True)
 
-    joblib.dump(X_train_tfidf, "data/processed/X_train_tfidf.joblib")
-    joblib.dump(X_test_tfidf, "data/processed/X_test_tfidf.joblib")
-    joblib.dump(y_train, "data/processed/y_train.joblib")
-    joblib.dump(y_test, "data/processed/y_test.joblib")
-    joblib.dump(tfidf_vectorizer, "models/tfidf_vectorizer.joblib")
-
+    joblib.dump(X_train_tfidf, f"{output_dir}/X_train_tfidf.joblib")
+    joblib.dump(X_test_tfidf, f"{output_dir}/X_test_tfidf.joblib")
+    joblib.dump(y_train, f"{output_dir}/y_train.joblib")
+    joblib.dump(y_test, f"{output_dir}/y_test.joblib")
+    joblib.dump(tfidf_vectorizer, f"{output_dir}/tfidf_vectorizer.joblib")
+    
+    return timestamp
 
 if __name__ == "__main__":
     preprocess(run_translation=True)
