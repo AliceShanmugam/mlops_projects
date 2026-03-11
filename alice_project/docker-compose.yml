@@ -1,8 +1,20 @@
+networks:
+  alice_network:
+    driver: bridge
+    name: alice_network
+
+volumes:
+  airflow_db:
+  postgres_db:
+
 services:
+  # ========================================================================
+  # MLFlow Tracking Server
+  # ========================================================================
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
     container_name: mlflow-server
-    ports: 
+    ports:
       - "5000:5000"
     volumes:
       - ./mlruns:/mlruns
@@ -11,69 +23,148 @@ services:
       --backend-store-uri sqlite:////mlruns/mlflow.db
       --artifacts-destination /mlruns
       --host 0.0.0.0
-      --allowed-hosts '*'
-#     --allowed-hosts mlflow,localhost,127.0.0.1,localhost:5000
+    networks:
+      - alice_network
+    restart: unless-stopped
 
+  # ========================================================================
+  # POSTGRESQL Database for Airflow
+  # ========================================================================
+  postgres:
+    image: postgres:13
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    networks:
+      - alice_network
+    restart: unless-stopped
+
+  # ========================================================================
+  # Airflow Web UI (no scheduler - manual trigger only)
+  # ========================================================================
+  airflow:
+    image: apache/airflow:2.8.1-python3.10
+    container_name: airflow-webserver
+    group_add:
+      - "108"  # Add to root group to access Docker socket
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth
+      _AIRFLOW_DB_UPGRADE: "true"
+      _AIRFLOW_WWW_USER_CREATE: "true"
+      _AIRFLOW_WWW_USER_USERNAME: admin
+      _AIRFLOW_WWW_USER_PASSWORD: admin
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config:/opt/airflow/config
+      - ./src:/opt/airflow/src
+    ports:
+      - "8081:8080"
+    command: standalone
+    networks:
+      - alice_network
+    restart: unless-stopped
+    depends_on:
+      - mlflow
+      - postgres
+
+  # ========================================================================
+  # Preprocessing Service
+  # ========================================================================
   preprocessing:
     build:
       context: .
       dockerfile: src/preprocessing/Dockerfile
+    image: alice_project-preprocessing:latest
+    container_name: preprocessing
     volumes:
       - ./data:/app/data
       - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=INFO
+      - LOG_DIR=/app/logs
+    networks:
+      - alice_network
+    restart: "no"
 
+  # ========================================================================
+  # Training Service
+  # ========================================================================
   training:
     build:
-      context: . # Utilise le Dockerfile dans le dossier courant
-      dockerfile : src/training/Dockerfile
-    image : alice_project-training
+      context: .
+      dockerfile: src/training/Dockerfile
+    image: alice_project-training:latest
+    container_name: training
     volumes:
       - ./data:/app/data
       - ./models:/app/models
+      - ./logs:/app/logs
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - LOG_LEVEL=INFO
+      - LOG_DIR=/app/logs
+    networks:
+      - alice_network
+    restart: "no"
     depends_on:
-        mlflow:
-          condition: service_started
-        preprocessing:
-          condition: service_started
-    ports :
-      - "8001:8001"
+      - mlflow
 
-  airflow:
-    image: apache/airflow:2.8.1-python3.10
-    container_name: airflow
-    restart: always
-    environment:
-      # Utilisation du SequentialExecutor pour SQLite
-      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
-      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "8081:8080"  # UI Airflow
-    command: >
-      bash -c "airflow db init && airflow webserver"
-
+  # ========================================================================
+  # Prediction API
+  # ========================================================================
   api:
     build:
       context: .
       dockerfile: src/api/Dockerfile.api
+    image: alice_project-api:latest
+    container_name: api
     ports:
       - "8000:8000"
     volumes:
       - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=INFO
+      - LOG_DIR=/app/logs
+      - AIRFLOW_WEBSERVER_URL=http://airflow-webserver:8080
+    networks:
+      - alice_network
+    restart: unless-stopped
+    depends_on:
+      - airflow
 
+  # ========================================================================
+  # Gateway (Optional - routes to API and Airflow)
+  # ========================================================================
   gateway:
     build:
       context: .
       dockerfile: src/gateway/Dockerfile
-    depends_on:
-        api:
-          condition: service_started
-        training:
-          condition: service_started
+    image: alice_project-gateway:latest
+    container_name: gateway
     ports:
       - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=INFO
+      - LOG_DIR=/app/logs
+      - API_SERVICE_URL=http://api:8000
+      - AIRFLOW_URL=http://airflow-webserver:8080
+    networks:
+      - alice_network
+    restart: unless-stopped
+    depends_on:
+      - api
+      - airflow

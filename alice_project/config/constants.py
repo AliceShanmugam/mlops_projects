@@ -1,0 +1,28 @@
+"""
+Application constants
+"""
+
+# Model artifact names in MLFlow
+MLFLOW_ARTIFACT_TFIDF = "tfidf_vectorizer"
+MLFLOW_ARTIFACT_SVM = "svm_model"
+MLFLOW_ARTIFACT_REPORT = "classification_report.txt"
+
+# Data validation
+MIN_TEXT_LENGTH = 5
+MAX_TEXT_LENGTH = 5000
+
+# API Response codes
+RESPONSE_SUCCESS = 200
+RESPONSE_CREATED = 201
+RESPONSE_BAD_REQUEST = 400
+RESPONSE_UNAUTHORIZED = 401
+RESPONSE_FORBIDDEN = 403
+RESPONSE_NOT_FOUND = 404
+RESPONSE_INTERNAL_ERROR = 500
+
+# Prediction confidence thresholds
+PREDICTION_CONFIDENCE_THRESHOLD = 0.5
+
+# Training parameters
+TRAIN_TEST_SPLIT = 0.2
+RANDOM_STATE = 42

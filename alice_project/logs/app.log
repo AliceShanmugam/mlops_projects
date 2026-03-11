@@ -1,0 +1,96 @@
+[2026-03-09 23:11:54] [32mINFO[0m - app - ✓ Ceci devrait apparaître
+[2026-03-09 23:11:54] [33mWARNING[0m - app - ⚠ Ceci aussi
+[2026-03-09 23:11:54] [31mERROR[0m - app - ✗ Et ceci
+[2026-03-10 22:55:27] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 22:55:28] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 22:55:28] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 22:55:28] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 22:55:28] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 22:56:11] [32mINFO[0m - src.api.main - Request: GET /health
+[2026-03-10 22:56:11] [32mINFO[0m - src.api.main - Health check called
+[2026-03-10 22:56:11] [32mINFO[0m - src.api.main - Response: 200 (0.005s)
+[2026-03-10 23:03:16] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:03:51] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:03:54] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:03:54] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:03:54] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:03:54] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:06:28] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:07:51] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:07:52] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:07:52] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:07:52] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:07:52] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:18:07] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:19:18] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:19:28] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:19:30] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:19:30] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:19:30] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:27:22] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:29:06] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:29:10] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:29:12] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:29:12] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:29:12] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:33:00] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:37:56] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:37:57] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:37:57] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:37:57] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:37:57] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:42:59] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:44:30] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:44:31] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:44:31] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:44:31] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:44:31] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:47:27] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:48:02] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:48:03] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:48:03] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:48:03] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:48:03] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:50:27] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:50:56] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:50:57] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:50:57] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:50:57] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:50:57] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:53:45] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:54:17] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:54:18] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:54:18] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:54:18] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:54:18] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-10 23:57:36] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-10 23:58:05] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-10 23:58:06] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-10 23:58:06] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-10 23:58:06] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-10 23:58:06] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-11 00:13:23] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-11 00:14:01] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-11 00:14:07] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-11 00:14:08] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-11 00:14:08] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-11 00:14:08] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-11 00:39:45] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-11 00:40:49] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-11 00:40:50] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-11 00:40:50] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-11 00:40:50] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-11 00:40:50] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-11 00:47:18] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-11 00:48:12] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-11 00:48:25] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-11 00:48:26] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-11 00:48:27] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-11 00:48:27] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-11 00:52:12] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-11 00:54:05] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-11 00:54:11] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-11 00:54:12] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-11 00:54:13] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-11 00:54:13] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-11 01:03:26] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...

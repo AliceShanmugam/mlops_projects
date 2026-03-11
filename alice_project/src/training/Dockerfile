@@ -3,24 +3,18 @@ FROM python:3.10-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Docker crée un dossier /app à l’intérieur du conteneur.
-# Tous les chemins suivants dans le Dockerfile seront relatifs à /app.
-# Pas besoin que /app existe sur le disque local, Docker le crée automatiquement dans l’image.
 WORKDIR /app
 
-# Dépendances
+# Copy dependencies
+COPY requirements-common.txt requirements-ml.txt ./
+RUN pip install --no-cache-dir -r requirements-ml.txt
 
-# Copie le fichier depuis ton disque local (le contexte de build) vers /app/ dans le conteneur.
-COPY requirements.txt .
-# Installe toutes les librairies dans l’image Docker (isolé de ton Python local).
-# Le conteneur a maintenant tout l’environnement Python nécessaire pour exécuter le code.
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy application code
+COPY config ./config
+COPY src ./src
 
-# Code
-# Copie tout le dossier src/training/ depuis le disque local vers /app/src/training/ dans le conteneur.
-COPY src/training/ ./
+# Create logs directory
+RUN mkdir -p /app/logs
 
-EXPOSE 8001
-
-# Commande par défaut = pipeline complet
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+# Run training script
+CMD ["python", "-u", "src/training/train.py"]

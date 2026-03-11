@@ -1,0 +1,11 @@
+-r requirements-common.txt
+
+# MLOps & Orchestration
+mlflow>=2.10.0
+apache-airflow==2.8.1
+apache-airflow-providers-docker>=3.10.0
+apache-airflow-providers-postgres>=5.10.0
+
+# Code Quality (pour tests dans containers)
+pytest>=7.4.0
+pytest-cov>=4.1.0
