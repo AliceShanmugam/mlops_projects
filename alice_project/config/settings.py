@@ -35,7 +35,7 @@ class Settings:
     )
     AIRFLOW_BASE_URL: str = os.getenv(
         "AIRFLOW_BASE_URL",
-        "http://airflow-webserver:8080/api/v1"
+        "http://airflow:8080/api/v1"
     )
     
     # Data paths

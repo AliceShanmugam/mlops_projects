@@ -443,3 +443,93 @@ weighted avg       0.85      0.84      0.84      8422
 [2026-03-16 19:37:18] [32mINFO[0m - __main__ - 
 📈 Improvement: +0.8448 F1 points
 [2026-03-16 19:37:18] [32mINFO[0m - __main__ - ✅ NEW MODEL IS BETTER - Ready for production
+[2026-03-16 23:36:33] [32mINFO[0m - __main__ - 🚀 Starting training with data version: 20260316_190442
+[2026-03-16 23:36:33] [32mINFO[0m - __main__ - 📂 Loading data from: /app/data/processed/20260316_190442
+[2026-03-16 23:36:34] [32mINFO[0m - __main__ - ✅ Data loaded successfully
+[2026-03-16 23:36:34] [32mINFO[0m - __main__ -    X_train shape: (33684, 2000)
+[2026-03-16 23:36:34] [32mINFO[0m - __main__ -    X_test shape: (8422, 2000)
+[2026-03-16 23:36:35] [32mINFO[0m - __main__ - ⚙️ Training LinearSVC model...
+[2026-03-16 23:36:37] [32mINFO[0m - __main__ - ✅ Model trained successfully
+[2026-03-16 23:36:37] [32mINFO[0m - __main__ - 📊 Making predictions on test set...
+[2026-03-16 23:36:37] [32mINFO[0m - __main__ - 📈 F1-score (macro): 0.8448
+[2026-03-16 23:36:37] [32mINFO[0m - __main__ - 
+              precision    recall  f1-score   support
+
+           0       0.88      0.75      0.81      1004
+           1       0.74      0.91      0.81      1175
+           2       0.89      0.82      0.85      1205
+           3       0.95      0.91      0.93      1009
+           4       0.84      0.82      0.83      1015
+           5       0.83      0.83      0.83       999
+           6       0.88      0.90      0.89       998
+           7       0.80      0.80      0.80      1017
+
+    accuracy                           0.84      8422
+   macro avg       0.85      0.84      0.84      8422
+weighted avg       0.85      0.84      0.84      8422
+
+[2026-03-16 23:36:38] [32mINFO[0m - __main__ - 💾 Saving model artifacts...
+[2026-03-16 23:36:54] [32mINFO[0m - __main__ - ✅ Model artifacts saved and logged to MLFlow
+[2026-03-16 23:36:54] [32mINFO[0m - __main__ - 🎉 Training completed successfully!
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ - 📊 Starting model evaluation...
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ -    New run ID: 878e4716672e47939d1703b046cb982e
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ -    Data version: 20260316_190442
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ - ✅ Test data loaded
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ - 🔍 Fetching new model from MLFlow...
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ -    New model F1: 0.8448
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ - 🔍 Fetching production model metrics...
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ -    No production model found (first training)
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ - 
+📈 Improvement: +0.8448 F1 points
+[2026-03-16 23:37:10] [32mINFO[0m - __main__ - ✅ NEW MODEL IS BETTER - Ready for production
+[2026-03-16 23:44:36] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-16 23:44:53] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-16 23:45:00] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-16 23:45:01] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-16 23:45:02] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-16 23:45:02] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-16 23:45:06] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-03-16 23:45:18] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-03-16 23:45:29] [32mINFO[0m - src.api.model - ✓ TFIDF loaded from /app/models/tfidf_vectorizer.joblib
+[2026-03-16 23:45:29] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
+[2026-03-16 23:45:29] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-03-16 23:45:29] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-03-16 23:47:39] [32mINFO[0m - __main__ - 🚀 Starting training with data version: 20260316_190442
+[2026-03-16 23:47:39] [32mINFO[0m - __main__ - 📂 Loading data from: /app/data/processed/20260316_190442
+[2026-03-16 23:47:39] [32mINFO[0m - __main__ - ✅ Data loaded successfully
+[2026-03-16 23:47:39] [32mINFO[0m - __main__ -    X_train shape: (33684, 2000)
+[2026-03-16 23:47:39] [32mINFO[0m - __main__ -    X_test shape: (8422, 2000)
+[2026-03-16 23:47:41] [32mINFO[0m - __main__ - ⚙️ Training LinearSVC model...
+[2026-03-16 23:47:43] [32mINFO[0m - __main__ - ✅ Model trained successfully
+[2026-03-16 23:47:43] [32mINFO[0m - __main__ - 📊 Making predictions on test set...
+[2026-03-16 23:47:43] [32mINFO[0m - __main__ - 📈 F1-score (macro): 0.8448
+[2026-03-16 23:47:43] [32mINFO[0m - __main__ - 
+              precision    recall  f1-score   support
+
+           0       0.88      0.75      0.81      1004
+           1       0.74      0.91      0.81      1175
+           2       0.89      0.82      0.85      1205
+           3       0.95      0.91      0.93      1009
+           4       0.84      0.82      0.83      1015
+           5       0.83      0.83      0.83       999
+           6       0.88      0.90      0.89       998
+           7       0.80      0.80      0.80      1017
+
+    accuracy                           0.84      8422
+   macro avg       0.85      0.84      0.84      8422
+weighted avg       0.85      0.84      0.84      8422
+
+[2026-03-16 23:47:43] [32mINFO[0m - __main__ - 💾 Saving model artifacts...
+[2026-03-16 23:48:11] [32mINFO[0m - __main__ - ✅ Model artifacts saved and logged to MLFlow
+[2026-03-16 23:48:11] [32mINFO[0m - __main__ - 🎉 Training completed successfully!
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ - 📊 Starting model evaluation...
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ -    New run ID: 0d01a4947f3642df892dea2acad03dfe
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ -    Data version: 20260316_190442
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ - ✅ Test data loaded
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ - 🔍 Fetching new model from MLFlow...
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ -    New model F1: 0.8448
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ - 🔍 Fetching production model metrics...
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ -    No production model found (first training)
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ - 
+📈 Improvement: +0.8448 F1 points
+[2026-03-16 23:48:29] [32mINFO[0m - __main__ - ✅ NEW MODEL IS BETTER - Ready for production

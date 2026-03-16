@@ -79,7 +79,7 @@ train_task = DockerOperator(
     container_name='airflow-train-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS,
     environment={
-        'MLFLOW_TRACKING_URI': 'http://mlflow-server:5000',
+        'MLFLOW_TRACKING_URI': 'http://mlflow:5000',
         'LOG_LEVEL': 'INFO',
         'LOG_DIR': '/app/logs',
         'PYTHONPATH': '/app',
@@ -99,7 +99,7 @@ evaluate_task = DockerOperator(
     container_name='airflow-eval-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS,
     environment={
-        'MLFLOW_TRACKING_URI': 'http://mlflow-server:5000',
+        'MLFLOW_TRACKING_URI': 'http://mlflow:5000',
         'LOG_LEVEL': 'INFO',
         'LOG_DIR': '/app/logs',
         'PYTHONPATH': '/app',
