@@ -6,23 +6,25 @@ networks:
 volumes:
   airflow_db:
   postgres_db:
+  mlflow_db:
 
 services:
   # ========================================================================
   # MLFlow Tracking Server
   # ========================================================================
   mlflow:
-    image: ghcr.io/mlflow/mlflow:latest
+    image: ghcr.io/mlflow/mlflow:v2.10.0
     container_name: mlflow-server
     ports:
       - "5000:5000"
     volumes:
-      - ./mlruns:/mlruns
+      - mlflow_db:/mlruns
     command: >
       mlflow server
       --backend-store-uri sqlite:////mlruns/mlflow.db
-      --artifacts-destination /mlruns
+      --default-artifact-root /mlruns/artifacts
       --host 0.0.0.0
+      --port 5000
     networks:
       - alice_network
     restart: unless-stopped

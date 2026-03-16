@@ -102,6 +102,12 @@ def train(data_version: str):
             
             logger.info("✅ Model artifacts saved and logged to MLFlow")
             logger.info(f"🎉 Training completed successfully!")
+
+            run_id = mlflow.active_run().info.run_id
+
+            # Sauvegarder le run_id pour la task suivante (evaluate)
+            with open('/tmp/mlflow_run_id.txt', 'w') as f:
+                f.write(run_id)
             
             return {
                 "status": "success",

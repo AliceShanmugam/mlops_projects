@@ -75,13 +75,11 @@ preprocess_task = DockerOperator(
 train_task = DockerOperator(
     task_id='train_model',
     image='alice_project-training:latest',
-    # Read data_version from preprocessing output
-    command='''python -u src/training/train.py \
-        --data_version $(cat /tmp/data_version.txt)''',
+    command=['/bin/sh', '-c', 'python -u src/training/train.py --data_version $(cat /tmp/data_version.txt)'],
     container_name='airflow-train-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS,
     environment={
-        'MLFLOW_TRACKING_URI': 'http://mlflow:5000',
+        'MLFLOW_TRACKING_URI': 'http://mlflow-server:5000',
         'LOG_LEVEL': 'INFO',
         'LOG_DIR': '/app/logs',
         'PYTHONPATH': '/app',
@@ -97,14 +95,11 @@ train_task = DockerOperator(
 evaluate_task = DockerOperator(
     task_id='evaluate_model',
     image='alice_project-training:latest',
-    # Get run_id from MLFlow (via API in production)
-    command='''python -u src/training/evaluate.py \
-        --new_run_id "{{ ti.xcom_pull(task_ids='train_model') }}" \
-        --data_version $(cat /tmp/data_version.txt)''',
+    command=['/bin/sh', '-c', 'python -u src/training/evaluate.py "$(cat /tmp/mlflow_run_id.txt)" $(cat /tmp/data_version.txt)'],
     container_name='airflow-eval-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS,
     environment={
-        'MLFLOW_TRACKING_URI': 'http://mlflow:5000',
+        'MLFLOW_TRACKING_URI': 'http://mlflow-server:5000',
         'LOG_LEVEL': 'INFO',
         'LOG_DIR': '/app/logs',
         'PYTHONPATH': '/app',
