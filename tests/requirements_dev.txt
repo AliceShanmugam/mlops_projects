@@ -2,6 +2,6 @@ pytest
 httpx
 pandas
 pyyaml
-PIL
+pillow
 bs4
 joblib
