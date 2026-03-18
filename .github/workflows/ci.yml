@@ -15,10 +15,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        service: [gateway, inference, training]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,14 +27,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip setuptools pytest
-          pip install -r src/${{ matrix.service }}/requirements.txt
+          python -m pip install --upgrade pip setuptools
           pip install -r tests/requirements_dev.txt
 
       - name: Run flake8
         run: |
           pip install flake8
-          flake8 src/${{ matrix.service }} --max-line-length=120
+          flake8 src --max-line-length=120
 
       - name: Run tests
         run: |
