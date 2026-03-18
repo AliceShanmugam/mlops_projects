@@ -10,7 +10,14 @@ from src.preprocessing.train_tfidf import train_tfidf_vectorizer
 from src.train_models.train_linearsvm import train_and_evaluate_svm
 import logging
 import dagshub
+import os
 
+dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
+
+mlflow.set_tracking_uri("https://dagshub.com/Fouxy84/mlops_projects.mlflow")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = "Fouxy84"
+os.environ["MLFLOW_TRACKING_PASSWORD"] = "fac5946f410149a81a7c5f4dc3402f1c7a4a1147"
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)

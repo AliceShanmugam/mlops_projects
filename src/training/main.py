@@ -2,7 +2,7 @@ from fastapi import FastAPI, BackgroundTasks
 import mlflow
 import logging
 import dagshub
-
+import os
 from src.training.run_training_text import main_texte
 from src.training.run_training_images import main_image
 
@@ -10,7 +10,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Training Service")
+
 dagshub.init(repo_owner="Fouxy84", repo_name="mlops_projects", mlflow=True)
+
+mlflow.set_tracking_uri("https://dagshub.com/Fouxy84/mlops_projects.mlflow")
+os.environ["MLFLOW_TRACKING_USERNAME"] = "Fouxy84"
+os.environ["MLFLOW_TRACKING_PASSWORD"] = "fac5946f410149a81a7c5f4dc3402f1c7a4a1147"
 
 
 @app.get("/health")

@@ -67,6 +67,9 @@ services:
       - ./models:/app/models
     networks:
       - mlops_network
+    environment:
+     - MLFLOW_TRACKING_USERNAME=${DAGSHUB_USER}
+     - MLFLOW_TRACKING_PASSWORD=${DAGSHUB_TOKEN}
 
   # =========================
   # AIRFLOW
