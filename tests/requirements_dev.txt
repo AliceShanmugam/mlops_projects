@@ -2,3 +2,6 @@ pytest
 httpx
 pandas
 pyyaml
+PIL
+bs4
+joblib
