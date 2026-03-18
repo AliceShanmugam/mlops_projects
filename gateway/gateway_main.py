@@ -14,6 +14,7 @@ TRAIN_API_URL = os.getenv("TRAIN_API_URL", "http://airflow-api:8002")
 AUTH_API_URL = os.getenv("AUTH_API_URL", "http://auth-api:8003")
 
 # =========================
+
 # FASTAPI INIT
 # =========================
 app = FastAPI(
