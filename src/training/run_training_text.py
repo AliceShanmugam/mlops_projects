@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 import mlflow
 from mlflow.tracking import MlflowClient
-from opentelemetry import metrics
+
 from src.preprocessing.text_cleaning import preprocess_training_data
 from src.preprocessing.train_tfidf import train_tfidf_vectorizer
 from src.train_models.train_linearsvm import train_and_evaluate_svm

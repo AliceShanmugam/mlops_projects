@@ -3,7 +3,7 @@
 Security utilities: validation, rate limiting, error handling.
 """
 
-from fastapi import Request, HTTPException, status
+from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -112,7 +112,7 @@ def log_request(func):
             duration_ms = (time.time() - start_time) * 1000
 
             logger.info(
-                f"Request completed",
+                "Request completed",
                 extra={
                     "request_id": request_id,
                     "function": func.__name__,
@@ -146,7 +146,7 @@ def log_request(func):
             duration_ms = (time.time() - start_time) * 1000
 
             logger.info(
-                f"Request completed",
+                "Request completed",
                 extra={
                     "request_id": request_id,
                     "function": func.__name__,
