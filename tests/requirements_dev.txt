@@ -5,3 +5,8 @@ pyyaml
 pillow
 bs4
 joblib
+fastapi
+uvicorn
+dagshub
+torch
+langdetect
