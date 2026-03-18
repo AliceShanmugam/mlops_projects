@@ -33,6 +33,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools pytest
           pip install -r src/${{ matrix.service }}/requirements.txt
+          pip install -r tests/requirements_dev.txt
 
       - name: Run flake8
         run: |
