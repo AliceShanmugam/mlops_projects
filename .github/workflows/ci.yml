@@ -1,4 +1,3 @@
-
 name: CI - MLOps Pipeline
 
 on:
@@ -9,67 +8,106 @@ on:
       - main
 
 jobs:
+
+  # ======================================================
+  # TEST PAR SERVICE
+  # ======================================================
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        service: [gateway, inference, training]
+
     steps:
-      # =========================
-      # CHECKOUT
-      # =========================
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # =========================
-      # PYTHON SETUP
-      # =========================
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
 
-      # =========================
-      # INSTALL DEPENDENCIES
-      # =========================
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools
-          pip install -r requirements.txt
+          pip install -r src/${{ matrix.service }}/requirements.txt
 
-      # =========================
-      # LINT (qualité code)
-      # =========================
       - name: Run flake8
         run: |
           pip install flake8
-          flake8 src --max-line-length=120
+          flake8 src/${{ matrix.service }} --max-line-length=120
 
-      # =========================
-      # UNIT TESTS
-      # =========================
       - name: Run tests
         run: |
-          pytest tests --disable-warnings -q
+          pytest tests/${{ matrix.service }} --disable-warnings -q
 
-  # =========================
-  # BUILD DOCKER (OPTIONNEL MAIS RECOMMANDÉ)
-  # =========================
+
+  # ======================================================
+  # AIRFLOW
+  # ======================================================
+  airflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Airflow deps
+        run: |
+          pip install -r airflow/requirements.txt
+
+      - name: Validate DAGs
+        run: |
+          python -m py_compile airflow/dags/*.py
+
+
+  # ======================================================
+  # BUILD + PUSH DOCKER
+  # ======================================================
   docker:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [test, airflow]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Gateway image
-        run: docker build -t gateway -f gateway/Dockerfile .
+      # 🔐 LOGIN DOCKER HUB
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build Inference image
-        run: docker build -t inference -f src/inference/Dockerfile .
+      # =========================
+      # BUILD IMAGES
+      # =========================
+      - name: Build Gateway
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest -f gateway/Dockerfile .
 
-      - name: Build Auth image
-        run: docker build -t auth -f src/gateway/Dockerfile .
+      - name: Build Auth
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/auth:latest -f src/gateway/Dockerfile .
 
-      - name: Build Training image
-        run: docker build -t training -f src/training/Dockerfile .
+      - name: Build Inference
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/inference:latest -f src/inference/Dockerfile .
+
+      - name: Build Training
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/training:latest -f src/training/Dockerfile .
+
+      # =========================
+      # PUSH IMAGES
+      # =========================
+      - name: Push Gateway
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
+
+      - name: Push Auth
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/auth:latest
+
+      - name: Push Inference
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/inference:latest
+
+      - name: Push Training
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/training:latest
