@@ -19,5 +19,5 @@ COPY src/ /app/src/
 ENV PYTHONPATH=/app
 
 # 5. Commande de démarrage
-CMD ["uvicorn", "src.inference.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.inference.main:app", "--host", "0.0.0.0", "--port", "8001"]
 

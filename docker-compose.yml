@@ -1,104 +1,96 @@
+version: "3.9"
+
 services:
-  
+
+  # =========================
+  # API GATEWAY (ENTRYPOINT)
+  # =========================
   gateway:
-    container_name: gateway_AF
     build:
       context: .
-      dockerfile: src/gateway/Dockerfile
+      dockerfile: gateway/Dockerfile
+    container_name: gateway
     ports:
       - "8000:8000"
     environment:
-      - INFERENCE_URL=http://inference:8000
-      - TRAINING_URL=http://training:8000
+      - PREDICT_API_URL=http://predict-api:8001
+      - TRAIN_API_URL=http://training-api:8002
+      - AUTH_API_URL=http://auth-api:8003
     depends_on:
-      - inference
-      - training
+      - predict-api
+      - training-api
+      - auth-api
     networks:
       - mlops_network
 
-  
-  training:
-    container_name: training_AF
+  # =========================
+  # AUTH SERVICE
+  # =========================
+  auth-api:
     build:
       context: .
-      dockerfile: src/training/Dockerfile
+      dockerfile: src/gateway/Dockerfile
+    container_name: auth-api
     ports:
-      - "8002:8000" 
-    environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:5000
-      - PYTHONPATH=/app
-    volumes:
-      - ./data:/app/data
-      - ./src:/app/src
-      - ./models:/app/models
-    depends_on:
-      - mlflow
+      - "8003:8003"
     networks:
       - mlops_network
 
-
-  inference:
-    container_name: inference_AF
+  # =========================
+  # PREDICTION SERVICE
+  # =========================
+  predict-api:
     build:
       context: .
       dockerfile: src/inference/Dockerfile
+    container_name: predict-api
     ports:
-      - "8001:8000"  
-    environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:5000
-      - PYTHONPATH=/app
+      - "8001:8001"
     volumes:
       - ./data:/app/data
-      - ./src:/app/src
       - ./models:/app/models
     networks:
       - mlops_network
 
-
-  mlflow:
-    container_name: mlflow_AF
+  # =========================
+  # TRAINING SERVICE
+  # =========================
+  training-api:
     build:
       context: .
-      dockerfile: src/mlflow/Dockerfile
+      dockerfile: src/training/Dockerfile
+    container_name: training-api
     ports:
-      - "5000:5000"
-    volumes:
-    
-      - ./mlflow/mlruns:/mlflow/mlruns
-    networks:
-      - mlops_network
-
-
-  streamlit:
-    container_name: streamlit_AF
-    build:
-      context: .
-      dockerfile: streamlit/Dockerfile
-    ports:
-      - "8501:8501"
-    environment:
-      - GATEWAY_URL=http://gateway:8000
-      - INFERENCE_URL=http://inference:8000
-      - TRAINING_URL=http://training:8000
-      - MLFLOW_URL=http://mlflow:5000
-      - PYTHONPATH=/app
+      - "8002:8002"
     volumes:
       - ./data:/app/data
       - ./models:/app/models
-      - ./streamlit:/app
+    networks:
+      - mlops_network
+
+  # =========================
+  # AIRFLOW
+  # =========================
+  airflow:
+    image: apache/airflow:2.9.1
+    container_name: airflow
     depends_on:
       - gateway
-      - inference
-      - training
-      - mlflow
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./data:/app/data
+      - ./models:/app/models
+    ports:
+      - "8080:8080"
+    command: webserver
     networks:
       - mlops_network
-    restart: unless-stopped
 
-
+# =========================
+# NETWORK
+# =========================
 networks:
   mlops_network:
     driver: bridge
-
-volumes:
-  grafana_storage:

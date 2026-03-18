@@ -1,4 +1,4 @@
-# services/gateway/main.py
+# src/gateway/main.py
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
