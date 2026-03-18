@@ -17,13 +17,10 @@ pydantic
 python-multipart
 pyjwt
 bcrypt
-slowapi
-prometheus-client
-apache-airflow
-evidently
+pandas
 structlog
 python-json-logger
-streamlit>=1.28.0
-plotly
 requests
 dagshub
+httpx
+yaml
