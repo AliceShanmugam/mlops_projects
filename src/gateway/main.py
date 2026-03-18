@@ -6,7 +6,12 @@ import requests
 import logging
 import uvicorn
 
-from src.gateway.auth import authenticate_user, create_access_token, require_admin, require_user
+from src.gateway.auth import (
+    authenticate_user,
+    create_access_token,
+    require_admin,
+    require_user,
+)
 from src.gateway.schemas import Token, PredictRequest, PredictImageRequest
 from src.gateway.config import TRAINING_SERVICE_URL, INFERENCE_SERVICE_URL
 
@@ -18,6 +23,7 @@ app = FastAPI(
 # ======================================================
 # HEALTH
 # ======================================================
+
 
 @app.get("/health")
 def health():
@@ -37,9 +43,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
             detail="Incorrect credentials",
         )
 
-    token = create_access_token(
-        {"sub": user["username"], "role": user["role"]}
-    )
+    token = create_access_token({"sub": user["username"], "role": user["role"]})
 
     return {"access_token": token, "token_type": "bearer"}
 
@@ -120,12 +124,5 @@ def predict_cnn(
     return response.json()
 
 
-
-
 if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=False
-    )
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)

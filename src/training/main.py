@@ -1,5 +1,3 @@
-     
-
 from fastapi import FastAPI, BackgroundTasks
 import mlflow
 import logging
@@ -12,7 +10,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Training Service")
-dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
+dagshub.init(repo_owner="Fouxy84", repo_name="mlops_projects", mlflow=True)
+
 
 @app.get("/health")
 def health():
@@ -43,4 +42,3 @@ def train_svm(background_tasks: BackgroundTasks):
 def train_cnn(background_tasks: BackgroundTasks):
     background_tasks.add_task(train_image_pipeline)
     return {"status": "cnn_training_started"}
-

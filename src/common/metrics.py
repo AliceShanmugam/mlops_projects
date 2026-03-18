@@ -8,11 +8,12 @@ from prometheus_client import Counter, Histogram, Gauge, CollectorRegistry
 import time
 from functools import wraps
 
+
 # Create a custom registry for each service
 def create_metrics_registry():
     """Create Prometheus metrics registry."""
     registry = CollectorRegistry()
-    
+
     # Request metrics
     request_count = Counter(
         "mlops_requests_total",
@@ -20,7 +21,7 @@ def create_metrics_registry():
         ["service", "endpoint", "method", "status"],
         registry=registry,
     )
-    
+
     request_latency = Histogram(
         "mlops_request_duration_seconds",
         "Request latency in seconds",
@@ -28,7 +29,7 @@ def create_metrics_registry():
         buckets=(0.01, 0.05, 0.1, 0.5, 1.0, 2.5, 5.0),
         registry=registry,
     )
-    
+
     # Model metrics
     model_predictions = Counter(
         "mlops_model_predictions_total",
@@ -36,7 +37,7 @@ def create_metrics_registry():
         ["service", "model_type"],
         registry=registry,
     )
-    
+
     model_prediction_latency = Histogram(
         "mlops_model_prediction_duration_seconds",
         "Model prediction latency",
@@ -44,7 +45,7 @@ def create_metrics_registry():
         buckets=(0.01, 0.05, 0.1, 0.5, 1.0),
         registry=registry,
     )
-    
+
     # Model performance
     model_accuracy = Gauge(
         "mlops_model_accuracy",
@@ -52,7 +53,7 @@ def create_metrics_registry():
         ["service", "model_type"],
         registry=registry,
     )
-    
+
     # Error metrics
     errors = Counter(
         "mlops_errors_total",
@@ -60,7 +61,7 @@ def create_metrics_registry():
         ["service", "error_type"],
         registry=registry,
     )
-    
+
     # Data drift metrics
     data_drift_score = Gauge(
         "mlops_data_drift_score",
@@ -68,7 +69,7 @@ def create_metrics_registry():
         ["service", "feature"],
         registry=registry,
     )
-    
+
     return {
         "registry": registry,
         "request_count": request_count,
@@ -83,12 +84,13 @@ def create_metrics_registry():
 
 def track_request(service_name: str, endpoint: str, metrics: dict):
     """Decorator to track request metrics."""
+
     def decorator(func):
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
             start_time = time.time()
             status_code = 200
-            
+
             try:
                 result = await func(*args, **kwargs)
                 return result
@@ -108,12 +110,12 @@ def track_request(service_name: str, endpoint: str, metrics: dict):
                     endpoint=endpoint,
                     method="POST",
                 ).observe(duration)
-        
+
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
             start_time = time.time()
             status_code = 200
-            
+
             try:
                 result = func(*args, **kwargs)
                 return result
@@ -133,8 +135,9 @@ def track_request(service_name: str, endpoint: str, metrics: dict):
                     endpoint=endpoint,
                     method="POST",
                 ).observe(duration)
-        
-        if hasattr(func, '__await__'):
+
+        if hasattr(func, "__await__"):
             return async_wrapper
         return sync_wrapper
+
     return decorator

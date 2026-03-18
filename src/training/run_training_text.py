@@ -1,4 +1,3 @@
-
 # # src/training/run_training_text.py
 
 from pathlib import Path
@@ -28,6 +27,7 @@ X_TRAIN_PATH = DATA_RAW_DIR / "X_train_update.csv"
 Y_TRAIN_PATH = DATA_RAW_DIR / "Y_train_CVw08PX.csv"
 TRAIN_CLEAN_PATH = DATA_PROCESSED_DIR / "train_clean.csv"
 
+
 # =========================
 # UTILITAIRES
 # =========================
@@ -41,11 +41,12 @@ def make_json_serializable(obj):
         return [make_json_serializable(v) for v in obj]
     return obj
 
+
 # =========================
 # PIPELINE COMPLET
 # =========================
 def main_texte():
-    dagshub.init(repo_owner='Fouxy84', repo_name='mlops_projects', mlflow=True)
+    dagshub.init(repo_owner="Fouxy84", repo_name="mlops_projects", mlflow=True)
     mlflow.set_experiment("Text_Pipeline")
     with mlflow.start_run(run_name="Full_Text_Pipeline"):
         try:
@@ -69,7 +70,7 @@ def main_texte():
                 artifacts_dir=MODELS_DIR,
                 text_column="text_clean",
                 max_features=50000,
-                ngram_range=(1, 2)
+                ngram_range=(1, 2),
             )
             mlflow.log_artifact(MODELS_DIR / "tfidf.joblib", "preprocessing")
             logger.info("✅ Vectorizer TF-IDF entraîné et sauvegardé")
@@ -81,42 +82,46 @@ def main_texte():
                 data_path=TRAIN_CLEAN_PATH,
                 artifacts_dir=MODELS_DIR,
                 test_size=0.2,
-                svm_params={"C": 1.0}
+                svm_params={"C": 1.0},
             )
 
             # 4. Enregistrement du modèle dans le registry MLflow
             mlflow.sklearn.log_model(
-                sk_model=metrics["svm_model"], 
+                sk_model=metrics["svm_model"],
                 artifact_path="model",
-                registered_model_name="Text_Classifier_SVM"
+                registered_model_name="Text_Classifier_SVM",
             )
-            
+
             # Transition vers le stage "Production"
             client = MlflowClient()
             all_versions = client.search_model_versions("name='Text_Classifier_SVM'")
-            latest_version = max(all_versions,key=lambda mv: int(mv.version))
+            latest_version = max(all_versions, key=lambda mv: int(mv.version))
 
             client.transition_model_version_stage(
                 name="Text_Classifier_SVM",
-                        stage="Production",
-                        version=latest_version.version
+                stage="Production",
+                version=latest_version.version,
             )
-            logger.info(f"✅ Modèle Text_Classifier_SVM v{latest_version.version} passé en Production")
+            logger.info(
+                f"✅ Modèle Text_Classifier_SVM v{latest_version.version} passé en Production"
+            )
 
             # 5. Sauvegarde des métriques
             mlflow.set_tag("step", "metrics")
             logger.info("4. Sauvegarde des métriques...")
             metrics_path = MODELS_DIR / "metrics_svm.json"
             # Retirer le modèle des métriques avant JSON
-            metrics_for_json = {k: v for k, v in metrics.items()if k != "svm_model"}
+            metrics_for_json = {k: v for k, v in metrics.items() if k != "svm_model"}
             metrics_serializable = make_json_serializable(metrics_for_json)
             with open(metrics_path, "w", encoding="utf-8") as f:
                 json.dump(metrics_serializable, f, indent=2)
             mlflow.log_artifact(metrics_path, "metrics")
-            mlflow.log_metrics({
-                "accuracy": metrics_for_json["accuracy"],
-                "f1_macro": metrics_for_json["f1_macro"]
-            })
+            mlflow.log_metrics(
+                {
+                    "accuracy": metrics_for_json["accuracy"],
+                    "f1_macro": metrics_for_json["f1_macro"],
+                }
+            )
 
             # Tags finaux
             mlflow.set_tag("status", "success")
@@ -135,6 +140,7 @@ def main_texte():
             logger.error(f"❌ Erreur dans le pipeline texte: {e}", exc_info=True)
             mlflow.set_tag("status", "failed")
             raise
+
 
 # =========================
 # ENTRY POINT

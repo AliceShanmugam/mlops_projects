@@ -1,5 +1,4 @@
-
-    # src/preprocessing/text_cleaning.py
+# src/preprocessing/text_cleaning.py
 import re
 import html
 from pathlib import Path
@@ -12,6 +11,7 @@ DetectorFactory.seed = 0
 
 IMAGE_DIR = Path("data/raw/image_train")
 
+
 # =========================
 # Build image paths
 # =========================
@@ -23,6 +23,8 @@ def add_image_paths(df: pd.DataFrame, image_dir: Path) -> pd.DataFrame:
 
     df["image_path"] = df.apply(build_path, axis=1)
     return df
+
+
 # =========================
 # Label mapping Rakuten
 # =========================
@@ -47,6 +49,7 @@ LABEL_NAME = {
     6: "fournitures",
     7: "jardin / piscine",
 }
+
 
 # =========================
 # Text cleaning
@@ -85,13 +88,9 @@ def preprocess_training_data(
     df = pd.concat([df_x, df_y], axis=1)
 
     # Merge text
-    df["text"] = (
-        df["designation"].fillna("") + " " +
-        df["description"].fillna("")
-    )
+    df["text"] = df["designation"].fillna("") + " " + df["description"].fillna("")
 
     df["text_clean"] = df["text"].apply(clean_text)
-
 
     # Label mapping
     def map_label(prdtypecode):
@@ -108,13 +107,5 @@ def preprocess_training_data(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     df[
-        [
-            "productid",
-            "imageid",
-            "text_clean",
-            "label",
-            "label_name",
-            "image_path"
-        ]
+        ["productid", "imageid", "text_clean", "label", "label_name", "image_path"]
     ].to_csv(output_path, index=False)
-

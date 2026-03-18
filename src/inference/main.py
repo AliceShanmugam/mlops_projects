@@ -1,5 +1,4 @@
-
- # src/inference/main.py
+# src/inference/main.py
 
 from pathlib import Path
 import sys
@@ -38,7 +37,11 @@ DATA_PROCESSED_DIR = BASE_DIR / "data" / "processed"
 # =========================
 try:
     df_labels = pd.read_csv(DATA_PROCESSED_DIR / "train_clean.csv")
-    label_mapping = df_labels[['label', 'label_name']].drop_duplicates().set_index('label')['label_name']
+    label_mapping = (
+        df_labels[["label", "label_name"]]
+        .drop_duplicates()
+        .set_index("label")["label_name"]
+    )
     LABEL_ID_TO_NAME = label_mapping.to_dict()
 except Exception as e:
     logger.warning(f"Labels fallback: {e}")
@@ -50,17 +53,20 @@ except Exception as e:
 DEVICE = torch.device("cpu")
 IMAGE_SIZE = 128
 
-transform = transforms.Compose([
-    transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5]*3, std=[0.5]*3),
-])
+transform = transforms.Compose(
+    [
+        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3),
+    ]
+)
 
 # =========================
 # GLOBAL MODELS
 # =========================
 text_model = None
 image_model = None
+
 
 # =========================
 # LOAD MODELS (MLFLOW FIRST)
@@ -96,11 +102,14 @@ app = FastAPI(
     title="MLOps Inference API (MLflow)",
 )
 
+
 class PredictTextRequest(BaseModel):
     text: str
 
+
 class PredictImageRequest(BaseModel):
     image_path: str
+
 
 class PredictResponse(BaseModel):
     predicted_label: int
@@ -159,6 +168,7 @@ def predict_cnn(request: PredictImageRequest):
         tensor = transform(image).unsqueeze(0)
 
         import pandas as pd
+
         df = pd.DataFrame({"image": [tensor.numpy().tolist()]})
 
         pred = image_model.predict(df)[0]
@@ -221,4 +231,4 @@ def startup():
     if image_model is None:
         logger.warning("⚠️ Image model not loaded")
 
-    logger.info("✅ Inference API ready")   
+    logger.info("✅ Inference API ready")
