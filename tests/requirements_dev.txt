@@ -12,3 +12,4 @@ torch
 langdetect
 mlflow
 torchvision
+python-multipart
