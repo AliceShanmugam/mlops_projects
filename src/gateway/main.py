@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 import requests
 import logging
-
+import uvicorn
 
 from src.gateway.auth import authenticate_user, create_access_token, require_admin, require_user
 from src.gateway.schemas import Token, PredictRequest, PredictImageRequest
@@ -18,6 +18,7 @@ app = FastAPI(
 # ======================================================
 # HEALTH
 # ======================================================
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "gateway"}
@@ -119,7 +120,7 @@ def predict_cnn(
     return response.json()
 
 
-import uvicorn
+
 
 if __name__ == "__main__":
     uvicorn.run(

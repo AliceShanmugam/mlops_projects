@@ -5,3 +5,5 @@ requests
 fastapi
 bcrypt
 pyjwt
+jose
+passlib

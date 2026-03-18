@@ -1,5 +1,4 @@
 # services/gateway/app/config.py
-from datetime import timedelta
 
 SECRET_KEY = "CHANGE_ME_SUPER_SECRET"
 ALGORITHM = "HS256"
