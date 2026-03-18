@@ -1,9 +1,5 @@
 fastapi
-uvicorn
-torch
-torchvision
 scikit-learn
-pandas
 joblib
-pillow
-mlflow
+numpy
+uvicorn
