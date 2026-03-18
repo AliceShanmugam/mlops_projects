@@ -41,7 +41,7 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m pytest tests/${{ matrix.service }} --disable-warnings -q
+          python -m pytest tests --disable-warnings -q
 
 
   # ======================================================
