@@ -21,6 +21,13 @@ class Settings:
     API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
     API_PORT: int = int(os.getenv("API_PORT", "8000"))
     API_KEY: str = os.getenv("API_KEY", "dev-key-insecure")
+
+    # MinIO / S3
+    MINIO_ENDPOINT: str = os.getenv("MINIO_ENDPOINT", "http://minio:9000")
+    MINIO_ACCESS_KEY: str = os.getenv("AWS_ACCESS_KEY_ID", "minioadmin")
+    MINIO_SECRET_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "minioadmin")
+    MINIO_BUCKET_RAW: str = os.getenv("MINIO_BUCKET_RAW", "raw-data")
+    MINIO_BUCKET_ARTIFACTS: str = os.getenv("MINIO_BUCKET_ARTIFACTS", "mlflow-artifacts")
     
     # MLFlow
     MLFLOW_TRACKING_URI: str = os.getenv(
