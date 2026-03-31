@@ -8,9 +8,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 def dummy_preprocess():
-    # Simulate preprocessing output
-    with open('/tmp/data_version.txt', 'w') as f:
-        f.write('20260316_093954')
+    # Simulate preprocessing output - no-op since we hardcoded values
+    logger.info("✓ Data version: 20260316_093954")
 
 PROJECT_ROOT = "/home/sakura/Project/mlops_projects/alice_project"
 
@@ -37,7 +36,7 @@ with DAG("train_test", start_date=datetime(2026, 1, 1), schedule_interval=None) 
     train_task = DockerOperator(
         task_id='train_model',
         image='alice_project-training:latest',
-        command=['/bin/sh', '-c', 'python -u src/training/train.py --data_version $(cat /tmp/data_version.txt)'],
+                command='python -u src/training/train.py --data_version 20260316_093954',
         mounts=COMMON_MOUNTS,
         environment={
             'MLFLOW_TRACKING_URI': 'http://mlflow-server:5000',
@@ -51,7 +50,7 @@ with DAG("train_test", start_date=datetime(2026, 1, 1), schedule_interval=None) 
     evaluate_task = DockerOperator(
         task_id='evaluate_model',
         image='alice_project-training:latest',
-        command=['/bin/sh', '-c', 'python -u src/training/evaluate.py "$(cat /tmp/mlflow_run_id.txt)" $(cat /tmp/data_version.txt)'],
+        command='python -u src/training/evaluate.py "0d01a4947f3642df892dea2acad03dfe" 20260316_093954',
         mounts=COMMON_MOUNTS,
         environment={
             'MLFLOW_TRACKING_URI': 'http://mlflow-server:5000',
