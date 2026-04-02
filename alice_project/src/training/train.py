@@ -4,9 +4,11 @@ Accepts data_version as argument from Airflow
 """
 
 import os
+import io
 import joblib
 import mlflow
 import mlflow.sklearn
+import boto3
 from sklearn.svm import LinearSVC
 from sklearn.metrics import f1_score, classification_report
 from sklearn.pipeline import Pipeline
@@ -18,6 +20,12 @@ from config.settings import settings
 
 logger = get_logger(__name__)
 
+def _load_from_minio(s3, data_version: str, filename: str):
+    buf = io.BytesIO(
+        s3.get_object(Bucket='processed-data', Key=f'{data_version}/{filename}')['Body'].read()
+    )
+    return joblib.load(buf)
+
 def train(data_version: str):
     """Train model with versioned data"""
     
@@ -27,19 +35,22 @@ def train(data_version: str):
     mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
     mlflow.set_experiment("text_classification")
     
-    data_path = Path(settings.DATA_PROCESSED_PATH) / data_version
-    
-    if not data_path.exists():
-        raise FileNotFoundError(f"Data directory not found: {data_path}")
-    
-    logger.info(f"📂 Loading data from: {data_path}")
+    # Charger les données depuis MinIO
+    s3 = boto3.client(
+        's3',
+        endpoint_url=os.getenv('MINIO_ENDPOINT', 'http://minio:9000'),
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    )
+    logger.info(f"📂 Loading data from MinIO: processed-data/{data_version}/")
     
     # Load data
-    X_train = joblib.load(data_path / "X_train_tfidf.joblib")
-    y_train = joblib.load(data_path / "y_train.joblib")
-    X_test = joblib.load(data_path / "X_test_tfidf.joblib")
-    y_test = joblib.load(data_path / "y_test.joblib")
-    tfidf_vectorizer = joblib.load(data_path / "tfidf_vectorizer.joblib")
+    X_train = _load_from_minio(s3, data_version, "X_train_tfidf.joblib")
+    y_train = _load_from_minio(s3, data_version, "y_train.joblib")
+    X_test  = _load_from_minio(s3, data_version, "X_test_tfidf.joblib")
+    y_test  = _load_from_minio(s3, data_version, "y_test.joblib")
+    tfidf_vectorizer = _load_from_minio(s3, data_version, "tfidf_vectorizer.joblib")
+    
     
     logger.info("✅ Data loaded successfully")
     logger.info(f"   X_train shape: {X_train.shape}")

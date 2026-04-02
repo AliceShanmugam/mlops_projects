@@ -24,14 +24,14 @@ default_args = {
 dag = DAG(
     'training_pipeline',
     default_args=default_args,
-    description='Complete ML training pipeline: preprocess → train → evaluate → registry',
+    description='Complete ML training pipeline: download → preprocess → train → evaluate → registry',
     schedule_interval=None,  # Manual trigger via API
     catchup=False,
     tags=['mlops', 'training'],
 )
 
 # Get project root
-PROJECT_ROOT = "/home/sakura/Project/mlops_projects/alice_project"
+PROJECT_ROOT = os.getenv("PROJECT_ROOT", "/home/sakura/Project/mlops_projects/alice_project")
 
 # Common Docker config
 DOCKER_BASE_CONFIG = {
@@ -41,13 +41,39 @@ DOCKER_BASE_CONFIG = {
     'mount_tmp_dir': False,
 }
 
+# Credentials MinIO partagés entre les tâches qui accèdent aux données
+MINIO_ENV = {
+    'MINIO_ENDPOINT': os.getenv('MINIO_ENDPOINT'),
+    'AWS_ACCESS_KEY_ID': os.getenv('MINIO_ROOT_USER'),
+    'AWS_SECRET_ACCESS_KEY': os.getenv('MINIO_ROOT_PASSWORD'),
+}
+
 # Common Docker mounts
 COMMON_MOUNTS = [
-    Mount(source=f'{PROJECT_ROOT}/data', target='/app/data', type='bind'),
-    Mount(source=f'{PROJECT_ROOT}/models', target='/app/models', type='bind'),
     Mount(source=f'{PROJECT_ROOT}/logs', target='/app/logs', type='bind'),
     Mount(source='/tmp', target='/tmp', type='bind'),
 ]
+
+# ============================================================================
+# TASK 0: DOWNLOAD raw data → MinIO
+# ============================================================================
+download_task = DockerOperator(
+    task_id='download_data',
+    image='alice_project-preprocessing:latest',
+    command='python -u src/preprocessing/download.py',
+    container_name='airflow-download-{{ execution_date.strftime("%s") }}',
+    mounts=COMMON_MOUNTS,
+    environment={
+        **MINIO_ENV,
+        'CHALLENGEDATA_USERNAME': os.getenv('CHALLENGEDATA_USERNAME'),
+        'CHALLENGEDATA_PASSWORD': os.getenv('CHALLENGEDATA_PASSWORD'),
+        'LOG_LEVEL': 'INFO',
+        'LOG_DIR': '/app/logs',
+        'PYTHONPATH': '/app',
+    },
+    dag=dag,
+    **DOCKER_BASE_CONFIG,
+)
 
 # ============================================================================
 # TASK 1: PREPROCESSING
@@ -60,6 +86,8 @@ preprocess_task = DockerOperator(
     container_name='airflow-preprocess-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS,
     environment={
+        **MINIO_ENV,
+        'BATCH': '{{dag_run.conf.get("batch", "1")}}',  # Pass batch number via conf when triggering
         'LOG_LEVEL': 'INFO',
         'LOG_DIR': '/app/logs',
         'PYTHONPATH': '/app',
@@ -79,7 +107,10 @@ train_task = DockerOperator(
     container_name='airflow-train-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS,
     environment={
-        'MLFLOW_TRACKING_URI': 'http://mlflow:5000',
+        **MINIO_ENV,
+        'MLFLOW_TRACKING_URI': 'https://dagshub.com/AliceShanmugam/mlops_projects.mlflow',
+        'MLFLOW_TRACKING_USERNAME': os.getenv('DAGSHUB_USERNAME'),
+        'MLFLOW_TRACKING_PASSWORD': os.getenv('DAGSHUB_USER_TOKEN'),
         'LOG_LEVEL': 'INFO',
         'LOG_DIR': '/app/logs',
         'PYTHONPATH': '/app',
@@ -99,7 +130,9 @@ evaluate_task = DockerOperator(
     container_name='airflow-eval-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS,
     environment={
-        'MLFLOW_TRACKING_URI': 'http://mlflow:5000',
+        'MLFLOW_TRACKING_URI': 'https://dagshub.com/AliceShanmugam/mlops_projects.mlflow',
+        'MLFLOW_TRACKING_USERNAME': os.getenv('DAGSHUB_USERNAME'),
+        'MLFLOW_TRACKING_PASSWORD': os.getenv('DAGSHUB_USER_TOKEN'),
         'LOG_LEVEL': 'INFO',
         'LOG_DIR': '/app/logs',
         'PYTHONPATH': '/app',
@@ -152,4 +185,4 @@ notify_task = PythonOperator(
 # DEPENDENCIES
 # ============================================================================
 
-preprocess_task >> train_task >> evaluate_task >> registry_task >> notify_task
+download_task >> preprocess_task >> train_task >> evaluate_task >> registry_task >> notify_task

@@ -27,12 +27,12 @@ class Settings:
     MINIO_ACCESS_KEY: str = os.getenv("AWS_ACCESS_KEY_ID", "minioadmin")
     MINIO_SECRET_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "minioadmin")
     MINIO_BUCKET_RAW: str = os.getenv("MINIO_BUCKET_RAW", "raw-data")
-    MINIO_BUCKET_ARTIFACTS: str = os.getenv("MINIO_BUCKET_ARTIFACTS", "mlflow-artifacts")
+    MINIO_BUCKET_PROCESSED: str = os.getenv("MINIO_BUCKET_PROCESSED", "processed-data")
     
     # MLFlow
     MLFLOW_TRACKING_URI: str = os.getenv(
-        "MLFLOW_TRACKING_URI", 
-        "http://mlflow:5000"
+        "MLFLOW_TRACKING_URI",
+        "https://dagshub.com/AliceShanmugam/mlops_projects.mlflow"
     )
     
     # Airflow

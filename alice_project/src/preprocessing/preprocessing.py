@@ -13,6 +13,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib
 import spacy
+import io
+import boto3
 
 DetectorFactory.seed = 0
 
@@ -44,9 +46,34 @@ LABEL_MAPPING = {
     7: [2582, 2585],
 }
 
+def _upload_joblib(s3, obj, bucket: str, key: str):
+    buf = io.BytesIO()
+    joblib.dump(obj, buf)
+    buf.seek(0)
+    s3.upload_fileobj(buf, bucket, key)
+
+
 def preprocess(run_translation=True):
-    df_products = pd.read_excel("data/raw/X_train_update.xlsx")
-    df_labels = pd.read_excel("data/raw/Y_train_CVw08PX.xlsx")
+    batch = int(os.getenv("BATCH", "1"))
+    s3 = boto3.client(
+        's3',
+        endpoint_url=os.getenv('MINIO_ENDPOINT', 'http://minio:9000'),
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    )
+
+    # Lire batch 1..N et concaténer
+    frames = []
+    for i in range(1, batch + 1):
+        df_b = pd.read_excel(io.BytesIO(
+            s3.get_object(Bucket='raw-data', Key=f'X_train_batch_{i}.xlsx')['Body'].read()
+        ))
+        frames.append(df_b)
+    df_products = pd.concat(frames, ignore_index=True)
+
+    df_labels = pd.read_excel(io.BytesIO(
+        s3.get_object(Bucket='raw-data', Key='Y_train_CVw08PX.xlsx')['Body'].read()
+    ))
 
     df = pd.concat([df_products, df_labels], axis=1)
     df = df[['designation', 'description', 'productid', 'imageid', 'prdtypecode']]
@@ -76,10 +103,6 @@ def preprocess(run_translation=True):
         tqdm.pandas(desc="Traduction FR")
         df_labeled.loc[mask, 'text_fr'] = df_labeled.loc[mask, 'text'].progress_apply(translate_text)
 
-    # Sauvegarde du dataframe prétraité
-    os.makedirs("data/processed", exist_ok=True)
-    df_labeled.to_csv("data/processed/df_labeled_fr.csv", index=False)
-
     # Split des données
     X = df_labeled['text_fr']
     y = df_labeled['label']
@@ -108,14 +131,12 @@ def preprocess(run_translation=True):
 
     # Sauvegarde des jeux de données prétraités
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_dir = f"data/processed/{timestamp}"
-    os.makedirs(output_dir, exist_ok=True)
-
-    joblib.dump(X_train_tfidf, f"{output_dir}/X_train_tfidf.joblib")
-    joblib.dump(X_test_tfidf, f"{output_dir}/X_test_tfidf.joblib")
-    joblib.dump(y_train, f"{output_dir}/y_train.joblib")
-    joblib.dump(y_test, f"{output_dir}/y_test.joblib")
-    joblib.dump(tfidf_vectorizer, f"{output_dir}/tfidf_vectorizer.joblib")
+    prefix = f"{timestamp}/"
+    _upload_joblib(s3, X_train_tfidf,    'processed-data', f"{prefix}X_train_tfidf.joblib")
+    _upload_joblib(s3, X_test_tfidf,     'processed-data', f"{prefix}X_test_tfidf.joblib")
+    _upload_joblib(s3, y_train,          'processed-data', f"{prefix}y_train.joblib")
+    _upload_joblib(s3, y_test,           'processed-data', f"{prefix}y_test.joblib")
+    _upload_joblib(s3, tfidf_vectorizer, 'processed-data', f"{prefix}tfidf_vectorizer.joblib")
     
     return timestamp
 

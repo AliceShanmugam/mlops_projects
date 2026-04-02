@@ -3,6 +3,8 @@ Model evaluation script
 Compares new model with production model
 """
 
+import os
+import io
 import joblib
 from pathlib import Path
 from sklearn.metrics import f1_score
@@ -24,16 +26,13 @@ def evaluate(new_run_id: str, data_version: str):
     # Setup MLFlow
     mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
     
-    # Load test data
-    data_path = Path(settings.DATA_PROCESSED_PATH) / data_version
-    X_test = joblib.load(data_path / "X_test_tfidf.joblib")
-    y_test = joblib.load(data_path / "y_test.joblib")
-    
     logger.info("✅ Test data loaded")
     
     # Get new model from new run
     logger.info("🔍 Fetching new model from MLFlow...")
     client = mlflow.tracking.MlflowClient(settings.MLFLOW_TRACKING_URI)
+    experiment = client.get_experiment_by_name("text_classification")
+    exp_id = experiment.experiment_id if experiment else "0"
     new_run = client.get_run(new_run_id)
     new_f1 = new_run.data.metrics.get("f1_macro", 0)
     
@@ -43,7 +42,7 @@ def evaluate(new_run_id: str, data_version: str):
     logger.info("🔍 Fetching production model metrics...")
     try:
         current_runs = client.search_runs(
-            experiment_ids=["0"],  # Default experiment
+            experiment_ids=[exp_id],  # Use the correct experiment ID
             filter_string="tags.model_stage = 'production'",
             order_by=["start_time DESC"],
             max_results=1

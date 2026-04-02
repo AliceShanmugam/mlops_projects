@@ -4,6 +4,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 from docker.types import Mount
 from datetime import datetime
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +12,7 @@ def dummy_preprocess():
     # Simulate preprocessing output - no-op since we hardcoded values
     logger.info("✓ Data version: 20260316_093954")
 
-PROJECT_ROOT = "/home/sakura/Project/mlops_projects/alice_project"
+PROJECT_ROOT = os.getenv("PROJECT_ROOT", "/home/sakura/Project/mlops_projects/alice_project")
 
 DOCKER_BASE_CONFIG = {
     'docker_url': 'unix://var/run/docker.sock',
