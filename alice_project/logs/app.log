@@ -708,3 +708,245 @@ weighted avg       0.85      0.84      0.84      8422
 [2026-03-31 09:19:49] [32mINFO[0m - src.api.model - ✓ SVM loaded from /app/models/svm.joblib
 [2026-03-31 09:19:49] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
 [2026-03-31 09:19:49] [32mINFO[0m - src.api.main - API Key authentication: ⚠ DEV MODE
+[2026-04-06 20:10:48] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:10:48] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:10:49] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:10:49] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:10:49] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:10:49] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:10:50] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:10:50] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:10:52] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:10:52] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:10:54] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:10:54] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:10:57] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:10:58] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:11:05] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:11:05] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:11:19] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:11:19] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:11:45] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:11:45] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:12:36] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:12:36] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:13:37] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:13:37] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:14:37] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:14:37] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:15:38] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:15:38] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:16:38] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:16:38] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:17:39] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:17:39] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:18:39] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:18:39] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:19:40] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:19:40] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:40] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:40] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:41] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:41] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:41] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:41] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:42] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:42] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:43] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:43] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:44] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:44] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:46] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:46] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:50] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:50] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:20:57] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:20:57] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:21:10] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:21:10] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:21:36] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:21:36] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:22:28] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:22:28] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:23:29] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:23:29] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:24:29] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:24:29] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:25:30] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:25:30] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:26:30] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:26:30] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:27:30] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:27:30] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:28:31] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:28:31] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:29:31] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:29:31] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:30:32] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:30:32] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:31:32] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:31:32] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:32:33] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:32:33] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:33:33] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:33:33] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:34:34] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:34:34] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:02] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:02] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:02] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:02] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:03] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:03] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:04] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:04] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:05] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:05] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:07] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:07] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:11] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:11] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:18] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:18] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:31] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:31] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:35:58] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:35:58] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:36:49] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:36:49] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:37:50] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:37:50] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:38:50] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:38:50] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:39:51] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:39:51] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:40:51] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:40:51] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:41:52] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:41:52] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:42:52] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:42:52] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:43:53] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:43:53] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:44:53] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:44:53] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:45:54] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:45:54] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:46:54] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:46:54] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:47:54] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:47:54] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:48:55] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:48:55] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:49:55] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:49:55] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:50:56] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:50:56] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:51:56] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:51:56] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:52:57] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:52:57] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:53:57] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:53:57] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:54:58] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:54:58] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:55:58] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:55:58] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:12] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:12] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:12] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:12] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:13] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:13] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:14] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:14] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:15] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:15] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:18] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:18] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:22] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:22] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:29] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:29] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:56:42] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:56:42] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:57:08] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:57:08] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:57:12] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-06 20:57:13] [31mERROR[0m - __main__ - ❌ Preprocessing failed: An error occurred (NoSuchKey) when calling the GetObject operation: The specified key does not exist.
+Traceback (most recent call last):
+  File "/app/src/preprocessing/run.py", line 17, in run_preprocessing
+    data_version = preprocess(run_translation=True)
+  File "/app/src/preprocessing/preprocessing.py", line 75, in preprocess
+    s3.get_object(Bucket='raw-data', Key='Y_train_CVw08PX.xlsx')['Body'].read()
+  File "/usr/local/lib/python3.10/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/usr/local/lib/python3.10/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/botocore/client.py", line 1078, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.errorfactory.NoSuchKey: An error occurred (NoSuchKey) when calling the GetObject operation: The specified key does not exist.
+[2026-04-06 20:58:00] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:58:00] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 20:59:01] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 20:59:01] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:00:01] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:00:01] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:01:01] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:01:01] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:02:02] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:02:02] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:02:16] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-06 21:02:17] [31mERROR[0m - __main__ - ❌ Preprocessing failed: An error occurred (NoSuchKey) when calling the GetObject operation: The specified key does not exist.
+Traceback (most recent call last):
+  File "/app/src/preprocessing/run.py", line 17, in run_preprocessing
+    data_version = preprocess(run_translation=True)
+  File "/app/src/preprocessing/preprocessing.py", line 75, in preprocess
+    s3.get_object(Bucket='raw-data', Key='Y_train_CVw08PX.xlsx')['Body'].read()
+  File "/usr/local/lib/python3.10/site-packages/botocore/client.py", line 602, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/usr/local/lib/python3.10/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/botocore/client.py", line 1078, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.errorfactory.NoSuchKey: An error occurred (NoSuchKey) when calling the GetObject operation: The specified key does not exist.
+[2026-04-06 21:03:02] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:03:02] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:04:03] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:04:03] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:05:03] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:05:03] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:06:04] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:06:04] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:07:04] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:07:04] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:08:05] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:08:05] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:09:05] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:09:05] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:10:05] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:10:06] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:11:06] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:11:06] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:12:06] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:12:06] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:13:07] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:13:07] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:14:07] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:14:07] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:15:08] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:15:08] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:16:08] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:16:08] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:17:09] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:17:09] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:18:09] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:18:09] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:19:10] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:19:10] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:20:10] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:20:10] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:21:10] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:21:10] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:22:11] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:22:11] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib

@@ -12,9 +12,9 @@ BASE_URL = "https://challengedata.ens.fr"
 LOGIN_URL = f"{BASE_URL}/login/?next=/challenges/35"
 
 FILES = {
-    "X_train_update.xlsx": "/participants/challenges/35/download/x-train",
-    "Y_train_CVw08PX.xlsx": "/participants/challenges/35/download/y-train",
-    "X_test_update.xlsx":   "/participants/challenges/35/download/x-test",
+    "X_train_update.csv": "/participants/challenges/35/download/x-train",
+    "Y_train_CVw08PX.csv": "/participants/challenges/35/download/y-train",
+    "X_test_update.csv":   "/participants/challenges/35/download/x-test",
 }
 
 
@@ -62,8 +62,8 @@ def download_to_minio(session: requests.Session, s3, filename: str, path: str):
     resp.raise_for_status()
 
     # Upload stream vers MinIO sans écrire sur disque
-    if filename == "X_train_update.xlsx":
-        df = pd.read_excel(io.BytesIO(resp.content))
+    if filename == "X_train_update.csv":
+        df = pd.read_csv(io.BytesIO(resp.content))
         n = len(df)
 
         for batch_name, batch_df in [
