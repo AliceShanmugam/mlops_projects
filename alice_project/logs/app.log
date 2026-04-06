@@ -950,3 +950,11 @@ botocore.errorfactory.NoSuchKey: An error occurred (NoSuchKey) when calling the 
 [2026-04-06 21:21:10] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
 [2026-04-06 21:22:11] [32mINFO[0m - src.api.model - Loading models from: models
 [2026-04-06 21:22:11] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:23:11] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:23:11] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:24:12] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:24:12] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:25:12] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:25:12] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-06 21:26:13] [32mINFO[0m - src.api.model - Loading models from: models
+[2026-04-06 21:26:13] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
