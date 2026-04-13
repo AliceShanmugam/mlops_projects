@@ -65,3 +65,11 @@ def predict(text: str) -> int:
     except Exception as e:
         logger.error(f"Prediction failed: {str(e)}", exc_info=True)
         raise PredictionError(f"Prediction failed: {str(e)}") from e
+    
+
+def reload_models() -> None:
+    """Recharge les modèles depuis le disque après promotion en production."""
+    global tfidf_vectorizer, svm_model
+    tfidf_vectorizer = joblib.load(tfidf_path)
+    svm_model        = joblib.load(svm_path)
+    logger.info(f"✅ Modèles rechargés depuis {MODELS_PATH}")

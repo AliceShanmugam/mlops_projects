@@ -1,12 +1,19 @@
 """
-Download raw data from challengedata.ens.fr and store in MinIO
+Download raw data from challengedata.ens.fr and store locally in data/raw/.
+
+Versioning strategy :
+  - data/raw/ contient toujours la dernière version téléchargée
+  - data/raw/lineage.json trace les métadonnées d'ingestion
+  - Le versionnement DVC (dvc add data/raw/ && dvc push) est géré
+    par GitHub Actions monthly.yml après l'exécution de ce script.
 """
+
+import json
 import os
-import io
-import boto3
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
 
 BASE_URL = "https://challengedata.ens.fr"
 LOGIN_URL = f"{BASE_URL}/login/?next=/challenges/35"
@@ -16,19 +23,12 @@ FILES = {
     "Y_train_CVw08PX.csv": "/participants/challenges/35/download/y-train",
     "X_test_update.csv":   "/participants/challenges/35/download/x-test",
 }
-
-
-def get_s3_client():
-    return boto3.client(
-        's3',
-        endpoint_url=os.getenv('MINIO_ENDPOINT', 'http://minio:9000'),
-        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-    )
+# Dossier de sortie local — surchargeable via variable d'environnement
+DATA_RAW_DIR = os.getenv("DATA_RAW_DIR", "data/raw")
 
 
 def login(session: requests.Session) -> bool:
-    """Authentification avec CSRF token Django"""
+    """Authentification CSRF sur challengedata.ens.fr"""
     # 1. Récupérer la page de login pour obtenir le CSRF token
     resp = session.get(LOGIN_URL)
     resp.raise_for_status()
@@ -52,54 +52,82 @@ def login(session: requests.Session) -> bool:
     if "login" in resp.url:
         raise ValueError("Authentification échouée — vérifiez username/password")
 
-    return True
+
+def _write_lineage(s3, download_date: str, file_sizes: dict) -> None:
+    """Écrit data/raw/lineage.json pour tracer l'ingestion (data lineage)."""
+    meta = {
+        "download_date": download_date,
+        "downloaded_at": datetime.now().isoformat(),
+        "local_path": DATA_RAW_DIR,
+        "files": {
+            fname: {"size_bytes": size} for fname, size in file_sizes.items()
+        },
+    }
+    lineage_path = os.path.join(DATA_RAW_DIR, "lineage.json")
+    with open(lineage_path, "w") as f:
+        json.dump(meta, f, indent=2)
+    print(f"  ✅ lineage.json → {lineage_path}")
 
 
-def download_to_minio(session: requests.Session, s3, filename: str, path: str):
-    """Télécharge un fichier et l'upload directement dans MinIO"""
-    url = f"{BASE_URL}{path}"
-    resp = session.get(url, stream=True)
-    resp.raise_for_status()
+def download_all(download_date: str = None) -> str:
+    """
+    Télécharge les fichiers raw dans DATA_RAW_DIR (data/raw/ par défaut).
 
-    # Upload stream vers MinIO sans écrire sur disque
-    if filename == "X_train_update.csv":
-        df = pd.read_csv(io.BytesIO(resp.content))
-        n = len(df)
+    Args:
+        download_date: Étiquette YYYY-MM de la version (défaut : mois courant).
+                       Stocké dans data/raw/lineage.json et /tmp/download_date.txt
+                       pour les tâches Airflow aval.
 
-        for batch_name, batch_df in [
-            ("X_train_batch_1.xlsx", df[:n//2]),
-            ("X_train_batch_2.xlsx", df[n//2:]),
-        ]:
-            buf = io.BytesIO()
-            batch_df.to_excel(buf, index=False)
-            buf.seek(0)
-            s3.upload_fileobj(buf, "raw-data", batch_name)
-            print(f"✅ {batch_name} → MinIO bucket raw-data")
-    else:
-        file_obj = io.BytesIO(resp.content)
-        s3.upload_fileobj(file_obj, "raw-data", filename)
-        print(f"✅ {filename} → MinIO bucket raw-data")
+    Returns:
+        download_date utilisé.
+    """
+    if not download_date:
+        download_date = datetime.now().strftime("%Y-%m")
 
+    if not os.getenv("CHALLENGEDATA_USERNAME") or not os.getenv("CHALLENGEDATA_PASSWORD"):
+        raise ValueError(
+            "CHALLENGEDATA_USERNAME et CHALLENGEDATA_PASSWORD sont requis"
+        )
 
-def download_all():
-    username = os.getenv("CHALLENGEDATA_USERNAME")
-    password = os.getenv("CHALLENGEDATA_PASSWORD")
-    if not username or not password:
-        raise ValueError("CHALLENGEDATA_USERNAME et CHALLENGEDATA_PASSWORD requis dans .env")
+    os.makedirs(DATA_RAW_DIR, exist_ok=True)
 
-    s3 = get_s3_client()
     session = requests.Session()
-
     print("🔐 Authentification sur challengedata.ens.fr...")
     login(session)
-    print("✅ Connecté")
+    print(f"✅ Connecté — version cible : {download_date}")
+
+    file_sizes: dict = {}
 
     for filename, path in FILES.items():
         print(f"⬇️  Téléchargement de {filename}...")
-        download_to_minio(session, s3, filename, path)
+        resp = session.get(f"{BASE_URL}{path}")
+        resp.raise_for_status()
 
-    print("🎉 Tous les fichiers téléchargés dans MinIO bucket raw-data")
+        dest = os.path.join(DATA_RAW_DIR, filename)
+        with open(dest, "wb") as f:
+            f.write(resp.content)
+
+        file_sizes[filename] = len(resp.content)
+        print(f"  ✅ → {dest} ({len(resp.content) / 1_000_000:.1f} MB)")
+
+    _write_lineage(download_date, file_sizes)
+
+    # Transmission de la date à la tâche preprocess Airflow
+    with open("/tmp/download_date.txt", "w") as f:
+        f.write(download_date)
+
+    print(f"\n🎉 Download terminé. Version : {download_date}")
+    return download_date
 
 
 if __name__ == "__main__":
-    download_all()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Download Rakuten data → data/raw/")
+    parser.add_argument(
+        "--download_date",
+        default=os.getenv("DOWNLOAD_DATE"),
+        help="Version YYYY-MM (défaut : mois courant, ou var env DOWNLOAD_DATE)",
+    )
+    args = parser.parse_args()
+    download_all(download_date=args.download_date or None)

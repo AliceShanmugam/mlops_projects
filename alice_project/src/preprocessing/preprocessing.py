@@ -1,22 +1,24 @@
-
-import pandas as pd
-from bs4 import BeautifulSoup
 import html
-from langdetect import detect, DetectorFactory
-from langdetect.lang_detect_exception import LangDetectException
-from deep_translator import GoogleTranslator
-from tqdm import tqdm
-import os
-from datetime import datetime 
-
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-import joblib
-import spacy
 import io
-import boto3
+import json
+import os
+from datetime import datetime
+
+import joblib
+import pandas as pd
+import spacy
+from bs4 import BeautifulSoup
+from deep_translator import GoogleTranslator
+from langdetect import DetectorFactory, detect 
+from langdetect.lang_detect_exception import LangDetectException
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 DetectorFactory.seed = 0
+
+DATA_RAW_DIR       = os.getenv("DATA_RAW_DIR", "data/raw")
+DATA_PROCESSED_DIR = os.getenv("DATA_PROCESSED_DIR", "data/processed")
 
 def clean_text(text: str) -> str:
     text = html.unescape(str(text))
@@ -46,34 +48,47 @@ LABEL_MAPPING = {
     7: [2582, 2585],
 }
 
-def _upload_joblib(s3, obj, bucket: str, key: str):
-    buf = io.BytesIO()
-    joblib.dump(obj, buf)
-    buf.seek(0)
-    s3.upload_fileobj(buf, bucket, key)
+def _save_joblib(obj, path: str) -> None:
+    joblib.dump(obj, path)
+    print(f"  ✅ → {path}")
 
+def _write_lineage(data_version: str, download_date: str, n_rows: int) -> None:
+    """Écrit data/processed/lineage.json pour tracer la transformation."""
+    meta = {
+        "data_version": data_version,
+        "download_date": download_date,
+        "processed_at": datetime.now().isoformat(),
+        "local_path": DATA_PROCESSED_DIR,
+        "source_raw_path": DATA_RAW_DIR,
+        "n_rows": n_rows,
+    }
+    lineage_path = os.path.join(DATA_PROCESSED_DIR, "lineage.json")
+    with open(lineage_path, "w") as f:
+        json.dump(meta, f, indent=2)
+    print(f"  ✅ lineage.json → {lineage_path}")
 
 def preprocess(run_translation=True):
-    batch = int(os.getenv("BATCH", "1"))
-    s3 = boto3.client(
-        's3',
-        endpoint_url=os.getenv('MINIO_ENDPOINT', 'http://minio:9000'),
-        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-    )
+    """
+    Lit les données raw depuis DATA_RAW_DIR (data/raw/),
+    applique le preprocessing et sauvegarde dans DATA_PROCESSED_DIR (data/processed/).
 
-    # Lire batch 1..N et concaténer
-    frames = []
-    for i in range(1, batch + 1):
-        df_b = pd.read_excel(io.BytesIO(
-            s3.get_object(Bucket='raw-data', Key=f'X_train_batch_{i}.xlsx')['Body'].read()
-        ))
-        frames.append(df_b)
-    df_products = pd.concat(frames, ignore_index=True)
+    Returns:
+        data_version : timestamp YYYYMMDD_HHMMSS utilisé comme identifiant
+                       de version pour les tâches Airflow aval (train.py).
+    """
+    os.makedirs(DATA_PROCESSED_DIR, exist_ok=True)
 
-    df_labels = pd.read_excel(io.BytesIO(
-        s3.get_object(Bucket='raw-data', Key='Y_train_CVw08PX.xlsx')['Body'].read()
-    ))
+    # Lecture des données raw locales
+    print(f"📂 Lecture des données raw depuis {DATA_RAW_DIR}/")
+    df_products = pd.read_csv(os.path.join(DATA_RAW_DIR, "X_train_update.csv"))
+    df_labels   = pd.read_csv(os.path.join(DATA_RAW_DIR, "Y_train_CVw08PX.csv"))
+    
+    # Récupération de la date de download depuis le lineage raw (pour traçabilité)
+    download_date = "unknown"
+    raw_lineage_path = os.path.join(DATA_RAW_DIR, "lineage.json")
+    if os.path.exists(raw_lineage_path):
+        with open(raw_lineage_path) as f:
+            download_date = json.load(f).get("download_date", "unknown")
 
     df = pd.concat([df_products, df_labels], axis=1)
     df = df[['designation', 'description', 'productid', 'imageid', 'prdtypecode']]
@@ -93,6 +108,7 @@ def preprocess(run_translation=True):
         labeled_frames.append(temp)
 
     df_labeled = pd.concat(labeled_frames).reset_index(drop=True)
+    print(f"✅ {len(df_labeled)} lignes labélisées")
 
     # Langue
     df_labeled['langue'] = df_labeled['text'].apply(detect_language)
@@ -130,15 +146,18 @@ def preprocess(run_translation=True):
     X_test_tfidf = tfidf_vectorizer.transform(X_test)
 
     # Sauvegarde des jeux de données prétraités
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    prefix = f"{timestamp}/"
-    _upload_joblib(s3, X_train_tfidf,    'processed-data', f"{prefix}X_train_tfidf.joblib")
-    _upload_joblib(s3, X_test_tfidf,     'processed-data', f"{prefix}X_test_tfidf.joblib")
-    _upload_joblib(s3, y_train,          'processed-data', f"{prefix}y_train.joblib")
-    _upload_joblib(s3, y_test,           'processed-data', f"{prefix}y_test.joblib")
-    _upload_joblib(s3, tfidf_vectorizer, 'processed-data', f"{prefix}tfidf_vectorizer.joblib")
+    data_version = datetime.now().strftime("%Y%m%d_%H%M%S")
+    print(f"\n💾 Sauvegarde dans {DATA_PROCESSED_DIR}/ (version: {data_version})")
+
+    _save_joblib(X_train_tfidf,    os.path.join(DATA_PROCESSED_DIR, "X_train_tfidf.joblib"))
+    _save_joblib(X_test_tfidf,     os.path.join(DATA_PROCESSED_DIR, "X_test_tfidf.joblib"))
+    _save_joblib(y_train,          os.path.join(DATA_PROCESSED_DIR, "y_train.joblib"))
+    _save_joblib(y_test,           os.path.join(DATA_PROCESSED_DIR, "y_test.joblib"))
+    _save_joblib(tfidf_vectorizer, os.path.join(DATA_PROCESSED_DIR, "tfidf_vectorizer.joblib"))
     
-    return timestamp
+    _write_lineage(data_version, download_date, len(df_labeled))
+
+    return data_version
 
 if __name__ == "__main__":
     preprocess(run_translation=True)

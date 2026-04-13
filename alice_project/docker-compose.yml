@@ -4,55 +4,9 @@ networks:
     name: alice_network
 
 volumes:
-  airflow_db:
   postgres_db:
-  minio_data:
 
 services:
-  # ================================================================
-  # MinIO - Object Storage (S3-compatible)
-  # ================================================================
-  minio:
-    image: minio/minio:latest
-    container_name: minio
-    ports:
-      - "9000:9000"    # API S3
-      - "9001:9001"    # Console Web UI
-    volumes:
-      - minio_data:/data
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
-    command: server /data --console-address ":9001"
-    networks:
-      - alice_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: unless-stopped
-
-  # Service one-shot pour créer les buckets au démarrage
-  minio-init:
-    image: minio/mc:latest
-    container_name: minio-init
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
-      mc mb --ignore-existing local/raw-data;
-      mc mb --ignore-existing local/processed-data;
-      exit 0;
-      "
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
-    networks:
-      - alice_network
-
   # ========================================================================
   # POSTGRESQL Database for Airflow
   # ========================================================================
@@ -70,7 +24,7 @@ services:
     restart: unless-stopped
 
   # ========================================================================
-  # Airflow Web UI (no scheduler - manual trigger only)
+  # Airflow
   # ========================================================================
   airflow:
     image: apache/airflow:2.8.1-python3.10
@@ -91,11 +45,11 @@ services:
       PROJECT_ROOT: ${PROJECT_ROOT}
       DAGSHUB_USER_TOKEN: ${DAGSHUB_USER_TOKEN}
       DAGSHUB_USERNAME: ${DAGSHUB_USERNAME}
-      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       CHALLENGEDATA_USERNAME: ${CHALLENGEDATA_USERNAME}
       CHALLENGEDATA_PASSWORD: ${CHALLENGEDATA_PASSWORD}
+      # Clé admin pour que registry_task puisse appeler /models/reload
+      ADMIN_API_KEY: ${ADMIN_API_KEY}
+      API_SERVICE_URL: http://api:8000
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - /var/run/docker.sock:/var/run/docker.sock
@@ -109,10 +63,9 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres
-      - minio
 
   # ========================================================================
-  # Preprocessing Service
+  # Preprocessing — image build target (exécuté via DockerOperator Airflow)
   # ========================================================================
   preprocessing:
     build:
@@ -122,21 +75,21 @@ services:
     container_name: preprocessing
     volumes:
       - ./logs:/app/logs
+      - ./data:/app/data
+      - ./.dvc:/app/.dvc
     environment:
       - LOG_LEVEL=INFO
       - LOG_DIR=/app/logs
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
-      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - DATA_RAW_DIR=/app/data/raw
+      - DATA_PROCESSED_DIR=/app/data/processed
+      - DAGSHUB_USERNAME=${DAGSHUB_USERNAME}
+      - DAGSHUB_USER_TOKEN=${DAGSHUB_USER_TOKEN}
     networks:
       - alice_network
     restart: "no"
-    depends_on:
-      minio:
-        condition: service_healthy
 
   # ========================================================================
-  # Training Service
+  # Training Service — image build target (exécuté via DockerOperator Airflow)
   # ========================================================================
   training:
     build:
@@ -146,21 +99,20 @@ services:
     container_name: training
     volumes:
       - ./logs:/app/logs
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./.dvc:/app/.dvc
     environment:
       - MLFLOW_TRACKING_URI=https://dagshub.com/AliceShanmugam/mlops_projects.mlflow
       - MLFLOW_TRACKING_USERNAME=${DAGSHUB_USERNAME}
       - MLFLOW_TRACKING_PASSWORD=${DAGSHUB_USER_TOKEN}
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
-      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - DATA_PROCESSED_DIR=/app/data/processed
+      - MODELS_PATH=/app/models
       - LOG_LEVEL=INFO
       - LOG_DIR=/app/logs
     networks:
       - alice_network
     restart: "no"
-    depends_on:
-      minio:
-        condition: service_healthy
 
   # ========================================================================
   # Prediction API
@@ -175,10 +127,14 @@ services:
       - "8000:8000"
     volumes:
       - ./logs:/app/logs
+      - ./models:/app/models        # lit les modèles écrits par training
     environment:
       - LOG_LEVEL=INFO
       - LOG_DIR=/app/logs
+      - MODELS_PATH=/app/models
       - AIRFLOW_WEBSERVER_URL=http://airflow-webserver:8080
+      - API_KEY=${API_KEY}
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
     networks:
       - alice_network
     restart: unless-stopped

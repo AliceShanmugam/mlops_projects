@@ -24,6 +24,9 @@ from src.api.model import predict
 from src.utils.auth import verify_api_key
 from src.utils.exceptions import PredictionError, AuthenticationError
 
+from src.utils.auth import verify_api_key, verify_admin, API_KEY_HEADER
+import src.api.model as model
+
 # Setup logging
 logger = get_logger(__name__)
 
@@ -348,3 +351,11 @@ async def startup_event():
 async def shutdown_event():
     """Called when application stops"""
     logger.info("🛑 Application shutting down")
+
+@app.post("/models/reload", tags=["Admin"])
+def reload_models_endpoint(api_key: str = Depends(API_KEY_HEADER)):
+    """Recharge les modèles en mémoire après un entraînement — admin uniquement."""
+    verify_admin(api_key)       # rôle admin requis
+    model.reload_models()
+    logger.info("✅ Modèles rechargés via endpoint admin")
+    return {"status": "reloaded"}
