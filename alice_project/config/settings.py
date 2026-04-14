@@ -1,16 +1,14 @@
 """
 Application settings and configuration
-Load from environment variables with defaults
 """
 
 import os
-from typing import Optional, List
+from typing import List
 from dataclasses import dataclass, field
 
 
 @dataclass
 class Settings:
-    """Application configuration"""
     
     # Application
     APP_NAME: str = "Alice MLOps"
@@ -21,15 +19,9 @@ class Settings:
     API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
     API_PORT: int = int(os.getenv("API_PORT", "8000"))
     API_KEY: str = os.getenv("API_KEY", "dev-key-insecure")
+    ADMIN_API_KEY: str = os.getenv("ADMIN_API_KEY", "dev-admin-key-insecure")
 
-    # MinIO / S3
-    MINIO_ENDPOINT: str = os.getenv("MINIO_ENDPOINT", "http://minio:9000")
-    MINIO_ACCESS_KEY: str = os.getenv("AWS_ACCESS_KEY_ID", "minioadmin")
-    MINIO_SECRET_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "minioadmin")
-    MINIO_BUCKET_RAW: str = os.getenv("MINIO_BUCKET_RAW", "raw-data")
-    MINIO_BUCKET_PROCESSED: str = os.getenv("MINIO_BUCKET_PROCESSED", "processed-data")
-    
-    # MLFlow
+    # MLFlow → DagsHub
     MLFLOW_TRACKING_URI: str = os.getenv(
         "MLFLOW_TRACKING_URI",
         "https://dagshub.com/AliceShanmugam/mlops_projects.mlflow"
@@ -54,6 +46,10 @@ class Settings:
     TFIDF_MODEL: str = os.getenv("TFIDF_MODEL", "tfidf_vectorizer.joblib")
     SVM_MODEL: str = os.getenv("SVM_MODEL", "svm.joblib")
     
+    # Model weights pour la fusion texte/image
+    TEXT_MODEL_WEIGHT: float  = float(os.getenv("TEXT_MODEL_WEIGHT",  "0.7"))
+    IMAGE_MODEL_WEIGHT: float = float(os.getenv("IMAGE_MODEL_WEIGHT", "0.3"))
+
     # Logging
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
     LOG_DIR: str = os.getenv("LOG_DIR", "/app/logs")
@@ -63,12 +59,14 @@ class Settings:
     RATE_LIMIT_REQUESTS: int = int(os.getenv("RATE_LIMIT_REQUESTS", "100"))
     RATE_LIMIT_PERIOD: int = int(os.getenv("RATE_LIMIT_PERIOD", "60"))
     
-    # CORS - use field with default_factory for mutable defaults
+    # CORS
     CORS_ORIGINS: List[str] = field(default_factory=lambda: [
-        "http://localhost:3000",
-        "http://localhost:8000",
-        "http://localhost:8080"
-    ])
+        os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,http://localhost:8080")
+            .split(",")
+    ][0].split(",") if "," in os.getenv("CORS_ORIGINS", "") else
+        os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,http://localhost:8080")
+            .split(",")
+    )
     
     @property
     def tfidf_path(self) -> str:

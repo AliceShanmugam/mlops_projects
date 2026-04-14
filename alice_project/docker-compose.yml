@@ -159,6 +159,8 @@ services:
       - LOG_DIR=/app/logs
       - API_SERVICE_URL=http://api:8000
       - AIRFLOW_URL=http://airflow-webserver:8080
+      - API_KEY=${API_KEY}
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
     networks:
       - alice_network
     restart: unless-stopped

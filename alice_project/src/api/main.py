@@ -15,13 +15,14 @@ from src.api.airflow_service import airflow_client
 from config.logging_config import get_logger
 from config.settings import settings
 from src.api.schemas import (
-    PredictionRequest, 
+    TextPredictionRequest, 
+    ImagePredictionRequest,
+    CombinedPredictionRequest,
     PredictionResponse, 
     ErrorResponse,
     HealthResponse
 )
 from src.api.model import predict
-from src.utils.auth import verify_api_key
 from src.utils.exceptions import PredictionError, AuthenticationError
 
 from src.utils.auth import verify_api_key, verify_admin, API_KEY_HEADER
@@ -126,69 +127,49 @@ def health_check():
         version=settings.APP_VERSION
     )
 
-
-@app.post(
-    "/predict",
-    response_model=PredictionResponse,
-    tags=["Predictions"],
-    responses={
-        400: {"model": ErrorResponse},
-        429: {"model": ErrorResponse},
-        500: {"model": ErrorResponse},
-    }
-)
+@app.post("/predict/text", response_model=PredictionResponse, tags=["Predictions"])
 @limiter.limit(f"{settings.RATE_LIMIT_REQUESTS}/minute")
-def predict_endpoint(request:Request, prediction_request: PredictionRequest):
-    """
-    Predict label for input text
-    
-    No authentication required
-    """
-    request_id = request.headers.get("X-Request-ID", "unknown")
-    
+def predict_text_endpoint(request: Request, body: TextPredictionRequest):
+    """Prédiction texte uniquement (TF-IDF + SVM). Accès user et admin."""
+    verify_api_key(request.headers.get("X-API-Key"))
     try:
-        logger.info(
-            "Prediction request received",
-            extra={
-                "request_id": request_id,
-                "text_length": len(prediction_request.text)
-            }
-        )
-        
-        # Get prediction
-        label = predict(prediction_request.text)
-        
-        logger.info(
-            "Prediction successful",
-            extra={
-                "request_id": request_id,
-                "predicted_label": label
-            }
-        )
-        
-        return PredictionResponse(label=label)
-    
+        label = model.predict_text(body.text)
+        return PredictionResponse(label=label, source="text")
     except PredictionError as e:
-        logger.error(
-            f"Prediction error: {str(e)}",
-            extra={"request_id": request_id},
-            exc_info=True
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/predict/image", response_model=PredictionResponse, tags=["Predictions"])
+@limiter.limit(f"{settings.RATE_LIMIT_REQUESTS}/minute")
+def predict_image_endpoint(request: Request, body: ImagePredictionRequest):
+    """Prédiction image uniquement (CNN — à venir). Accès user et admin."""
+    verify_api_key(request.headers.get("X-API-Key"))
+    try:
+        label = model.predict_image(body.image_path)
+        return PredictionResponse(label=label, source="image")
+    except PredictionError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+
+
+@app.post("/predict", response_model=PredictionResponse, tags=["Predictions"])
+@limiter.limit(f"{settings.RATE_LIMIT_REQUESTS}/minute")
+def predict_combined_endpoint(request: Request, body: CombinedPredictionRequest):
+    """
+    Prédiction combinée texte + image avec fallback automatique.
+    - Texte poids 0.7, image poids 0.3
+    - Si un modèle échoue → retourne quand même une prédiction avec fallback=True
+    - Si aucun modèle ne fonctionne → 503
+    Accès user et admin.
+    """
+    verify_api_key(request.headers.get("X-API-Key"))
+    try:
+        result = model.predict_combined(
+            text=body.text,
+            image_path=body.image_path,
         )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Prediction failed: {str(e)}"
-        )
-    
-    except Exception as e:
-        logger.error(
-            f"Unexpected error: {str(e)}",
-            extra={"request_id": request_id},
-            exc_info=True
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
-        )
+        return PredictionResponse(**result)
+    except PredictionError as e:
+        raise HTTPException(status_code=503, detail=str(e))
 
 # ============================================================================
 # TRAINING ENDPOINTS
@@ -234,7 +215,7 @@ def trigger_training(request: Request):
         return {
             "status": "triggered",
             "dag_run_id": dag_run_id,
-            "message": f"Training pipeline started. Monitor at: http://localhost:8081/dags/training_pipeline/grid"
+            "message": "Training pipeline started. Monitor at: http://localhost:8081/dags/training_pipeline/grid"
         }
     
     except Exception as e:
