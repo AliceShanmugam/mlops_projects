@@ -21,20 +21,19 @@ from config.settings import settings
 
 logger = get_logger(__name__)
 
-DATA_PROCESSED_DIR = os.getenv("DATA_PROCESSED_DIR", "/app/data/processed")
-
-def _load(filename: str):
-    path = os.path.join(DATA_PROCESSED_DIR, filename)
+def _load(filename: str, data_dir: str) -> object:
+    path = os.path.join(data_dir, filename)
     logger.info(f"  📂 Chargement : {path}")
     return joblib.load(path)
 
-def _read_lineage() -> dict:
+def _read_lineage(data_dir: str) -> dict:
     """Lit data/processed/lineage.json pour enrichir les tags MLFlow (data lineage)."""
-    lineage_path = os.path.join(DATA_PROCESSED_DIR, "lineage.json")
+    lineage_path = os.path.join(data_dir, "lineage.json")
     if os.path.exists(lineage_path):
         with open(lineage_path) as f:
             return json.load(f)
     return {}
+
 
 def train(data_version: str):
     """
@@ -44,24 +43,26 @@ def train(data_version: str):
         data_version: Timestamp YYYYMMDD_HHMMSS issu du preprocessing.
                       Loggé dans MLFlow pour la traçabilité.
     """
+    data_dir = os.getenv("DATA_PROCESSED_DIR", "/app/data/processed")
     logger.info(f"🚀 Starting training with data version: {data_version}")
+    logger.info(f"   Données depuis : {data_dir}")
     
     # Setup MLFlow → DagsHub
     mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
     mlflow.set_experiment("text_classification")
     
     # Chargement des données preprocessées locales
-    X_train          = _load("X_train_tfidf.joblib")
-    y_train          = _load("y_train.joblib")
-    X_test           = _load("X_test_tfidf.joblib")
-    y_test           = _load("y_test.joblib")
-    tfidf_vectorizer = _load("tfidf_vectorizer.joblib")
+    X_train          = _load("X_train_tfidf.joblib", data_dir)
+    y_train          = _load("y_train.joblib", data_dir)
+    X_test           = _load("X_test_tfidf.joblib", data_dir)
+    y_test           = _load("y_test.joblib", data_dir)
+    tfidf_vectorizer = _load("tfidf_vectorizer.joblib", data_dir)
     
     
     logger.info(f"✅ Données chargées — X_train: {X_train.shape}, X_test: {X_test.shape}")
 
     # Data lineage depuis lineage.json
-    lineage = _read_lineage()
+    lineage = _read_lineage(data_dir=data_dir)
     
     # Start MLFlow run
     with mlflow.start_run():

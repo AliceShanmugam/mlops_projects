@@ -60,12 +60,11 @@ class Settings:
     RATE_LIMIT_PERIOD: int = int(os.getenv("RATE_LIMIT_PERIOD", "60"))
     
     # CORS
-    CORS_ORIGINS: List[str] = field(default_factory=lambda: [
-        os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,http://localhost:8080")
-            .split(",")
-    ][0].split(",") if "," in os.getenv("CORS_ORIGINS", "") else
-        os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,http://localhost:8080")
-            .split(",")
+    CORS_ORIGINS: List[str] = field(
+        default_factory=lambda: os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:3000,http://localhost:8000,http://localhost:8080"
+        ).split(",")
     )
     
     @property
