@@ -20,18 +20,7 @@ def _dvc_push() -> None:
     Nécessite git + dvc[http] dans le container et les credentials
     DAGSHUB_USERNAME / DAGSHUB_USER_TOKEN en variables d'environnement.
     """
-    dagshub_user  = os.getenv("DAGSHUB_USERNAME")
-    dagshub_token = os.getenv("DAGSHUB_USER_TOKEN")
-
-    if not dagshub_user or not dagshub_token:
-        logger.warning("⚠️  DAGSHUB_USERNAME/TOKEN manquants — dvc push ignoré")
-        return
-
     commands = [
-        # Configure credentials DagsHub pour ce run
-        ["dvc", "remote", "modify", "origin", "--local", "auth", "basic"],
-        ["dvc", "remote", "modify", "origin", "--local", "user", dagshub_user],
-        ["dvc", "remote", "modify", "origin", "--local", "password", dagshub_token],
         # Versionner et pusher data/processed/
         ["dvc", "add", "data/processed/"],
         ["dvc", "push"],

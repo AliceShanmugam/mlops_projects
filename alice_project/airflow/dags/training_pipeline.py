@@ -82,12 +82,7 @@ MODEL_MOUNTS = [
 dvc_pull_task = DockerOperator(
     task_id='dvc_pull_raw',
     image='alice_project-preprocessing:latest',
-    command=['/bin/sh', '-c', (
-        'dvc remote modify origin --local auth basic && '
-        'dvc remote modify origin --local user $DAGSHUB_USERNAME && '
-        'dvc remote modify origin --local password $DAGSHUB_USER_TOKEN && '
-        'dvc pull data/raw/'
-    )],
+    command=['/bin/sh', '-c', 'dvc pull data/raw/'],
     container_name='airflow-dvcpull-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS + DATA_MOUNTS,
     environment={
@@ -110,6 +105,7 @@ preprocess_task = DockerOperator(
     container_name='airflow-preprocess-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS + DATA_MOUNTS,
     environment={
+        **DAGSHUB_ENV, 
         'DATA_RAW_DIR': '/app/data/raw',
         'DATA_PROCESSED_DIR': '/app/data/processed',
         'LOG_LEVEL': 'INFO',
@@ -212,11 +208,25 @@ def register_model(**context):
         logger.warning("⚠️  Modèle non promu — pas d'amélioration")
     
 
-registry_task = PythonOperator(
+registry_task = DockerOperator(
     task_id='model_registry',
-    python_callable=register_model,
-    provide_context=True,
+    image='alice_project-training:latest',
+    command=['/bin/sh', '-c', (
+        'python -u src/training/model_registry.py '
+        '"$(cat /tmp/mlflow_run_id.txt)"'
+    )],
+    container_name='airflow-registry-{{ execution_date.strftime("%s") }}',
+    mounts=COMMON_MOUNTS + MODEL_MOUNTS,
+    environment={
+        **MLFLOW_ENV,
+        'ADMIN_API_KEY': os.getenv('ADMIN_API_KEY'),
+        'API_SERVICE_URL': 'http://api:8000',
+        'LOG_LEVEL': 'INFO',
+        'LOG_DIR': '/app/logs',
+        'PYTHONPATH': '/app',
+    },
     dag=dag,
+    **DOCKER_BASE_CONFIG,
 )
 
 

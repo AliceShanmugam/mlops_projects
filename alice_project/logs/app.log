@@ -1104,3 +1104,147 @@ botocore.errorfactory.NoSuchKey: An error occurred (NoSuchKey) when calling the 
 [2026-04-07 09:02:36] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
 [2026-04-07 09:03:37] [32mINFO[0m - src.api.model - Loading models from: models
 [2026-04-07 09:03:37] [31mERROR[0m - src.api.model - ✗ TFIDF model not found at models/tfidf_vectorizer.joblib
+[2026-04-17 12:16:17] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-04-17 12:16:18] [32mINFO[0m - src.api.model - ✓ Text model loaded (tfidf + svm)
+[2026-04-17 12:16:18] [32mINFO[0m - src.api.model - ✗ Image model not yet trained — will use text-only fallback
+[2026-04-17 12:16:18] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-04-17 12:16:18] [32mINFO[0m - src.api.main - API Key authentication: ✓ Enabled
+[2026-04-17 14:31:45] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-17 14:31:45] [31mERROR[0m - __main__ - ❌ Preprocessing failed: [Errno 2] No such file or directory: '/app/data/raw/X_train_update.csv'
+Traceback (most recent call last):
+  File "/app/src/preprocessing/run.py", line 58, in run_preprocessing
+    data_version = preprocess(run_translation=True)
+  File "/app/src/preprocessing/preprocessing.py", line 83, in preprocess
+    df_products = pd.read_csv(os.path.join(DATA_RAW_DIR, "X_train_update.csv"))
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/common.py", line 873, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/app/data/raw/X_train_update.csv'
+[2026-04-17 14:36:47] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-17 14:36:47] [31mERROR[0m - __main__ - ❌ Preprocessing failed: [Errno 2] No such file or directory: '/app/data/raw/X_train_update.csv'
+Traceback (most recent call last):
+  File "/app/src/preprocessing/run.py", line 58, in run_preprocessing
+    data_version = preprocess(run_translation=True)
+  File "/app/src/preprocessing/preprocessing.py", line 83, in preprocess
+    df_products = pd.read_csv(os.path.join(DATA_RAW_DIR, "X_train_update.csv"))
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/common.py", line 873, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/app/data/raw/X_train_update.csv'
+[2026-04-17 14:45:03] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-17 16:03:55] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-17 16:05:08] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-17 17:41:25] [32mINFO[0m - __main__ - ✅ Preprocessing completed : Data version: 20260417_174125
+[2026-04-17 17:41:25] [33mWARNING[0m - __main__ - ⚠️  DAGSHUB_USERNAME/TOKEN manquants — dvc push ignoré
+[2026-04-17 17:41:25] [32mINFO[0m - __main__ - ✅ Data version saved for downstream tasks
+[2026-04-17 17:41:29] [32mINFO[0m - __main__ - 🚀 Starting training with data version: 20260417_174125
+[2026-04-17 17:41:29] [32mINFO[0m - __main__ -    Données depuis : /app/data/processed
+[2026-04-17 17:41:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_train_tfidf.joblib
+[2026-04-17 17:41:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_train.joblib
+[2026-04-17 17:41:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_test_tfidf.joblib
+[2026-04-17 17:41:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_test.joblib
+[2026-04-17 17:41:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/tfidf_vectorizer.joblib
+[2026-04-17 17:41:30] [32mINFO[0m - __main__ - ✅ Données chargées — X_train: (33684, 2000), X_test: (8422, 2000)
+[2026-04-17 17:41:32] [32mINFO[0m - __main__ - ⚙️ Training LinearSVC model...
+[2026-04-17 17:41:33] [32mINFO[0m - __main__ - ✅ Model trained successfully
+[2026-04-17 17:41:33] [32mINFO[0m - __main__ - 📈 F1-score (macro): 0.8450
+[2026-04-17 17:41:33] [32mINFO[0m - __main__ - 
+              precision    recall  f1-score   support
+
+           0       0.88      0.75      0.81      1004
+           1       0.74      0.91      0.82      1175
+           2       0.89      0.82      0.85      1205
+           3       0.95      0.91      0.93      1009
+           4       0.84      0.82      0.83      1015
+           5       0.83      0.83      0.83       999
+           6       0.88      0.90      0.89       998
+           7       0.80      0.80      0.80      1017
+
+    accuracy                           0.84      8422
+   macro avg       0.85      0.84      0.85      8422
+weighted avg       0.85      0.84      0.84      8422
+
+[2026-04-17 17:41:33] [32mINFO[0m - __main__ - 💾 Modèles sauvegardés dans /app/models
+[2026-04-17 17:41:41] [32mINFO[0m - __main__ - ✅ Model artifacts saved and logged to MLFlow
+[2026-04-17 17:41:41] [32mINFO[0m - __main__ - 🎉 Entraînement terminé — run_id: fef8891375084f7da65df57726adfcff
+[2026-04-17 17:41:44] [32mINFO[0m - __main__ - 📊 Starting model evaluation...
+[2026-04-17 17:41:44] [32mINFO[0m - __main__ -    New run ID: fef8891375084f7da65df57726adfcff
+[2026-04-17 17:41:44] [32mINFO[0m - __main__ -    Data version: 20260417_174125
+[2026-04-17 17:41:44] [32mINFO[0m - __main__ -    New model F1:  0.8450
+[2026-04-17 17:41:45] [32mINFO[0m - __main__ -    No production model found (first training)
+[2026-04-17 17:41:45] [32mINFO[0m - __main__ - 
+📈 Improvement: +0.8450 F1 points
+[2026-04-17 17:41:45] [32mINFO[0m - __main__ - ✅ NEW MODEL IS BETTER — Ready for production
+[2026-04-17 18:54:52] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-17 19:24:38] [32mINFO[0m - __main__ - ✅ Preprocessing completed : Data version: 20260417_192438
+[2026-04-17 19:24:38] [32mINFO[0m - __main__ -   $ dvc remote modify origin --local auth basic
+[2026-04-17 19:24:38] [32mINFO[0m - __main__ -   $ dvc remote modify origin --local user AliceShanmugam
+[2026-04-17 19:24:39] [32mINFO[0m - __main__ -   $ dvc remote modify origin --local password 2ddce949e20b42ad6263eeb3c91d5dcaae480c2b
+[2026-04-17 19:24:39] [32mINFO[0m - __main__ -   $ dvc add data/processed/
+[2026-04-17 19:24:40] [32mINFO[0m - __main__ -   To track the changes with git, run:
+
+	git add data/processed.dvc
+
+To enable auto staging, run:
+
+	dvc config core.autostage true
+[2026-04-17 19:24:40] [32mINFO[0m - __main__ -   $ dvc push
+[2026-04-17 19:24:48] [32mINFO[0m - __main__ -   5 files pushed
+[2026-04-17 19:24:48] [32mINFO[0m - __main__ - ✅ data/processed/ versionnée et pushée sur DagsHub
+[2026-04-17 19:24:48] [32mINFO[0m - __main__ - ✅ Data version saved for downstream tasks
+[2026-04-17 19:24:50] [32mINFO[0m - __main__ - 🚀 Starting training with data version: 20260417_192438
+[2026-04-17 19:24:50] [32mINFO[0m - __main__ -    Données depuis : /app/data/processed
+[2026-04-17 19:24:51] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_train_tfidf.joblib
+[2026-04-17 19:24:51] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_train.joblib
+[2026-04-17 19:24:51] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_test_tfidf.joblib
+[2026-04-17 19:24:51] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_test.joblib
+[2026-04-17 19:24:51] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/tfidf_vectorizer.joblib
+[2026-04-17 19:24:51] [32mINFO[0m - __main__ - ✅ Données chargées — X_train: (33684, 2000), X_test: (8422, 2000)
+[2026-04-17 19:24:54] [32mINFO[0m - __main__ - ⚙️ Training LinearSVC model...
+[2026-04-17 19:24:54] [32mINFO[0m - __main__ - ✅ Model trained successfully
+[2026-04-17 19:24:55] [32mINFO[0m - __main__ - 📈 F1-score (macro): 0.8450
+[2026-04-17 19:24:55] [32mINFO[0m - __main__ - 
+              precision    recall  f1-score   support
+
+           0       0.88      0.75      0.81      1004
+           1       0.74      0.91      0.82      1175
+           2       0.89      0.82      0.85      1205
+           3       0.95      0.91      0.93      1009
+           4       0.84      0.82      0.83      1015
+           5       0.82      0.83      0.83       999
+           6       0.88      0.90      0.89       998
+           7       0.80      0.80      0.80      1017
+
+    accuracy                           0.84      8422
+   macro avg       0.85      0.84      0.85      8422
+weighted avg       0.85      0.84      0.84      8422
+
+[2026-04-17 19:24:55] [32mINFO[0m - __main__ - 💾 Modèles sauvegardés dans /app/models
+[2026-04-17 19:25:01] [32mINFO[0m - __main__ - ✅ Model artifacts saved and logged to MLFlow
+[2026-04-17 19:25:01] [32mINFO[0m - __main__ - 🎉 Entraînement terminé — run_id: bce7eeefc89e4554a446a867cda29bd1
+[2026-04-17 19:25:04] [32mINFO[0m - __main__ - 📊 Starting model evaluation...
+[2026-04-17 19:25:04] [32mINFO[0m - __main__ -    New run ID: bce7eeefc89e4554a446a867cda29bd1
+[2026-04-17 19:25:04] [32mINFO[0m - __main__ -    Data version: 20260417_192438
+[2026-04-17 19:25:04] [32mINFO[0m - __main__ -    New model F1:  0.8450
+[2026-04-17 19:25:05] [32mINFO[0m - __main__ -    No production model found (first training)
+[2026-04-17 19:25:05] [32mINFO[0m - __main__ - 
+📈 Improvement: +0.8450 F1 points
+[2026-04-17 19:25:05] [32mINFO[0m - __main__ - ✅ NEW MODEL IS BETTER — Ready for production
+[2026-04-17 19:25:06] [32mINFO[0m - __main__ - 📦 Promoting model bce7eeefc89e4554a446a867cda29bd1 to production...
+[2026-04-17 19:25:07] [32mINFO[0m - __main__ -    Found 0 registered models
+[2026-04-17 19:25:07] [32mINFO[0m - __main__ -    Tagging new run as production...
+[2026-04-17 19:25:07] [32mINFO[0m - __main__ - ✅ Model promoted to production successfully!

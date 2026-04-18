@@ -14,6 +14,7 @@ from langdetect.lang_detect_exception import LangDetectException
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
+import openpyxl
 
 DetectorFactory.seed = 0
 
@@ -80,8 +81,8 @@ def preprocess(run_translation=True):
 
     # Lecture des données raw locales
     print(f"📂 Lecture des données raw depuis {DATA_RAW_DIR}/")
-    df_products = pd.read_csv(os.path.join(DATA_RAW_DIR, "X_train_update.csv"))
-    df_labels   = pd.read_csv(os.path.join(DATA_RAW_DIR, "Y_train_CVw08PX.csv"))
+    df_products = pd.read_excel(os.path.join(DATA_RAW_DIR, "X_train_update.xlsx"))
+    df_labels   = pd.read_excel(os.path.join(DATA_RAW_DIR, "Y_train_CVw08PX.xlsx"))
     
     # Récupération de la date de download depuis le lineage raw (pour traçabilité)
     download_date = "unknown"

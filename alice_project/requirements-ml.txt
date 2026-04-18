@@ -12,3 +12,5 @@ pytest-cov>=4.1.0
 
 # DVC 
 dvc[http]>=3.40.0 # backend S3/MinIO pour DVC
+
+openpyxl>=3.1.0
