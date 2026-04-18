@@ -129,9 +129,9 @@ def health_check():
 
 @app.post("/predict/text", response_model=PredictionResponse, tags=["Predictions"])
 @limiter.limit(f"{settings.RATE_LIMIT_REQUESTS}/minute")
-def predict_text_endpoint(request: Request, body: TextPredictionRequest):
+def predict_text_endpoint(request: Request, body: TextPredictionRequest, api_key: str = Depends(API_KEY_HEADER)):
     """Prédiction texte uniquement (TF-IDF + SVM). Accès user et admin."""
-    verify_api_key(request.headers.get("X-API-Key"))
+    verify_api_key(api_key)
     try:
         label = model.predict_text(body.text)
         return PredictionResponse(label=label, source="text")
@@ -141,9 +141,9 @@ def predict_text_endpoint(request: Request, body: TextPredictionRequest):
 
 @app.post("/predict/image", response_model=PredictionResponse, tags=["Predictions"])
 @limiter.limit(f"{settings.RATE_LIMIT_REQUESTS}/minute")
-def predict_image_endpoint(request: Request, body: ImagePredictionRequest):
+def predict_image_endpoint(request: Request, body: ImagePredictionRequest, api_key: str = Depends(API_KEY_HEADER)):
     """Prédiction image uniquement (CNN — à venir). Accès user et admin."""
-    verify_api_key(request.headers.get("X-API-Key"))
+    verify_api_key(api_key)
     try:
         label = model.predict_image(body.image_path)
         return PredictionResponse(label=label, source="image")
@@ -153,7 +153,7 @@ def predict_image_endpoint(request: Request, body: ImagePredictionRequest):
 
 @app.post("/predict", response_model=PredictionResponse, tags=["Predictions"])
 @limiter.limit(f"{settings.RATE_LIMIT_REQUESTS}/minute")
-def predict_combined_endpoint(request: Request, body: CombinedPredictionRequest):
+def predict_combined_endpoint(request: Request, body: CombinedPredictionRequest, api_key: str = Depends(API_KEY_HEADER)):
     """
     Prédiction combinée texte + image avec fallback automatique.
     - Texte poids 0.7, image poids 0.3
@@ -161,7 +161,7 @@ def predict_combined_endpoint(request: Request, body: CombinedPredictionRequest)
     - Si aucun modèle ne fonctionne → 503
     Accès user et admin.
     """
-    verify_api_key(request.headers.get("X-API-Key"))
+    verify_api_key(api_key)
     try:
         result = model.predict_combined(
             text=body.text,
@@ -184,13 +184,14 @@ def predict_combined_endpoint(request: Request, body: CombinedPredictionRequest)
         500: {"description": "Internal server error"},
     }
 )
-def trigger_training(request: Request):
+def trigger_training(request: Request, api_key: str = Depends(API_KEY_HEADER)):
     """
     Trigger training pipeline asynchronously via Airflow
     
     Returns:
         dag_run_id for tracking progress
     """
+    verify_admin(api_key)
     request_id = request.headers.get("X-Request-ID", "unknown")
     
     try:
@@ -234,7 +235,7 @@ def trigger_training(request: Request):
     "/training/status/{dag_run_id}",
     tags=["Training"],
 )
-def get_training_status(dag_run_id: str, request: Request):
+def get_training_status(dag_run_id: str, request: Request, api_key: str = Depends(API_KEY_HEADER)):
     """
     Get status of a training run
     
@@ -244,11 +245,12 @@ def get_training_status(dag_run_id: str, request: Request):
     Returns:
         Status: running, success, failed, queued
     """
+    verify_admin(api_key)
     request_id = request.headers.get("X-Request-ID", "unknown")
     
     try:
         logger.info(
-            f"🔍 Checking training status",
+            "🔍 Checking training status",
             extra={"request_id": request_id, "dag_run_id": dag_run_id}
         )
         
@@ -283,7 +285,7 @@ def get_training_status(dag_run_id: str, request: Request):
     "/training/logs/{dag_run_id}",
     tags=["Training"],
 )
-def get_training_logs(dag_run_id: str, task_id: str = "train_model", request: Request = None):
+def get_training_logs(dag_run_id: str, task_id: str = "train_model", request: Request = None, api_key: str = Depends(API_KEY_HEADER)):
     """
     Get logs from a training run task
     
@@ -294,11 +296,12 @@ def get_training_logs(dag_run_id: str, task_id: str = "train_model", request: Re
     Returns:
         Task execution logs
     """
+    verify_admin(api_key)
     request_id = request.headers.get("X-Request-ID", "unknown") if request else "unknown"
     
     try:
         logger.info(
-            f"📜 Fetching logs",
+            "📜 Fetching logs",
             extra={"request_id": request_id, "dag_run_id": dag_run_id, "task_id": task_id}
         )
         

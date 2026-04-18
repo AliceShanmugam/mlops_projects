@@ -1248,3 +1248,82 @@ weighted avg       0.85      0.84      0.84      8422
 [2026-04-17 19:25:07] [32mINFO[0m - __main__ -    Found 0 registered models
 [2026-04-17 19:25:07] [32mINFO[0m - __main__ -    Tagging new run as production...
 [2026-04-17 19:25:07] [32mINFO[0m - __main__ - ✅ Model promoted to production successfully!
+[2026-04-18 15:57:28] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-18 15:58:05] [32mINFO[0m - src.api.main - Request: GET /
+[2026-04-18 15:58:05] [32mINFO[0m - src.api.main - Response: 404 (0.001s)
+[2026-04-18 15:58:05] [32mINFO[0m - src.api.main - Request: GET /favicon.ico
+[2026-04-18 15:58:05] [32mINFO[0m - src.api.main - Response: 404 (0.001s)
+[2026-04-18 15:58:09] [32mINFO[0m - src.api.main - Request: GET /
+[2026-04-18 15:58:09] [32mINFO[0m - src.api.main - Response: 404 (0.000s)
+[2026-04-18 15:58:19] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-18 15:58:19] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-18 15:58:19] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-18 15:58:19] [32mINFO[0m - src.api.main - Response: 200 (0.011s)
+[2026-04-18 16:26:12] [32mINFO[0m - __main__ - ✅ Preprocessing completed : Data version: 20260418_162612
+[2026-04-18 16:26:12] [32mINFO[0m - __main__ -   $ dvc add data/processed/
+[2026-04-18 16:26:13] [32mINFO[0m - __main__ -   To track the changes with git, run:
+
+	git add data/processed.dvc
+
+To enable auto staging, run:
+
+	dvc config core.autostage true
+[2026-04-18 16:26:13] [32mINFO[0m - __main__ -   $ dvc push
+[2026-04-18 16:26:19] [32mINFO[0m - __main__ -   3 files pushed
+[2026-04-18 16:26:19] [32mINFO[0m - __main__ - ✅ data/processed/ versionnée et pushée sur DagsHub
+[2026-04-18 16:26:19] [32mINFO[0m - __main__ - ✅ Data version saved for downstream tasks
+[2026-04-18 16:26:22] [32mINFO[0m - __main__ - 🚀 Starting training with data version: 20260418_162612
+[2026-04-18 16:26:22] [32mINFO[0m - __main__ -    Données depuis : /app/data/processed
+[2026-04-18 16:26:22] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_train_tfidf.joblib
+[2026-04-18 16:26:22] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_train.joblib
+[2026-04-18 16:26:22] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_test_tfidf.joblib
+[2026-04-18 16:26:22] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_test.joblib
+[2026-04-18 16:26:22] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/tfidf_vectorizer.joblib
+[2026-04-18 16:26:22] [32mINFO[0m - __main__ - ✅ Données chargées — X_train: (33684, 2000), X_test: (8422, 2000)
+[2026-04-18 16:26:25] [32mINFO[0m - __main__ - ⚙️ Training LinearSVC model...
+[2026-04-18 16:26:25] [32mINFO[0m - __main__ - ✅ Model trained successfully
+[2026-04-18 16:26:25] [32mINFO[0m - __main__ - 📈 F1-score (macro): 0.8450
+[2026-04-18 16:26:25] [32mINFO[0m - __main__ - 
+              precision    recall  f1-score   support
+
+           0       0.88      0.75      0.81      1004
+           1       0.74      0.91      0.82      1175
+           2       0.89      0.82      0.85      1205
+           3       0.95      0.91      0.93      1009
+           4       0.84      0.82      0.83      1015
+           5       0.82      0.83      0.83       999
+           6       0.88      0.90      0.89       998
+           7       0.80      0.80      0.80      1017
+
+    accuracy                           0.84      8422
+   macro avg       0.85      0.84      0.85      8422
+weighted avg       0.85      0.84      0.84      8422
+
+[2026-04-18 16:26:25] [32mINFO[0m - __main__ - 💾 Modèles sauvegardés dans /app/models
+[2026-04-18 16:26:32] [32mINFO[0m - __main__ - ✅ Model artifacts saved and logged to MLFlow
+[2026-04-18 16:26:32] [32mINFO[0m - __main__ - 🎉 Entraînement terminé — run_id: 53f1f5d5f1464fbb89a11e5d8da5bfe0
+[2026-04-18 16:26:35] [32mINFO[0m - __main__ - 📊 Starting model evaluation...
+[2026-04-18 16:26:35] [32mINFO[0m - __main__ -    New run ID: 53f1f5d5f1464fbb89a11e5d8da5bfe0
+[2026-04-18 16:26:35] [32mINFO[0m - __main__ -    Data version: 20260418_162612
+[2026-04-18 16:26:37] [32mINFO[0m - __main__ -    New model F1:  0.8450
+[2026-04-18 16:26:37] [32mINFO[0m - __main__ -    Production F1: 0.8450
+[2026-04-18 16:26:37] [32mINFO[0m - __main__ - 
+📈 Improvement: +0.0000 F1 points
+[2026-04-18 16:26:37] [33mWARNING[0m - __main__ - ⚠️  New model is NOT better — Keep current production
+[2026-04-18 16:30:51] [32mINFO[0m - src.api.main - Request: POST /predict/text
+[2026-04-18 16:30:51] [32mINFO[0m - src.api.main - Response: 401 (0.008s)
+[2026-04-18 16:33:23] [32mINFO[0m - src.api.main - Request: POST /predict/text
+[2026-04-18 16:33:23] [32mINFO[0m - src.api.main - Response: 401 (0.003s)
+[2026-04-18 16:33:46] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-18 16:33:46] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-18 16:33:46] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-18 16:33:46] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-18 16:33:56] [32mINFO[0m - src.api.main - Request: GET /health
+[2026-04-18 16:33:56] [32mINFO[0m - src.api.main - Health check called
+[2026-04-18 16:33:56] [32mINFO[0m - src.api.main - Response: 200 (0.003s)
+[2026-04-18 16:34:13] [32mINFO[0m - src.api.main - Request: POST /predict/text
+[2026-04-18 16:34:13] [32mINFO[0m - src.api.main - Response: 401 (0.003s)
+[2026-04-18 16:54:44] [32mINFO[0m - src.api.main - Request: POST /predict/text
+[2026-04-18 16:54:44] [32mINFO[0m - src.api.main - Response: 200 (0.006s)
+[2026-04-18 16:58:05] [32mINFO[0m - src.api.main - Request: POST /predict/text
+[2026-04-18 16:58:05] [32mINFO[0m - src.api.main - Response: 401 (0.003s)
