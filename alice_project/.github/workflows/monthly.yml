@@ -1,0 +1,75 @@
+name: Monthly data ingestion
+
+on:
+  schedule:
+    - cron: "0 6 1 * *"      # 1er du mois à 6h UTC
+  workflow_dispatch:           # déclenchement manuel depuis GitHub UI
+    inputs:
+      download_date:
+        description: "Version YYYY-MM à télécharger (défaut: mois courant)"
+        required: false
+        default: ""
+
+jobs:
+  download-and-version:
+    name: Download → DVC push → trigger Airflow
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 dvc[http]
+
+      - name: Configure DVC remote (DagsHub)
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_USER_TOKEN }}
+
+      - name: Download raw data → data/raw/
+        env:
+          CHALLENGEDATA_USERNAME: ${{ secrets.CHALLENGEDATA_USERNAME }}
+          CHALLENGEDATA_PASSWORD: ${{ secrets.CHALLENGEDATA_PASSWORD }}
+          DOWNLOAD_DATE: ${{ inputs.download_date }}
+          DATA_RAW_DIR: data/raw
+        run: python src/preprocessing/download.py
+
+      - name: DVC add + push → DagsHub
+        run: |
+          dvc add data/raw/
+          dvc push
+
+      - name: Commit updated data/raw.dvc
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          DOWNLOAD_DATE=$(cat /tmp/download_date.txt 2>/dev/null || date +%Y-%m)
+          git add data/raw.dvc
+          git diff --staged --quiet || git commit -m "data: raw ${DOWNLOAD_DATE}"
+          git push
+      
+      - name: Tag data version
+        run: |
+          DOWNLOAD_DATE=$(cat /tmp/download_date.txt 2>/dev/null || date +%Y-%m)
+          git tag -f "data-raw-${DOWNLOAD_DATE}" || true
+          git push origin "data-raw-${DOWNLOAD_DATE}"
+
+      - name: Trigger Airflow training DAG
+        env:
+          AIRFLOW_URL: ${{ secrets.AIRFLOW_URL }}      # ex: http://mon-serveur:8081
+          AIRFLOW_USERNAME: admin
+          AIRFLOW_PASSWORD: ${{ secrets.AIRFLOW_PASSWORD }}
+        run: |
+          DOWNLOAD_DATE=$(cat /tmp/download_date.txt 2>/dev/null || date +%Y-%m)
+          curl -s -X POST "${AIRFLOW_URL}/api/v1/dags/training_pipeline/dagRuns" \
+            -H "Content-Type: application/json" \
+            -u "${AIRFLOW_USERNAME}:${AIRFLOW_PASSWORD}" \
+            -d "{\"conf\": {\"download_date\": \"${DOWNLOAD_DATE}\"}}"
