@@ -55,6 +55,12 @@ jobs:
           git add data/raw.dvc
           git diff --staged --quiet || git commit -m "data: raw ${DOWNLOAD_DATE}"
           git push
+      
+      - name: Tag data version
+        run: |
+          DOWNLOAD_DATE=$(cat /tmp/download_date.txt 2>/dev/null || date +%Y-%m)
+          git tag -f "data-raw-${DOWNLOAD_DATE}" || true
+          git push origin "data-raw-${DOWNLOAD_DATE}"
 
       - name: Trigger Airflow training DAG
         env:

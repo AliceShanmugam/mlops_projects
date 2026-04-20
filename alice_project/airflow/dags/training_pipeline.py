@@ -15,6 +15,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.utils.dates import days_ago
+from airflow.models import Param
 from docker.types import Mount
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,14 @@ dag = DAG(
     schedule_interval=None,  # Déclenché via API après le download mensuel GitHub Actions
     catchup=False,
     tags=['mlops', 'training'],
+    params={
+        "download_date": Param(
+            "", 
+            type=["string", "null"],
+            minLength=0,
+            description="YYYY-MM — vide = dernière version, ex: 2026-01 pour janvier"
+        )
+    },
 )
 
 # Get project root
@@ -82,7 +91,14 @@ MODEL_MOUNTS = [
 dvc_pull_task = DockerOperator(
     task_id='dvc_pull_raw',
     image='alice_project-preprocessing:latest',
-    command=['/bin/sh', '-c', 'dvc pull data/raw/'],
+    command=['/bin/sh', '-c', (
+        'DOWNLOAD_DATE="{{ dag_run.conf.get(\'download_date\') or \'\' }}" && '
+        'if [ -n "$DOWNLOAD_DATE" ] && [ "$DOWNLOAD_DATE" != "None" ]; then '
+        '  git -C /app fetch --tags https://$DAGSHUB_USERNAME:$DAGSHUB_USER_TOKEN@dagshub.com/AliceShanmugam/mlops_projects.git && '
+        '  git -C /app checkout "data-raw-${DOWNLOAD_DATE}" -- data/raw.dvc; '
+        'fi && '
+        'dvc pull data/raw/'
+    )],
     container_name='airflow-dvcpull-{{ execution_date.strftime("%s") }}',
     mounts=COMMON_MOUNTS + DATA_MOUNTS,
     environment={
@@ -108,6 +124,7 @@ preprocess_task = DockerOperator(
         **DAGSHUB_ENV, 
         'DATA_RAW_DIR': '/app/data/raw',
         'DATA_PROCESSED_DIR': '/app/data/processed',
+        'DOWNLOAD_DATE': '{{ dag_run.conf.get("download_date") or "" }}',
         'LOG_LEVEL': 'INFO',
         'LOG_DIR': '/app/logs',
         'PYTHONPATH': '/app',
@@ -160,53 +177,6 @@ evaluate_task = DockerOperator(
 # ============================================================================
 # TASK 4: MODEL REGISTRY — promeut le modèle si meilleur que la production
 # ============================================================================
-
-def register_model(**context):
-    import mlflow
-    import requests
-    mlflow.set_tracking_uri(
-        'https://dagshub.com/AliceShanmugam/mlops_projects.mlflow'
-    )
-    client = mlflow.tracking.MlflowClient()
-
-    with open('/tmp/mlflow_run_id.txt') as f:
-        new_run_id = f.read().strip()
-
-    new_run = client.get_run(new_run_id)
-    new_f1  = new_run.data.metrics.get('f1_macro', 0)
-    exp_id  = new_run.info.experiment_id
-
-    current_runs = client.search_runs(
-        experiment_ids=[exp_id],
-        filter_string="tags.model_stage = 'production'",
-        order_by=["start_time DESC"],
-        max_results=1,
-    )
-    prod_f1 = current_runs[0].data.metrics.get('f1_macro', 0) if current_runs else 0
-
-    logger.info(f"📊 Nouveau: F1={new_f1:.4f} | Production: F1={prod_f1:.4f}")
-
-    if new_f1 > prod_f1:
-        if current_runs:
-            client.set_tag(current_runs[0].info.run_id, 'model_stage', 'archived')
-        client.set_tag(new_run_id, 'model_stage', 'production')
-        # Demander à l'API de recharger le modèle en mémoire
-        try:
-            resp = requests.post(
-                "http://api:8000/models/reload",
-                headers={"X-API-Key": os.getenv("API_KEY")},
-                timeout=10,
-            )
-            logger.info(f"✅ API reload: {resp.status_code}")
-        except Exception as e:
-            logger.warning(f"⚠️ API reload échoué (restart manuel requis): {e}")
-        client.set_tag(new_run_id, 'promoted_at', dt.now().isoformat())
-        logger.info("✅ Nouveau modèle promu en production")
-
-    else:
-        client.set_tag(new_run_id, 'model_stage', 'rejected')
-        logger.warning("⚠️  Modèle non promu — pas d'amélioration")
-    
 
 registry_task = DockerOperator(
     task_id='model_registry',

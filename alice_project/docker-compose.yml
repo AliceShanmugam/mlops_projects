@@ -135,6 +135,8 @@ services:
       - AIRFLOW_WEBSERVER_URL=http://airflow-webserver:8080
       - API_KEY=${API_KEY}
       - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - MLFLOW_TRACKING_USERNAME=${DAGSHUB_USERNAME}
+      - MLFLOW_TRACKING_PASSWORD=${DAGSHUB_USER_TOKEN}
     networks:
       - alice_network
     restart: unless-stopped

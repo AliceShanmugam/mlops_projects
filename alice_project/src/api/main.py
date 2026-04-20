@@ -22,8 +22,8 @@ from src.api.schemas import (
     ErrorResponse,
     HealthResponse
 )
-from src.api.model import predict
-from src.utils.exceptions import PredictionError, AuthenticationError
+
+from src.utils.exceptions import PredictionError
 
 from src.utils.auth import verify_api_key, verify_admin, API_KEY_HEADER
 import src.api.model as model
@@ -323,7 +323,57 @@ def get_training_logs(dag_run_id: str, task_id: str = "train_model", request: Re
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to get logs: {str(e)}"
         )
-    
+
+@app.post(
+    "/training/previous_data",
+    tags=["Training"],
+    responses={
+        202: {"description": "Training pipeline triggered with historical data"},
+        400: {"description": "Invalid download_date format"},
+        500: {"description": "Internal server error"},
+    }
+)
+def trigger_training_previous_data(
+    request: Request,
+    download_date: str,
+    api_key: str = Depends(API_KEY_HEADER)
+):
+    """
+    Lance un entraînement sur un ancien jeu de données identifié par sa date (YYYY-MM).
+    Le pipeline Airflow fera un `git checkout data-raw-{download_date}` avant le DVC pull.
+    Accès admin uniquement.
+    """
+    verify_admin(api_key)
+    import re
+    if not re.match(r"^\d{4}-\d{2}$", download_date):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="download_date doit être au format YYYY-MM"
+        )
+    request_id = request.headers.get("X-Request-ID", "unknown")
+    try:
+        result = airflow_client.trigger_dag(
+            dag_id='training_pipeline',
+            conf={'download_date': download_date, 'triggered_by': 'api', 'request_id': request_id}
+        )
+        dag_run_id = result.get('dag_run_id')
+        logger.info(
+            f"✅ Training with historical data triggered (download_date={download_date})",
+            extra={"request_id": request_id, "dag_run_id": dag_run_id}
+        )
+        return {
+            "status": "triggered",
+            "download_date": download_date,
+            "dag_run_id": dag_run_id,
+            "message": f"Training started on data-raw-{download_date}. Monitor at: http://localhost:8081/dags/training_pipeline/grid"
+        }
+    except Exception as e:
+        logger.error(f"❌ Failed to trigger training: {str(e)}", extra={"request_id": request_id}, exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to trigger training: {str(e)}"
+        )
+      
 @app.on_event("startup")
 async def startup_event():
     """Called when application starts"""
@@ -335,6 +385,96 @@ async def startup_event():
 async def shutdown_event():
     """Called when application stops"""
     logger.info("🛑 Application shutting down")
+
+@app.post("/predict/text/archived", tags=["Predictions"])
+@limiter.limit(f"{settings.RATE_LIMIT_REQUESTS}/minute")
+def predict_text_archived(
+    request: Request,
+    body: TextPredictionRequest,
+    date: str,
+    api_key: str = Depends(API_KEY_HEADER)
+):
+    """
+    Prédiction avec un ancien modèle retrouvé par date de preprocessing (YYYY-MM-DD).
+    Ex: date=2026-04-17
+    """
+    verify_api_key(api_key)
+    import mlflow, joblib, tempfile
+    mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
+    client = mlflow.tracking.MlflowClient(settings.MLFLOW_TRACKING_URI)
+    exp = client.get_experiment_by_name("text_classification")
+    experiment_ids = [exp.experiment_id] if exp else ["1"]
+    # Trouver le run correspondant à la date
+    runs = client.search_runs(
+        experiment_ids = experiment_ids,
+        filter_string=f"tags.processed_at LIKE '{date}%'",
+        order_by=["start_time DESC"],
+        max_results=1,
+    )
+    if not runs:
+        raise HTTPException(status_code=404, detail=f"Aucun modèle trouvé pour la date {date}")
+
+    run = runs[0]
+    run_id = run.info.run_id
+
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            mlflow.artifacts.download_artifacts(
+                run_id=run_id, artifact_path="svm.joblib", dst_path=tmp
+            )
+            mlflow.artifacts.download_artifacts(
+                run_id=run_id, artifact_path="tfidf_vectorizer.joblib", dst_path=tmp
+            )
+            import os
+            svm = joblib.load(os.path.join(tmp, "svm.joblib"))
+            tfidf = joblib.load(os.path.join(tmp, "tfidf_vectorizer.joblib"))
+            vec = tfidf.transform([body.text])
+            label = int(svm.predict(vec)[0])
+
+        return PredictionResponse(
+            label=label,
+            source="text",
+            fallback=False,
+            fallback_reason=f"archived model from {date} (run_id: {run_id})"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/models/history", tags=["Admin"])
+def get_model_history(
+    date: str = None,
+    api_key: str = Depends(API_KEY_HEADER)
+):
+    """
+    Liste les modèles entraînés, filtrables par date (YYYY-MM-DD).
+    Utilise le tag processed_at pour retrouver les runs.
+    """
+    verify_admin(api_key)
+    import mlflow
+    mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
+    client = mlflow.tracking.MlflowClient(settings.MLFLOW_TRACKING_URI)
+
+    filter_string = f"tags.processed_at LIKE '{date}%'" if date else ""
+
+    try:
+        runs = client.search_runs(
+            experiment_ids=["1"],
+            filter_string=filter_string,
+            order_by=["start_time DESC"],
+        )
+        return [
+            {
+                "run_id": r.info.run_id,
+                "f1_macro": r.data.metrics.get("f1_macro"),
+                "model_stage": r.data.tags.get("model_stage"),
+                "download_date": r.data.tags.get("download_date"),
+                "processed_at": r.data.tags.get("processed_at"),
+                "promoted_at": r.data.tags.get("promoted_at"),
+            }
+            for r in runs
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/models/reload", tags=["Admin"])
 def reload_models_endpoint(api_key: str = Depends(API_KEY_HEADER)):

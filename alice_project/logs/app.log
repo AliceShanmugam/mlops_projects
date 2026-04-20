@@ -1327,3 +1327,188 @@ weighted avg       0.85      0.84      0.84      8422
 [2026-04-18 16:54:44] [32mINFO[0m - src.api.main - Response: 200 (0.006s)
 [2026-04-18 16:58:05] [32mINFO[0m - src.api.main - Request: POST /predict/text
 [2026-04-18 16:58:05] [32mINFO[0m - src.api.main - Response: 401 (0.003s)
+[2026-04-18 19:14:02] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-18 19:14:02] [32mINFO[0m - src.api.main - Response: 200 (0.003s)
+[2026-04-18 19:14:03] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-18 19:14:03] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-18 19:14:27] [32mINFO[0m - src.api.main - Request: POST /predict/text
+[2026-04-18 19:14:27] [32mINFO[0m - src.api.main - Response: 401 (0.005s)
+[2026-04-18 19:21:45] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-18 19:21:45] [32mINFO[0m - src.api.main - Response: 200 (0.002s)
+[2026-04-18 19:21:45] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-18 19:21:45] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-18 19:21:56] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-18 19:21:56] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-18 19:21:57] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-18 19:21:57] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-18 19:27:13] [32mINFO[0m - src.api.main - Request: POST /models/reload
+[2026-04-18 19:27:13] [32mINFO[0m - src.api.model - ✅ Modèles texte rechargés depuis /app/models
+[2026-04-18 19:27:13] [32mINFO[0m - src.api.main - ✅ Modèles rechargés via endpoint admin
+[2026-04-18 19:27:13] [32mINFO[0m - src.api.main - Response: 200 (0.022s)
+[2026-04-18 19:29:48] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-04-18 19:30:04] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-04-18 19:30:04] [32mINFO[0m - src.api.model - ✓ Text model loaded (tfidf + svm)
+[2026-04-18 19:30:04] [32mINFO[0m - src.api.model - ✗ Image model not yet trained — will use text-only fallback
+[2026-04-18 19:30:05] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-04-18 19:30:05] [32mINFO[0m - src.api.main - API Key authentication: ✓ Enabled
+[2026-04-18 19:31:28] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-18 19:31:28] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-18 19:31:28] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-18 19:31:28] [32mINFO[0m - src.api.main - Response: 200 (0.013s)
+[2026-04-18 19:31:49] [32mINFO[0m - src.api.main - Request: POST /predict/text
+[2026-04-18 19:31:49] [32mINFO[0m - src.api.main - Response: 200 (0.008s)
+[2026-04-18 19:51:57] [32mINFO[0m - src.api.main - Request: POST /training/trigger
+[2026-04-18 19:51:57] [33mWARNING[0m - src.utils.auth - Accès admin refusé : homemade...
+[2026-04-18 19:51:57] [32mINFO[0m - src.api.main - Response: 403 (0.004s)
+[2026-04-18 19:52:20] [32mINFO[0m - src.api.main - Request: POST /training/trigger
+[2026-04-18 19:52:20] [32mINFO[0m - src.api.main - 🚀 Training triggered
+[2026-04-18 19:52:20] [32mINFO[0m - src.api.airflow_service - DAG training_pipeline triggered successfully. Run ID: manual__2026-04-18T19:52:20.397631+00:00
+[2026-04-18 19:52:20] [32mINFO[0m - src.api.main - ✅ Training pipeline started
+[2026-04-18 19:52:20] [32mINFO[0m - src.api.main - Response: 200 (0.144s)
+[2026-04-18 19:52:24] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-19 09:03:17] [32mINFO[0m - __main__ - ✅ Preprocessing completed : Data version: 20260419_090317
+[2026-04-19 09:03:17] [32mINFO[0m - __main__ -   $ dvc add data/processed/
+[2026-04-19 09:03:18] [32mINFO[0m - __main__ -   To track the changes with git, run:
+
+	git add data/processed.dvc
+
+To enable auto staging, run:
+
+	dvc config core.autostage true
+[2026-04-19 09:03:18] [32mINFO[0m - __main__ -   $ dvc push
+[2026-04-19 09:03:27] [32mINFO[0m - __main__ -   5 files pushed
+[2026-04-19 09:03:27] [32mINFO[0m - __main__ - ✅ data/processed/ versionnée et pushée sur DagsHub
+[2026-04-19 09:03:27] [32mINFO[0m - __main__ - ✅ Data version saved for downstream tasks
+[2026-04-19 09:03:29] [32mINFO[0m - __main__ - 🚀 Starting training with data version: 20260419_090317
+[2026-04-19 09:03:29] [32mINFO[0m - __main__ -    Données depuis : /app/data/processed
+[2026-04-19 09:03:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_train_tfidf.joblib
+[2026-04-19 09:03:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_train.joblib
+[2026-04-19 09:03:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_test_tfidf.joblib
+[2026-04-19 09:03:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_test.joblib
+[2026-04-19 09:03:30] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/tfidf_vectorizer.joblib
+[2026-04-19 09:03:30] [32mINFO[0m - __main__ - ✅ Données chargées — X_train: (33684, 2000), X_test: (8422, 2000)
+[2026-04-19 09:03:33] [32mINFO[0m - __main__ - ⚙️ Training LinearSVC model...
+[2026-04-19 09:03:34] [32mINFO[0m - __main__ - ✅ Model trained successfully
+[2026-04-19 09:03:34] [32mINFO[0m - __main__ - 📈 F1-score (macro): 0.8454
+[2026-04-19 09:03:34] [32mINFO[0m - __main__ - 
+              precision    recall  f1-score   support
+
+           0       0.88      0.76      0.81      1004
+           1       0.74      0.91      0.82      1175
+           2       0.89      0.82      0.85      1205
+           3       0.95      0.91      0.93      1009
+           4       0.84      0.82      0.83      1015
+           5       0.83      0.83      0.83       999
+           6       0.88      0.90      0.89       998
+           7       0.80      0.80      0.80      1017
+
+    accuracy                           0.84      8422
+   macro avg       0.85      0.84      0.85      8422
+weighted avg       0.85      0.84      0.84      8422
+
+[2026-04-19 09:03:34] [32mINFO[0m - __main__ - 💾 Modèles sauvegardés dans /app/models
+[2026-04-19 09:03:40] [32mINFO[0m - __main__ - ✅ Model artifacts saved and logged to MLFlow
+[2026-04-19 09:03:40] [32mINFO[0m - __main__ - 🎉 Entraînement terminé — run_id: 8632a901b7674fc98e5f958cf3b68136
+[2026-04-19 09:03:43] [32mINFO[0m - __main__ - 📊 Starting model evaluation...
+[2026-04-19 09:03:43] [32mINFO[0m - __main__ -    New run ID: 8632a901b7674fc98e5f958cf3b68136
+[2026-04-19 09:03:43] [32mINFO[0m - __main__ -    Data version: 20260419_090317
+[2026-04-19 09:03:43] [32mINFO[0m - __main__ -    New model F1:  0.8454
+[2026-04-19 09:03:44] [32mINFO[0m - __main__ -    Production F1: 0.8450
+[2026-04-19 09:03:44] [32mINFO[0m - __main__ - 
+📈 Improvement: +0.0004 F1 points
+[2026-04-19 09:03:44] [32mINFO[0m - __main__ - ✅ NEW MODEL IS BETTER — Ready for production
+[2026-04-19 09:03:48] [32mINFO[0m - src.api.main - Request: POST /models/reload
+[2026-04-19 09:03:48] [32mINFO[0m - src.api.model - ✅ Modèles texte rechargés depuis /app/models
+[2026-04-19 09:03:48] [32mINFO[0m - src.api.main - ✅ Modèles rechargés via endpoint admin
+[2026-04-19 09:03:48] [32mINFO[0m - src.api.main - Response: 200 (0.028s)
+[2026-04-19 10:39:43] [32mINFO[0m - src.api.main - Request: POST /training/previous_data
+[2026-04-19 10:39:43] [32mINFO[0m - src.api.main - Response: 404 (0.001s)
+[2026-04-19 11:01:12] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-04-19 14:17:06] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-04-19 14:17:07] [32mINFO[0m - src.api.model - ✓ Text model loaded (tfidf + svm)
+[2026-04-19 14:17:07] [32mINFO[0m - src.api.model - ✗ Image model not yet trained — will use text-only fallback
+[2026-04-19 14:17:07] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-04-19 14:17:07] [32mINFO[0m - src.api.main - API Key authentication: ✓ Enabled
+[2026-04-19 14:18:04] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-19 14:18:04] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-19 14:18:04] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-19 14:18:04] [32mINFO[0m - src.api.main - Response: 200 (0.009s)
+[2026-04-19 14:18:14] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-19 14:18:14] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-19 14:18:14] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-19 14:18:14] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-19 14:18:34] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-04-19 14:19:57] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-04-19 14:19:58] [32mINFO[0m - src.api.model - ✓ Text model loaded (tfidf + svm)
+[2026-04-19 14:19:58] [32mINFO[0m - src.api.model - ✗ Image model not yet trained — will use text-only fallback
+[2026-04-19 14:19:58] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-04-19 14:19:58] [32mINFO[0m - src.api.main - API Key authentication: ✓ Enabled
+[2026-04-19 14:20:24] [32mINFO[0m - src.api.main - Request: GET /docs
+[2026-04-19 14:20:24] [32mINFO[0m - src.api.main - Response: 200 (0.001s)
+[2026-04-19 14:20:24] [32mINFO[0m - src.api.main - Request: GET /openapi.json
+[2026-04-19 14:20:24] [32mINFO[0m - src.api.main - Response: 200 (0.008s)
+[2026-04-19 16:14:35] [32mINFO[0m - src.api.main - 🛑 Application shutting down
+[2026-04-19 16:17:27] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-04-19 16:17:28] [32mINFO[0m - src.api.model - ✓ Text model loaded (tfidf + svm)
+[2026-04-19 16:17:28] [32mINFO[0m - src.api.model - ✗ Image model not yet trained — will use text-only fallback
+[2026-04-19 16:17:28] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-04-19 16:17:28] [32mINFO[0m - src.api.main - API Key authentication: ✓ Enabled
+[2026-04-19 18:15:06] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-19 20:14:46] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-20 07:28:06] [32mINFO[0m - src.api.model - Loading models from: /app/models
+[2026-04-20 07:28:07] [32mINFO[0m - src.api.model - ✓ Text model loaded (tfidf + svm)
+[2026-04-20 07:28:07] [32mINFO[0m - src.api.model - ✗ Image model not yet trained — will use text-only fallback
+[2026-04-20 07:28:07] [32mINFO[0m - src.api.main - 🚀 Alice MLOps v1.0.0 started
+[2026-04-20 07:28:07] [32mINFO[0m - src.api.main - API Key authentication: ✓ Enabled
+[2026-04-20 07:28:44] [32mINFO[0m - __main__ - 🔄 Starting preprocessing pipeline...
+[2026-04-20 07:58:42] [32mINFO[0m - __main__ - ✅ Preprocessing completed : Data version: 20260420_075842
+[2026-04-20 07:58:42] [32mINFO[0m - __main__ -   $ dvc add data/processed/
+[2026-04-20 07:58:43] [32mINFO[0m - __main__ -   To track the changes with git, run:
+
+	git add data/processed.dvc
+
+To enable auto staging, run:
+
+	dvc config core.autostage true
+[2026-04-20 07:58:43] [32mINFO[0m - __main__ -   $ dvc push
+[2026-04-20 07:58:55] [32mINFO[0m - __main__ -   5 files pushed
+[2026-04-20 07:58:55] [32mINFO[0m - __main__ - ✅ data/processed/ versionnée et pushée sur DagsHub
+[2026-04-20 07:58:55] [32mINFO[0m - __main__ - ✅ Data version saved for downstream tasks
+[2026-04-20 07:58:57] [32mINFO[0m - __main__ - 🚀 Starting training with data version: 20260420_075842
+[2026-04-20 07:58:57] [32mINFO[0m - __main__ -    Données depuis : /app/data/processed
+[2026-04-20 07:58:58] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_train_tfidf.joblib
+[2026-04-20 07:58:58] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_train.joblib
+[2026-04-20 07:58:58] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/X_test_tfidf.joblib
+[2026-04-20 07:58:58] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/y_test.joblib
+[2026-04-20 07:58:58] [32mINFO[0m - __main__ -   📂 Chargement : /app/data/processed/tfidf_vectorizer.joblib
+[2026-04-20 07:58:58] [32mINFO[0m - __main__ - ✅ Données chargées — X_train: (33684, 2000), X_test: (8422, 2000)
+[2026-04-20 07:59:01] [32mINFO[0m - __main__ - ⚙️ Training LinearSVC model...
+[2026-04-20 07:59:01] [32mINFO[0m - __main__ - ✅ Model trained successfully
+[2026-04-20 07:59:01] [32mINFO[0m - __main__ - 📈 F1-score (macro): 0.8454
+[2026-04-20 07:59:01] [32mINFO[0m - __main__ - 
+              precision    recall  f1-score   support
+
+           0       0.88      0.75      0.81      1004
+           1       0.74      0.91      0.82      1175
+           2       0.89      0.82      0.85      1205
+           3       0.95      0.91      0.93      1009
+           4       0.84      0.82      0.83      1015
+           5       0.83      0.83      0.83       999
+           6       0.88      0.90      0.89       998
+           7       0.80      0.80      0.80      1017
+
+    accuracy                           0.84      8422
+   macro avg       0.85      0.84      0.85      8422
+weighted avg       0.85      0.84      0.84      8422
+
+[2026-04-20 07:59:02] [32mINFO[0m - __main__ - 💾 Modèles sauvegardés dans /app/models
+[2026-04-20 07:59:09] [32mINFO[0m - __main__ - ✅ Model artifacts saved and logged to MLFlow
+[2026-04-20 07:59:09] [32mINFO[0m - __main__ - 🎉 Entraînement terminé — run_id: d1631b68bfa146309263268d794ea412
+[2026-04-20 07:59:12] [32mINFO[0m - __main__ - 📊 Starting model evaluation...
+[2026-04-20 07:59:12] [32mINFO[0m - __main__ -    New run ID: d1631b68bfa146309263268d794ea412
+[2026-04-20 07:59:12] [32mINFO[0m - __main__ -    Data version: 20260420_075842
+[2026-04-20 07:59:12] [32mINFO[0m - __main__ -    New model F1:  0.8454
+[2026-04-20 07:59:12] [32mINFO[0m - __main__ -    Production F1: 0.8454
+[2026-04-20 07:59:12] [32mINFO[0m - __main__ - 
+📈 Improvement: -0.0000 F1 points
+[2026-04-20 07:59:12] [33mWARNING[0m - __main__ - ⚠️  New model is NOT better — Keep current production

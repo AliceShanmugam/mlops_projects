@@ -53,7 +53,7 @@ def login(session: requests.Session) -> bool:
         raise ValueError("Authentification échouée — vérifiez username/password")
 
 
-def _write_lineage(s3, download_date: str, file_sizes: dict) -> None:
+def _write_lineage(download_date: str, file_sizes: dict) -> None:
     """Écrit data/raw/lineage.json pour tracer l'ingestion (data lineage)."""
     meta = {
         "download_date": download_date,

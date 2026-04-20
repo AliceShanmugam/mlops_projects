@@ -115,7 +115,7 @@ def train(data_version: str):
             # Log to MLFlow
             mlflow.sklearn.log_model(pipeline, "model")
             mlflow.log_artifact(str(models_path / "svm.joblib"))
-            
+            mlflow.log_artifact(str(models_path / "tfidf_vectorizer.joblib"))
             # Save classification report
             report_path = Path("/tmp/classification_report.txt")
             report_path.write_text(report)

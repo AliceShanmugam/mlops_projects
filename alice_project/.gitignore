@@ -9,3 +9,5 @@ old/
 
 .env
 .env.example
+
+.dvc/config.local
